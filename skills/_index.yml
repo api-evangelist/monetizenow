@@ -1,0 +1,35 @@
+generated: '2026-07-20'
+method: generated
+source: >-
+  Generated from documented MonetizeNow API operations at
+  https://docs.monetizenow.io/reference; grounded in real operationIds. No
+  provider-published Agent Skills / AGENTS.md were found during this pass.
+skills:
+- file: monetizenow-create-account-and-quote.md
+  name: Create an account and build a quote
+  api: MonetizeNow API
+  operations:
+  - createAccount
+  - createNetNewQuote
+  - saveQuoteOffering
+  - processQuote
+  - sendQuote
+  - acceptQuote
+- file: monetizenow-record-usage-and-bill.md
+  name: Record usage and bill an invoice
+  api: MonetizeNow API
+  operations:
+  - recordEvents
+  - getUsageConsumption
+  - previewInvoice
+  - getInvoiceById
+  - payInvoice
+- file: monetizenow-manage-contract-lifecycle.md
+  name: Manage the contract lifecycle
+  api: MonetizeNow API
+  operations:
+  - getContractById
+  - amendContract
+  - changeContractOwner
+  - renewContract
+  - getAllContractsByAccountId

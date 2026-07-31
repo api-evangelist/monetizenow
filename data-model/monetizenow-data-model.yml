@@ -1,0 +1,156 @@
+generated: '2026-07-20'
+method: derived
+source: >-
+  Derived from the documented MonetizeNow API resource operations at
+  https://docs.monetizenow.io/reference (operationIds and path shapes), the
+  product catalog hierarchy in https://docs.monetizenow.io/docs/product-catalog-overview,
+  and the quote-to-invoice data flow docs.
+description: >-
+  Entity-relationship graph for the MonetizeNow quote-to-cash domain, inferred
+  from the API's by-parent-id operations (e.g. getAllContactsByAccountId,
+  getAllRatesByOfferingId) and the documented product -> offering -> rate and
+  quote -> contract -> subscription -> invoice flows.
+entities:
+- name: account
+  description: Customer account; root of most relationships.
+- name: contact
+- name: address
+- name: billGroup
+  description: Billing container grouping subscriptions and invoices under an account.
+- name: opportunity
+- name: quote
+- name: quoteOffering
+  description: A line/offering attached to a quote.
+- name: contract
+- name: subscription
+- name: usageEvent
+  description: Recorded metered usage against a subscription.
+- name: invoice
+- name: payment
+- name: paymentMethod
+- name: gatewayAccount
+- name: credit
+- name: creditNote
+- name: product
+- name: offering
+- name: rate
+- name: trial
+- name: accountDocument
+  description: E-signature document (DocuSign/Adobe) tied to an account.
+relationships:
+- from: account
+  type: has_many
+  to: contact
+  via: accountId
+- from: account
+  type: has_many
+  to: address
+  via: accountId
+- from: account
+  type: has_many
+  to: billGroup
+  via: accountId
+- from: account
+  type: has_many
+  to: quote
+  via: accountId
+- from: account
+  type: has_many
+  to: contract
+  via: accountId
+- from: account
+  type: has_many
+  to: subscription
+  via: accountId
+- from: account
+  type: has_many
+  to: invoice
+  via: accountId
+- from: account
+  type: has_many
+  to: credit
+  via: accountId
+- from: account
+  type: has_many
+  to: creditNote
+  via: accountId
+- from: account
+  type: has_many
+  to: trial
+  via: accountId
+- from: account
+  type: has_many
+  to: accountDocument
+  via: accountId
+- from: account
+  type: has_many
+  to: paymentMethod
+  via: accountId
+- from: billGroup
+  type: has_many
+  to: subscription
+  via: billGroupId
+- from: billGroup
+  type: has_many
+  to: invoice
+  via: billGroupId
+- from: billGroup
+  type: has_many
+  to: contact
+  via: billGroupId
+- from: opportunity
+  type: has_many
+  to: quote
+  via: opportunityId
+- from: quote
+  type: belongs_to
+  to: opportunity
+  via: opportunityId
+- from: quote
+  type: has_many
+  to: quoteOffering
+  via: quoteId
+- from: quote
+  type: has_many
+  to: contact
+  via: quoteId
+- from: quote
+  type: has_one
+  to: contract
+  via: quoteId
+- from: subscription
+  type: belongs_to
+  to: billGroup
+  via: billGroupId
+- from: subscription
+  type: has_many
+  to: usageEvent
+  via: subscriptionId
+- from: invoice
+  type: belongs_to
+  to: billGroup
+  via: billGroupId
+- from: invoice
+  type: has_many
+  to: payment
+  via: invoiceId
+- from: payment
+  type: belongs_to
+  to: invoice
+  via: invoiceId
+- from: payment
+  type: belongs_to
+  to: paymentMethod
+  via: paymentMethodId
+- from: paymentMethod
+  type: belongs_to
+  to: gatewayAccount
+  via: gatewayAccountId
+- from: product
+  type: has_many
+  to: offering
+  via: productId
+- from: offering
+  type: has_many
+  to: rate
+  via: offeringId

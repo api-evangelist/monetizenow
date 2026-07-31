@@ -1,0 +1,377 @@
+# MonetizeNow Documentation
+
+> Commercial excellencemeans MonetizeNow. The most elegant, flexible, all-in-one, solution for monetization. Sell any product or service, from any channel, to any accounting system. Only with MonetizeNow. Quoting for Sales Billing for Finance Pricing & Configuring for RevOps Usage for Engineering Self-Serve Sales for Product Revenue Reporting for Executives
+
+## Guides
+- [MonetizeNow HQ](https://docs.monetizenow.io/docs/welcome.md): Find answers fast. Earn revenue even faster.
+- [About Us](https://docs.monetizenow.io/docs/about-us.md)
+- [Architecture Overview](https://docs.monetizenow.io/docs/architecture-overview.md)
+- [Data Flow: Quote to Invoice](https://docs.monetizenow.io/docs/data-flow-fromto-quote-bill-group-contract-and-invoice.md)
+- [Lifecycle: Subscriptions](https://docs.monetizenow.io/docs/subscription-lifecycle.md)
+- [Onboard in minutes](https://docs.monetizenow.io/docs/onboarding-a-tenant.md)
+- [Set Up Company](https://docs.monetizenow.io/docs/onboard-company.md): Add your company information which is displayed on Quotes and Invoices
+- [Integrate Systems](https://docs.monetizenow.io/docs/onboard-integrations.md)
+- [Configure Product Catalog](https://docs.monetizenow.io/docs/onboard-product-catalog.md)
+- [User Testing & Go-Live](https://docs.monetizenow.io/docs/onboard-golive.md)
+- [New Tenant Checklist](https://docs.monetizenow.io/docs/new-tenant-checklist.md): A simple checklist to set up your MonetizeNow tenant, covering company details, team roles, proration, addresses, and product catalog structure, so you can launch quickly with confidence
+- [MonetizeNow AI Capabilities](https://docs.monetizenow.io/docs/monetizenow-ai-capabilities.md)
+- [AI Powered Insights](https://docs.monetizenow.io/docs/ai-powered-insights.md)
+- [Tenants](https://docs.monetizenow.io/docs/understanding-tenants.md)
+- [Tenant Time Zone](https://docs.monetizenow.io/docs/tenant-time-zone.md)
+- [Legal Entities](https://docs.monetizenow.io/docs/legal-entities.md)
+- [Entity Settings](https://docs.monetizenow.io/docs/company-settings.md): Add your company information which is displayed on Quotes and Invoices
+- [API Keys](https://docs.monetizenow.io/docs/api-keys.md)
+- [Custom Fields](https://docs.monetizenow.io/docs/custom-fields.md)
+- [Currencies](https://docs.monetizenow.io/docs/mulit-currency.md): MonetizeNow supports multiple currencies
+- [Notifications](https://docs.monetizenow.io/docs/notifications.md)
+- [In App Documentation & Support](https://docs.monetizenow.io/docs/in-app-documentation-support.md)
+- [Users & Roles](https://docs.monetizenow.io/docs/users.md): MonetizeNow supports role-based access control with Users
+- [Dunning](https://docs.monetizenow.io/docs/dunning.md)
+- [Invoice Terms](https://docs.monetizenow.io/docs/invoice-terms.md)
+- [Invoice Settings](https://docs.monetizenow.io/docs/invoice-settings.md)
+- [Quote Settings](https://docs.monetizenow.io/docs/quote-settings.md)
+- [Teams](https://docs.monetizenow.io/docs/teams.md)
+- [Rules Engine](https://docs.monetizenow.io/docs/rules-engine.md)
+- [Approval Rules](https://docs.monetizenow.io/docs/approval-rules.md)
+- [Retaining Previous Approvals ](https://docs.monetizenow.io/docs/retaining-previous-approvals.md): Approvals can be retained while editing the quote in exception scenarios
+- [Quote Approval Rules](https://docs.monetizenow.io/docs/approvals.md)
+- [Conditional Terms](https://docs.monetizenow.io/docs/conditional-terms.md)
+- [Validation Rules](https://docs.monetizenow.io/docs/validation-rules-1.md)
+- [Quote Validation Rules](https://docs.monetizenow.io/docs/validation-rules.md)
+- [Record Automation](https://docs.monetizenow.io/docs/record-automation.md): Define values for new records based on conditions
+- [Proration](https://docs.monetizenow.io/docs/proration-1.md)
+- [Custom Fields](https://docs.monetizenow.io/docs/managing-entitlements-with-custom-fields-in-monetizenow.md): Custom fields in MonetizeNow provide a flexible way to store additional, specific data about your products and offerings. This data can be incredibly useful for managing entitlements, allowing you to define and retrieve specific permissions or features associated with a customer's subscription.
+- [Product Catalog Overview](https://docs.monetizenow.io/docs/product-catalog-overview.md): Product Catalog is the data model that defines how you can package and price your service.
+- [Products](https://docs.monetizenow.io/docs/product.md): Product is any feature that has a price associated with it
+- [Optional: Disable proration on Products](https://docs.monetizenow.io/docs/nonprorated-products.md): This article explains how MonetizeNow calculates pricing for non‑prorated products, including how we treat quantity changes within a billing period.
+- [Optional products](https://docs.monetizenow.io/docs/optional-products-in-bundles.md)
+- [Minimum Commitment Products](https://docs.monetizenow.io/docs/minimum-commitment-products.md)
+- [Offerings](https://docs.monetizenow.io/docs/offering-1.md): Offering is a pre-defined group of Products that are usually sold together.
+- [Rates](https://docs.monetizenow.io/docs/rates.md): Rates assign pricing details to Offerings
+- [Creating your first Offering](https://docs.monetizenow.io/docs/creating-your-first-product-offering-and-rate.md)
+- [Creating a Product Catalog ](https://docs.monetizenow.io/docs/creating-a-product-catalog-for-a-saas-business.md): How to create a product catalog for a SaaS Business and things to consider when building it in MonetizeNow
+- [Discounts](https://docs.monetizenow.io/docs/discounts.md)
+- [Quoting Overview](https://docs.monetizenow.io/docs/opportunity-contracting-quoting-overview.md)
+- [Quote Stages](https://docs.monetizenow.io/docs/quote-stages.md)
+- [Editing an Approved/Accepted Quote](https://docs.monetizenow.io/docs/editing-an-accepted-quote.md)
+- [Quote FAQs](https://docs.monetizenow.io/docs/quote-faqs.md)
+- [Creating your first Quote](https://docs.monetizenow.io/docs/creating-your-first-quote.md)
+- [Start Date and Contract Length](https://docs.monetizenow.io/docs/start-date-and-contract-length.md): Learn how to customize the start date of a contract as well as its length
+- [Net Terms](https://docs.monetizenow.io/docs/net-terms.md)
+- [Contacts](https://docs.monetizenow.io/docs/contacts-on-quotes.md)
+- [Quote Analytics](https://docs.monetizenow.io/docs/quote-analytics.md)
+- [Quote Expiration Date](https://docs.monetizenow.io/docs/quote-expiration-date-1.md)
+- [Attaching Documents](https://docs.monetizenow.io/docs/documents-attachment.md): MonetizeNow allows you to manage quote-related documents across all quotes and at the Legal Entity level, giving admins centralized control while still providing flexibility for sales teams during the quoting process.
+- [Adding Offerings to a Quote](https://docs.monetizenow.io/docs/adding-an-offering.md)
+- [Customizing Contract Start and End Dates](https://docs.monetizenow.io/docs/customizing-contract-start-and-end-dates.md): The ability to customize contract start and end dates depends on your quote settings and the current status of your contract. Here's how to modify contract dates in different scenarios:
+- [Quote Share ](https://docs.monetizenow.io/docs/quote-share.md)
+- [eSign](https://docs.monetizenow.io/docs/setting-up-esign.md)
+- [How to handle quotes that are signed outside of MonetizeNow](https://docs.monetizenow.io/docs/how-to-handle-quotes-that-are-signed-outside-of-monetizenow.md): When customers sign contracts manually outside of MonetizeNow, you have several options to process the quote depending on your specific situation.
+- [Terms and Conditions](https://docs.monetizenow.io/docs/terms-and-conditions.md)
+- [Validations - Info, Warning, and Error](https://docs.monetizenow.io/docs/warning-and-info.md)
+- [Pricing Changes](https://docs.monetizenow.io/docs/pricing-changes.md)
+- [Price Uplift on Renewal](https://docs.monetizenow.io/docs/percentage-price-uplift.md)
+- [Percentage Price Change on a Quote](https://docs.monetizenow.io/docs/percentage-price-change-on-a-quote.md): Allow your sales reps to easily adjust prices using percentages
+- [Ramps / Schedule Changes](https://docs.monetizenow.io/docs/schedule-change.md)
+- [Understanding ARR (Annual Recurring Revenue) Calculations in Quotes](https://docs.monetizenow.io/docs/understanding-arr-annual-recurring-revenue-calculations-in-quotes.md): ARR (Annual Recurring Revenue) is a key metric that shows the annualized value of your recurring revenue. Understanding how ARR is calculated in MonetizeNow can help you interpret your quote analytics correctly.
+- [Customization of Quote PDF](https://docs.monetizenow.io/docs/customization-of-quote-pdf.md)
+- [Custom Display Frequency](https://docs.monetizenow.io/docs/custom-display-frequency.md)
+- [Prices Output Table](https://docs.monetizenow.io/docs/prices.md)
+- [Billing Schedule Output](https://docs.monetizenow.io/docs/billing-schedule-output.md)
+- [Internal / Customer View](https://docs.monetizenow.io/docs/internal-customer-view.md)
+- [Primary Quote](https://docs.monetizenow.io/docs/primary-quote.md)
+- [Mark as Renewal (New Quotes only)](https://docs.monetizenow.io/docs/mark-as-renewal-new-quotes-only.md)
+- [Custom Billing Date](https://docs.monetizenow.io/docs/custom-billing-dates.md): Choose a billing date which is different from your contract start date to enable control over your billing schedule.
+- [Amendments Overview](https://docs.monetizenow.io/docs/amendments-2024-exp.md)
+- [How to Amend Contracts](https://docs.monetizenow.io/docs/how-to-amend-contracts-and-handle-common-amendment-scenarios.md): Contract amendments allow you to modify existing contracts by changing pricing, quantities, dates, or adding new products. Here's how to create and manage amendments effectively.
+- [Amendment Scenarios](https://docs.monetizenow.io/docs/amendment-scenarios.md)
+- [Amendment Errors](https://docs.monetizenow.io/docs/amendment-errors.md): Common amendment errors in MonetizeNow and how to resolve them.
+- [Contracts](https://docs.monetizenow.io/docs/contracts.md)
+- [Cancel Contract](https://docs.monetizenow.io/docs/cancel-contract.md)
+- [Understanding Contract Statuses](https://docs.monetizenow.io/docs/understanding-contract-statuses.md): This article explains what each contract status means in MonetizeNow.
+- [Renewals](https://docs.monetizenow.io/docs/renewals.md)
+- [Early Renewal](https://docs.monetizenow.io/docs/early-renewal.md): This section outlines the process for implementing "Early Renewals" for contracts, allowing for significant changes and adjustments before the original contract term ends.
+- [Auto Renewal](https://docs.monetizenow.io/docs/auto-renewal.md)
+- [Guided Quoting](https://docs.monetizenow.io/docs/guided-quoting.md)
+- [Quote Blueprints](https://docs.monetizenow.io/docs/quote-blueprints.md)
+- [Create Blueprint](https://docs.monetizenow.io/docs/create-blueprint.md)
+- [View Blueprint](https://docs.monetizenow.io/docs/view-blueprints.md)
+- [Edit or Inactivate a Blueprint](https://docs.monetizenow.io/docs/edit-blueprints.md)
+- [Using a Quote Blueprint (Rep Workflow)](https://docs.monetizenow.io/docs/using-blueprint-rep-workflow.md)
+- [Billing Overview](https://docs.monetizenow.io/docs/billing-overview.md)
+- [Bill Groups](https://docs.monetizenow.io/docs/bill-groups.md)
+- [Billing Actions (Bill Run, Invoice Sending, and Bulk Crediting)](https://docs.monetizenow.io/docs/bill-run.md)
+- [Billing Schedule](https://docs.monetizenow.io/docs/billing-schedule.md)
+- [Unbilled Invoice Report](https://docs.monetizenow.io/docs/unbilled-invoice-report.md)
+- [Billing for Usage](https://docs.monetizenow.io/docs/billing-for-usage.md): MonetizeNow supports usage based billing which can be done in the UI, with a CSV upload or via the API.
+- [Payments](https://docs.monetizenow.io/docs/payments.md)
+- [Payments & Collection](https://docs.monetizenow.io/docs/payments-collection.md)
+- [Payment Method Management](https://docs.monetizenow.io/docs/payment-method-management.md)
+- [ACH Wire Transfer Payment Instructions](https://docs.monetizenow.io/docs/ach-wire-transfer-payment-instructions.md): Include wire instructions on your invoice
+- [Credits](https://docs.monetizenow.io/docs/credits.md)
+- [Credit Notes](https://docs.monetizenow.io/docs/credit-notes.md)
+- [Credit and Rebill (Invoice-based)](https://docs.monetizenow.io/docs/credit-and-rebill.md)
+- [Application and Unapplication of Credits, Credit Notes, and Payments to Invoices](https://docs.monetizenow.io/docs/application-and-unapplication-of-credits-credit-notes-and-payments-to-invoices.md)
+- [Refunding Payments](https://docs.monetizenow.io/docs/payment-refunds.md)
+- [Void Credit / Credit Note](https://docs.monetizenow.io/docs/void-credit-credit-note.md)
+- [Accounts](https://docs.monetizenow.io/docs/accounts-1.md)
+- [Account Merge](https://docs.monetizenow.io/docs/account-merge.md)
+- [Contacts](https://docs.monetizenow.io/docs/contacts.md)
+- [Addresses](https://docs.monetizenow.io/docs/addresses.md)
+- [Introduction](https://docs.monetizenow.io/docs/introduction.md): Enable PLG workflows in your product to support new business as well as upgrades and renewals for existing customers
+- [Architectural Requirements](https://docs.monetizenow.io/docs/architectural-requirements.md)
+- [Step-by-Step Workflow](https://docs.monetizenow.io/docs/new-customer-checkout-with-credit-card-flow.md)
+- [Trials](https://docs.monetizenow.io/docs/trials.md)
+- [Evergreen Contracts](https://docs.monetizenow.io/docs/evergreen-contracts.md)
+- [Building a SaaS billing portal](https://docs.monetizenow.io/docs/building-a-saas-billing-portal.md)
+- [Collecting Payment Information from End-Customer (Stripe)](https://docs.monetizenow.io/docs/collecting-payment-information-from-end-customer-stripe.md)
+- [Customer Portal](https://docs.monetizenow.io/docs/customer-portal.md): Allow your customers to manage their billing relationship
+- [NetSuite](https://docs.monetizenow.io/docs/authentication-setup.md)
+- [Credit Memos](https://docs.monetizenow.io/docs/credit-memos.md)
+- [Payments](https://docs.monetizenow.io/docs/payments-1.md)
+- [Quickbooks Online](https://docs.monetizenow.io/docs/quickbooks.md): QuickBooks Online (QBO) is a leading accounting software package. MonetizeNow has a pre-built integration with QBO that our customers can leverage to sync data relevant for accounting to Quickbooks.. This document describes how to turn on/manage the QuickBooks integration and also describes it capabilities.
+- [Xero](https://docs.monetizenow.io/docs/xero.md): MonetizeNow offers a pre-built integration with Xero, allowing customers to easily sync accounting data to Xero. This document describes how to enable and configure the integration.
+- [Xero Configuration Guide](https://docs.monetizenow.io/docs/xero-configuration-guide.md)
+- [HubSpot](https://docs.monetizenow.io/docs/hubspot-integration-overview.md)
+- [HubSpot  Configuration Guide](https://docs.monetizenow.io/docs/hubspot-2.md)
+- [HubSpot Field Mapping](https://docs.monetizenow.io/docs/hubspot-field-mapping.md)
+- [HubSpot Field Mapping Details](https://docs.monetizenow.io/docs/hubspot-field-mapping-details.md): This article reviews the flow of data between MonetizeNow and Hubspot using our Hubspot Connector with no customization
+- [Linked Accounts with HubSpot](https://docs.monetizenow.io/docs/linked-accounts-with-hubspot.md)
+- [Salesforce](https://docs.monetizenow.io/docs/salesforce-1.md)
+- [Release Notes](https://docs.monetizenow.io/docs/salesforce-release-notes.md): Salesforce Managed Pacakge Release Notes
+- [Salesforce Best Practices](https://docs.monetizenow.io/docs/salesforce-best-practices.md)
+- [Salesforce Configuration Guide](https://docs.monetizenow.io/docs/salesforce-configuration-guide.md)
+- [Customizing Opportunity Product Sync Process](https://docs.monetizenow.io/docs/customizing-opportunity-product-sync-process.md)
+- [Opportunity Creation and Quote Sync](https://docs.monetizenow.io/docs/opportunity-creation-and-sync.md)
+- [Salesforce Field Mapping](https://docs.monetizenow.io/docs/salesforce-field-mapping.md): Complete field mapping reference for syncing data between MonetizeNow and Salesforce, including Product Catalog, Accounts, Contacts, and Opportunities.
+- [How the Salesforce Managed Package Sync Works](https://docs.monetizenow.io/docs/how-the-salesforce-managed-package-sync-works.md)
+- [How Usage-Based Product Pricing Appears in Salesforce](https://docs.monetizenow.io/docs/how-usage-based-product-pricing-appears-in-salesforce.md)
+- [Troubleshooting Salesforce Integration Issues](https://docs.monetizenow.io/docs/salesforce-troubleshooting.md): This page covers some scenarios that you may encounter along with steps to troubleshoot and resolve.
+- [Attio](https://docs.monetizenow.io/docs/attio.md)
+- [Integration Guide](https://docs.monetizenow.io/docs/attio-1.md)
+- [Attio Configuration Guide](https://docs.monetizenow.io/docs/attio-configuration-guide.md)
+- [Creating Monetizenow Quote From Attio Deal](https://docs.monetizenow.io/docs/creating-monetizenow-quote-from-attio-deal.md)
+- [List MonetizeNow Quotes From Attio Deal](https://docs.monetizenow.io/docs/list-quotes.md)
+- [View MonetizeNow Contract from Attio Deal](https://docs.monetizenow.io/docs/view-monetizenow-contract-from-attio-deal.md)
+- [List Contracts from Attio Company](https://docs.monetizenow.io/docs/list-contracts-from-attio-company.md)
+- [How Attio <-> MonetizeNow Integration Works](https://docs.monetizenow.io/docs/how-attio-monetizenow-synchronization-works.md): desc
+- [Slack Approvals](https://docs.monetizenow.io/docs/slack-approvals.md): Bring your approval workflows to where communication actually happens.
+- [eSign Integrations](https://docs.monetizenow.io/docs/esign-integrations.md)
+- [Docusign](https://docs.monetizenow.io/docs/docusign-1.md): Connect DocuSign to MonetizeNow, send documents for signature, track envelope status, and troubleshoot common integration issues.
+- [Docusign Tags](https://docs.monetizenow.io/docs/docusign-tags.md)
+- [FAQs](https://docs.monetizenow.io/docs/docusign.md)
+- [Adobe Sign](https://docs.monetizenow.io/docs/adobe.md): Connect Adobe Sign to MonetizeNow, send documents for signature, track agreement status, and troubleshoot common integration issues.
+- [Stripe](https://docs.monetizenow.io/docs/stripe.md): Use Stripe to collect payments from your customers
+- [Webhooks](https://docs.monetizenow.io/docs/webhooks.md)
+- [Tax Integrations](https://docs.monetizenow.io/docs/tax-integrations.md): This section outlines the three supported tax engine integrations available within MonetizeNow, each enabling real-time tax calculation workflows.
+- [Anrok](https://docs.monetizenow.io/docs/anrok.md)
+- [Avalara](https://docs.monetizenow.io/docs/avalara.md)
+- [Taxwire](https://docs.monetizenow.io/docs/taxwire.md)
+- [Migrating from other tax providers to Taxwire ](https://docs.monetizenow.io/docs/migrating-from-other-tax-providers-to-taxwire.md)
+- [Reporting Overview](https://docs.monetizenow.io/docs/reporting-overview.md)
+- [Data Export](https://docs.monetizenow.io/docs/data-export.md)
+- [Data Export Destinations](https://docs.monetizenow.io/docs/daily-sync-destinations.md)
+- [Azure Blob Storage](https://docs.monetizenow.io/docs/destinations-abs.md): Configuring your Azure Blob Storage destination.
+- [Athena](https://docs.monetizenow.io/docs/destinations-athena.md): Configuring your AWS Athena destination.
+- [BigQuery](https://docs.monetizenow.io/docs/destinations-bigquery.md): Configuring your BigQuery destination.
+- [Databricks](https://docs.monetizenow.io/docs/destinations-databricks.md): Configuring your Databricks destination.
+- [Google Cloud Storage](https://docs.monetizenow.io/docs/destinations-gcs.md): Configuring your Google Cloud Storage destination.
+- [MotherDuck](https://docs.monetizenow.io/docs/destinations-motherduck.md): Configuring your MotherDuck destination.
+- [Aurora MySQL](https://docs.monetizenow.io/docs/destinations-mysql-aurora.md): Configuring your Aurora MySQL destination.
+- [Generic MySQL](https://docs.monetizenow.io/docs/destinations-mysql-generic.md): Configuring your generic MySQL destination.
+- [AWS RDS & AWS Aurora](https://docs.monetizenow.io/docs/destinations-postgres-aws.md): Configuring your AWS Postgres (RDS or Aurora) destination.
+- [Generic Postgres](https://docs.monetizenow.io/docs/destinations-postgres-generic.md): Configuring your generic Postgres destination.
+- [Redshift](https://docs.monetizenow.io/docs/destinations-redshift.md): Configuring your Redshift destination.
+- [S3](https://docs.monetizenow.io/docs/destinations-s3.md): Configuring your AWS S3 destination.
+- [Google Sheets](https://docs.monetizenow.io/docs/destinations-sheets.md): Configuring your Google Sheets destination.
+- [Snowflake](https://docs.monetizenow.io/docs/destinations-snowflake.md): Configuring your Snowflake destination.
+- [Google Cloud Storage Staging Bucket](https://docs.monetizenow.io/docs/destinations-staging-gcs.md): Configuring your GCS bucket for staging data to load into your destination.
+- [S3 Staging Bucket](https://docs.monetizenow.io/docs/destinations-staging-s3.md): Configuring your AWS S3 bucket for staging data to load into your destination.
+- [Advanced Reporting](https://docs.monetizenow.io/docs/advanced-reporting.md): The advanced reporting feature in MonetizeNow, allows you to create insightful reports and dashboards to better understand your business. This article will walk you through creating a new report from scratch, including joining tables, filtering, summarizing, and grouping your data, All with an easy-to-use visual UI.
+- [Login FAQs](https://docs.monetizenow.io/docs/login.md)
+- [User Role FAQs](https://docs.monetizenow.io/docs/role-recommendations.md)
+- [Salesforce FAQs](https://docs.monetizenow.io/docs/salesforce-solutioning.md)
+- [HubSpot FAQs](https://docs.monetizenow.io/docs/hubspot.md)
+- [Quoting FAQs](https://docs.monetizenow.io/docs/quotes.md)
+- [Amendment FAQs](https://docs.monetizenow.io/docs/amendments-1.md)
+- [Renewal FAQs](https://docs.monetizenow.io/docs/renewals-1.md)
+- [Billing FAQs](https://docs.monetizenow.io/docs/invoicing-1.md)
+- [Dunning FAQs](https://docs.monetizenow.io/docs/dunning-1.md)
+- [Stripe FAQs](https://docs.monetizenow.io/docs/payments-2.md)
+- [Creating Payment Methods via API](https://docs.monetizenow.io/docs/stripe-configuration.md)
+- [Usage FAQs](https://docs.monetizenow.io/docs/usage-1.md)
+- [Invoicing FAQs](https://docs.monetizenow.io/docs/products-pricing.md): If you're experiencing problems with invoice generation, there are several common causes and solutions to try.
+- [Troubleshooting User Login Issues ](https://docs.monetizenow.io/docs/copy-of-invoicing-faqs.md): If users are experiencing login issues or receiving "Access Denied" errors when trying to access MonetizeNow, there are several common causes and solutions to try.
+- [GDPR Right to Erasure (Data Deletion) ](https://docs.monetizenow.io/docs/gdpr-right-to-erasure-data-deletion.md)
+- [E-Signature FAQ](https://docs.monetizenow.io/docs/e-signature-faq.md): E-signature functionality in MonetizeNow allows you to send approved quotes directly to customers for digital signing through integrated providers like DocuSign and Adobe Sign.
+
+## API Reference
+- [Getting Started](https://docs.monetizenow.io/reference/getting-started-with-your-api.md)
+- [Webhooks](https://docs.monetizenow.io/reference/webhooks-1.md)
+- [Webhook Payload Examples](https://docs.monetizenow.io/reference/webhook-payload-examples.md)
+- [API Breaking Change Policy](https://docs.monetizenow.io/reference/api-breaking-change-policy.md): Definitions and guidelines for breaking change policy
+- [Checkout](https://docs.monetizenow.io/reference/checkout.md)
+- [Getting Started](https://docs.monetizenow.io/reference/getting-started-1.md)
+- [Amend](https://docs.monetizenow.io/reference/amend.md)
+- [Pricing](https://docs.monetizenow.io/reference/pricing-api.md)
+- [Trials](https://docs.monetizenow.io/reference/trials.md)
+- [Create Trial](https://docs.monetizenow.io/reference/create-trial.md)
+- [View Trial](https://docs.monetizenow.io/reference/view-trial.md)
+- [View all Trials](https://docs.monetizenow.io/reference/view-all-trials.md)
+- [Cancel Trial](https://docs.monetizenow.io/reference/cancel-trial.md)
+- [Get account](https://docs.monetizenow.io/reference/getaccountbyaccountid.md): Get account by account Id
+- [Update account](https://docs.monetizenow.io/reference/updateaccountbyaccountid.md): Update account by Id
+- [Cancel account](https://docs.monetizenow.io/reference/cancelaccount.md): Cancel account
+- [Activate account](https://docs.monetizenow.io/reference/activateaccount.md): Activate account
+- [Get account](https://docs.monetizenow.io/reference/getaccountbycustomid.md): Get account by custom Id
+- [Update account](https://docs.monetizenow.io/reference/updateaccountbycustomid.md): Update account by custom Id
+- [Get all accounts](https://docs.monetizenow.io/reference/getaccounts.md): Get all account as a list
+- [Create account](https://docs.monetizenow.io/reference/createaccount.md): Create account
+- [Search accounts by id, customId, and name](https://docs.monetizenow.io/reference/searchaccounts.md): Get all that meet the search criteria account as a list
+- [Run Billing Batch for Account](https://docs.monetizenow.io/reference/manualbatchrun_1.md): Run a Batch Manually
+- [Update account's shipping or billing address](https://docs.monetizenow.io/reference/updateaccountaddresses.md): Update account's shipping or billing address
+- [Get a single billgroup](https://docs.monetizenow.io/reference/getbillgroup_1.md): Get a single billgroup information by id
+- [Update a billgroup](https://docs.monetizenow.io/reference/updatebillgroup.md): Update a billgroup which holds the billing information for a quote in a specific account
+- [Deactivate a billgroup](https://docs.monetizenow.io/reference/deactivatebillgroup.md): Deactivate a billgroup
+- [Activate a billgroup](https://docs.monetizenow.io/reference/activatebillgroup.md): Activate a billgroup
+- [Get billgroups for an account](https://docs.monetizenow.io/reference/getallbillgroups_1.md): Get all of the billgroups for an account with account id
+- [Get a single billgroup](https://docs.monetizenow.io/reference/getbillgroup.md): Get a single billgroup information by id
+- [Get contact](https://docs.monetizenow.io/reference/getcontactbycontactid.md): Get contact by contact Id
+- [Get contact](https://docs.monetizenow.io/reference/getcontactbyaccountidandid.md): Get contact by account Id and contact Id
+- [Update bill group contact](https://docs.monetizenow.io/reference/updatebillgroupcontact.md): Update bill group contact details
+- [Get all contacts](https://docs.monetizenow.io/reference/getallcontacts.md): Get all contacts
+- [Create contact](https://docs.monetizenow.io/reference/createcontact.md): Create contact
+- [Get all contacts](https://docs.monetizenow.io/reference/getallcontactsbyaccountid.md): Get all contacts by account Id
+- [Create bill group contact](https://docs.monetizenow.io/reference/createbillgroupcontact.md): Create bill group contact
+- [Search contact by id, customId, and name](https://docs.monetizenow.io/reference/searchcontacts.md): Get all contact's that meet the search criteria as a list
+- [Get contact](https://docs.monetizenow.io/reference/getcontactbyaccountidandcustomid.md): Get contact by account Id and account custom Id
+- [Create contact for account](https://docs.monetizenow.io/reference/createaccountcontact.md): Create contact to associate with an account
+- [Update a credit](https://docs.monetizenow.io/reference/updatecredit.md): Update a credit which can be used to adjust account balance
+- [Create a credit](https://docs.monetizenow.io/reference/createcredit.md): Create a credit which can be used to adjust account balance
+- [Get credit by id](https://docs.monetizenow.io/reference/getcreditsbyid.md): Get credit by credit id
+- [Set Custom Fields For Credit](https://docs.monetizenow.io/reference/setcustomfields_1.md): Set Custom Fields For Credit by id
+- [Void a credit by credit id](https://docs.monetizenow.io/reference/voidcredit.md): Void a credit
+- [Get credit in pdf](https://docs.monetizenow.io/reference/getcreditinpdf.md): Get credit in pdf by credit id
+- [Get Invoices By id](https://docs.monetizenow.io/reference/getinvoicebyid.md): Get a single invoice by it's id
+- [Update vat number, purchase order number, registration number, custom fields for invoice](https://docs.monetizenow.io/reference/updateinvoice.md): Update vat number, purchase order number, registration number, custom fields for invoice
+- [Preview an upcoming invoice](https://docs.monetizenow.io/reference/previewinvoice.md): Preview an upcoming invoice for a subscription
+- [Get Invoices By Account ID](https://docs.monetizenow.io/reference/getinvoicebyaccount.md): Get Invoices for an account by associated account id
+- [Get Invoices By Account ID and BillGroup id](https://docs.monetizenow.io/reference/getinvoicebyaccountandbillgroup.md): Get Invoices for an account and billgroup by associated account id and billgroup id
+- [Generate Invoice Pdf](https://docs.monetizenow.io/reference/getinvoicepdf.md): Generate a pdf for an invoice
+- [Get an Offering](https://docs.monetizenow.io/reference/getofferingbyid.md): Get an Offering by Offering id
+- [Deactivate Offering](https://docs.monetizenow.io/reference/offeringdeactivatebyid.md): Deactivate Offering by id
+- [Cancel an Offering](https://docs.monetizenow.io/reference/cancelofferingbyid.md): Cancelling an by id.
+- [Activate an Offering](https://docs.monetizenow.io/reference/activateofferingbyid.md): Activate an Offering by id
+- [Get all Offerings](https://docs.monetizenow.io/reference/getalloffering.md): Get all Offerings as a list.
+- [Archive Offering](https://docs.monetizenow.io/reference/offeringarchivebyid.md): Archive Offering by id
+- [Get all Offerings](https://docs.monetizenow.io/reference/getalloffering_1.md): Get all Offerings as a list.
+- [Search offerings by id, customId, and name](https://docs.monetizenow.io/reference/searchofferings.md): Get all offering's that meet the search criteria as a list
+- [Update an Offering](https://docs.monetizenow.io/reference/updateofferingbyid_1.md): Update an offering to add or remove products. Some fields cannot be udpated if an offering is locked.
+- [Create an Offering](https://docs.monetizenow.io/reference/createoffering_1.md): Create an offering to define the way products can be sold
+- [Pay an invoice](https://docs.monetizenow.io/reference/payinvoice.md): Endpoint to pay an invoice
+- [Pay an invoice using manually payment](https://docs.monetizenow.io/reference/invoicemanualpayment.md): Endpoint to pay an invoice using manually payment
+- [Pay all invoices of a bill group](https://docs.monetizenow.io/reference/payallinvoicesbybillgroup.md): Endpoint to pay all invoices of a bill group
+- [Retrieve payments for an invoice](https://docs.monetizenow.io/reference/retrievepayments.md): Endpoint to retrieve payments for an invoice by account
+- [Retrieve payment by id](https://docs.monetizenow.io/reference/retrievepaymentbyid.md): Endpoint to retrieve payment by id
+- [Refund a payment](https://docs.monetizenow.io/reference/paymentrefund_1.md): Endpoint to refund a payment
+- [Update Manual Payment](https://docs.monetizenow.io/reference/updatemanualpayment.md): Update reference number, description or payment date of a manual payment
+- [/api/payments/{paymentId}/print](https://docs.monetizenow.io/reference/printpayment_1.md)
+- [Create setup intent](https://docs.monetizenow.io/reference/createsetupintent.md): Endpoint to create setup intent for the allowed payment methods.
+- [Get payment gateway list](https://docs.monetizenow.io/reference/getpaymentgatewaylist.md): Endpoint to retrieve payment gateway list within a tenant.
+- [Set default payment method](https://docs.monetizenow.io/reference/setdefault.md): Endpoint to specify a payment method as the default
+- [Retrieve all the payment methods for the account](https://docs.monetizenow.io/reference/retrievepaymentmethodlist.md): Endpoint to retrieve all the payment methods for the specified account
+- [Create payment method for an account](https://docs.monetizenow.io/reference/createpaymentmethod.md): Endpoint to create payment method for an account. It will verify the token and retrieve payment method from the gateway to create MonetizeNow payment method
+- [Import external payment methods for an account](https://docs.monetizenow.io/reference/importpaymentmethod.md): Endpoint to import external payment methods for an account
+- [Retrieve a gateway account](https://docs.monetizenow.io/reference/retrievegatewayaccount.md): Endpoint to retrieve a gateway account for the specified account and gateway
+- [Create a gateway account](https://docs.monetizenow.io/reference/creategatewayaccount.md): Endpoint to create a gateway account for the specified account and gateway
+- [Retrieve a payment method](https://docs.monetizenow.io/reference/retrievepaymentmethod.md): Endpoint to retrieve a payment method
+- [Get product by Id](https://docs.monetizenow.io/reference/getproductbyid.md): Get a particular product by product Id
+- [Updates a product](https://docs.monetizenow.io/reference/updateproduct.md): Updates a product given some information
+- [Deactivate product](https://docs.monetizenow.io/reference/deactivateproductbyid.md): Change product status to deactive by product Id
+- [Activate product by product Id](https://docs.monetizenow.io/reference/activateproductbyid.md): Change product status to active by product Id
+- [Get all products](https://docs.monetizenow.io/reference/getallproduct.md): Get a list of all product
+- [Creates a new product](https://docs.monetizenow.io/reference/createproduct.md): Creates a new product given some information
+- [Search products by id, customId, and name](https://docs.monetizenow.io/reference/searchproducts.md): Get all product's that meet the search criteria as a list
+- [Get a rate object by providing offering and rate Id](https://docs.monetizenow.io/reference/getratebyofferingandrateid.md): Get a rate object by providing offering and rate Id
+- [Update a rate for offering](https://docs.monetizenow.io/reference/updaterateforoffering.md): Update a rate for offering, some fields will be locked once a rate is in use.
+- [Delete rate.](https://docs.monetizenow.io/reference/deleteratebyofferingidandrateid.md): Delete rate by providing offering Id and rate Id. This cannot be done on locked rates.
+- [Cancel rate](https://docs.monetizenow.io/reference/cancelratebyofferingidandid.md): Cancel rate by providing offering Id and rate Id
+- [Activate rate](https://docs.monetizenow.io/reference/activateratebyofferingidandid.md): Activate rate by providing offering Id and rate Id
+- [Get all the rates for an offering](https://docs.monetizenow.io/reference/getallratesbyofferingid.md): Get all the rate by providing offering Id
+- [Create a rate for offering](https://docs.monetizenow.io/reference/createrateforoffering.md): Creates a new Rate that you can use to define pricing and billing frequency for products.
+- [Get all the rates](https://docs.monetizenow.io/reference/getallrates.md): Get all the rate as list
+- [Get rate](https://docs.monetizenow.io/reference/getratebyid.md): Get rate object by Id
+- [Get subscription by Id](https://docs.monetizenow.io/reference/getsubscriptionbyid.md): Get subscription by Id
+- [Get a list of subscriptions by providing a billGroupId](https://docs.monetizenow.io/reference/getallsubscriptionbybillgroupid.md): Get a list of subscriptions by providing a billGroupId
+- [Get a list of subscriptions by providing a billGroupId and a subscriptionId](https://docs.monetizenow.io/reference/getsubscriptionbybillgroupidandsubscriptionid.md): Get a list of subscriptions by providing a billGroupId and a subscriptionId
+- [Get a list of subscriptions by providing an accountId](https://docs.monetizenow.io/reference/getsubscriptionbyaccountid.md): Get a list of subscriptions by an accountId
+- [Void a usage event](https://docs.monetizenow.io/reference/voidevent.md): Voiding a usage event, essentially sets its unitsConsumed to 0 and the ratedPrice if it exists to 0.0
+- [Update units consumed and/or the rated price](https://docs.monetizenow.io/reference/editeventunits.md): Update units consumed and/or rated price for a given event identifier
+- [Get usage events](https://docs.monetizenow.io/reference/getevents.md): Returns usage events for a given subscription identifier, usage type and time rangeFor reads  after updates, we support eventual consistency semantics. For usage events with timestamps less than 45 days old, the eventual consistency is more or less immediate. For events with timestamps greater than 45 days old, the eventual consistency could take upto 6 hours.
+- [Record usage events](https://docs.monetizenow.io/reference/recordevents.md): This is a batch API that can ingest upto 100 events per request. The API will return success or partial success or failed in the response. For reads  after updates,we support eventual consistency semantics. For usage events with timestamps less than 45 days old, the eventual consistency is more or less immediate. For events with timestamps greater than 45 days old, the eventual consistency could take upto 6 hours.
+- [Get usage consumption per day](https://docs.monetizenow.io/reference/getusageconsumptionperday.md): Returns usage consumption grouped by date for a given subscription identifier, usage type, aggregation model  and time rangeFor reads  after updates, we support eventual consistency semantics. For usage events with timestamps less than 45 days old, the eventual consistency is more or less immediate. For events with timestamps greater than 45 days old, the eventual consistency could take upto 6 hours.
+- [Get usage consumption](https://docs.monetizenow.io/reference/getusageconsumption.md): Returns usage consumption for a given subscription identifier, usage type, aggregation model  and time rangeFor reads  after updates, we support eventual consistency semantics. For usage events with timestamps less than 45 days old, the eventual consistency is more or less immediate. For events with timestamps greater than 45 days old, the eventual consistency could take upto 6 hours.
+- [/api/v2/accounts/{accountId}/subscriptions/overview](https://docs.monetizenow.io/reference/getsubscriptionsoverviewbyaccountv2.md)
+- [Get account overview by account](https://docs.monetizenow.io/reference/accountoverview.md): Account overview with billgroup and subscriptions
+- [/api/contracts/{contractId}](https://docs.monetizenow.io/reference/getcontractbyid.md)
+- [/api/contracts/{contractId}](https://docs.monetizenow.io/reference/updatecontract.md)
+- [/api/contracts/{contractId}/renew](https://docs.monetizenow.io/reference/renewcontract.md)
+- [/api/contracts/{contractId}/changeOwner/{userId}](https://docs.monetizenow.io/reference/changecontractowner.md)
+- [/api/contracts/{contractId}/amend](https://docs.monetizenow.io/reference/amendcontract.md)
+- [/api/contracts](https://docs.monetizenow.io/reference/getallcontracts.md)
+- [/api/accounts/{accountId}/contracts](https://docs.monetizenow.io/reference/getallcontractsbyaccountid.md)
+- [/api/invoices/{invoiceId}/creditNotes](https://docs.monetizenow.io/reference/getallcreditnotes.md)
+- [/api/invoices/{invoiceId}/creditNotes](https://docs.monetizenow.io/reference/savecreditnote.md)
+- [/api/creditNotes/{creditNoteId}](https://docs.monetizenow.io/reference/getcreditnotebyid.md)
+- [/api/accounts/{accountId}/creditNotes](https://docs.monetizenow.io/reference/getallcreditnotesbyaccountid.md)
+- [Set Custom Fields for CreditNote By id](https://docs.monetizenow.io/reference/setcustomfieldsforcreditnote.md): Set the custom fields for a CreditNote
+- [Void a credit note by credit note id](https://docs.monetizenow.io/reference/voidcreditnote.md): Void a credit note
+- [/api/creditNotes/{creditNoteId}/print](https://docs.monetizenow.io/reference/printcreditnote.md)
+- [/api/opportunities/{opportunityId}](https://docs.monetizenow.io/reference/getopportunity.md)
+- [/api/opportunities/{opportunityId}/quotes/{quoteId}/setPrimary](https://docs.monetizenow.io/reference/setprimaryquote.md)
+- [/api/opportunities/{opportunityId}/quotes/{quoteId}/link](https://docs.monetizenow.io/reference/linkopportunitytoquote.md)
+- [/api/opportunities](https://docs.monetizenow.io/reference/getopportunities.md)
+- [/api/opportunities](https://docs.monetizenow.io/reference/createopportunity.md)
+- [/api/opportunities/customId/{customId}](https://docs.monetizenow.io/reference/getopportunitybycustomid.md)
+- [/api/priceUplift/{priceUpliftConfigurationId}](https://docs.monetizenow.io/reference/getpriceupliftconfiguration.md)
+- [/api/priceUplift/{priceUpliftConfigurationId}](https://docs.monetizenow.io/reference/updatepriceupliftconfiguration.md)
+- [/api/quotes/{quoteId}](https://docs.monetizenow.io/reference/getquote.md)
+- [Updates an existing quote](https://docs.monetizenow.io/reference/updatequote.md): Updates an existing quote
+- [/api/quotes/{quoteId}](https://docs.monetizenow.io/reference/deletequotebyquoteid.md)
+- [/api/quotes/{quoteId}/quoteOfferings/{quoteOfferingId}](https://docs.monetizenow.io/reference/getquoteoffering.md)
+- [Updates a quote offering](https://docs.monetizenow.io/reference/updatequoteoffering.md): Updates an existing root or ramp quote offering
+- [/api/quotes/{quoteId}/quoteOfferings/{quoteOfferingId}](https://docs.monetizenow.io/reference/deletequoteoffering.md)
+- [Set Custom Fields for Quote By id](https://docs.monetizenow.io/reference/setcustomfieldsforquote.md): Set the custom fields for an quote
+- [/api/quotes/{quoteId}/contacts](https://docs.monetizenow.io/reference/getcontactsbyquoteid.md)
+- [/api/quotes/{quoteId}/contacts](https://docs.monetizenow.io/reference/setcontactsbyquoteid.md)
+- [/api/quotes/{quoteId}/archive](https://docs.monetizenow.io/reference/archivequote.md)
+- [/api/quotes/{quoteId}/addresses](https://docs.monetizenow.io/reference/updateaddress.md)
+- [/api/quotes](https://docs.monetizenow.io/reference/getallquotes.md)
+- [Create a new quote](https://docs.monetizenow.io/reference/createnetnewquote.md): Creates a new quote
+- [/api/quotes/{quoteId}/send](https://docs.monetizenow.io/reference/sendquote.md)
+- [/api/quotes/{quoteId}/review](https://docs.monetizenow.io/reference/reviewquote.md)
+- [/api/quotes/{quoteId}/retract](https://docs.monetizenow.io/reference/retractquote.md)
+- [Creates a quote offering](https://docs.monetizenow.io/reference/savequoteoffering.md): Creates a root or ramp quote offering depending on the request configuration
+- [/api/quotes/{quoteId}/quoteOfferings/{quoteOfferingId}/priceUplift](https://docs.monetizenow.io/reference/configurepriceuplift.md)
+- [/api/quotes/{quoteId}/quoteOfferings/{quoteOfferingId}/priceUplift](https://docs.monetizenow.io/reference/removepriceupliftconfiguration.md)
+- [/api/quotes/{quoteId}/process](https://docs.monetizenow.io/reference/processquote.md)
+- [/api/quotes/{quoteId}/cancel](https://docs.monetizenow.io/reference/cancelquote.md)
+- [/api/quotes/{quoteId}/accept](https://docs.monetizenow.io/reference/acceptquote_1.md)
+- [/api/quotes/{quoteId}/opportunity](https://docs.monetizenow.io/reference/getopportunityforquote.md)
+- [/api/accounts/{accountId}/quotes](https://docs.monetizenow.io/reference/getallquotesbyaccountid.md)
+- [/api/quotes/{quoteId}/edit](https://docs.monetizenow.io/reference/editquote_1.md)
+- [/api/trials](https://docs.monetizenow.io/reference/gettrials.md)
+- [/api/trials](https://docs.monetizenow.io/reference/createtrial.md)
+- [/api/accounts/{accountId}/trials/{trialId}/cancel](https://docs.monetizenow.io/reference/canceltrial.md)
+- [/api/accounts/{accountId}/trials](https://docs.monetizenow.io/reference/gettrialsbyaccountid.md)
+- [/api/accounts/{accountId}/trials/{trialId}/convert](https://docs.monetizenow.io/reference/converttrial.md)
+- [/api/accounts/{accountId}/accountDocuments/{accountDocumentId}](https://docs.monetizenow.io/reference/getaccountdocument.md)
+- [/api/accounts/{accountId}/accountDocuments/{accountDocumentId}](https://docs.monetizenow.io/reference/updateaccountdocument.md)
+- [/api/accounts/{accountId}/accountDocuments/{accountDocumentId}](https://docs.monetizenow.io/reference/deleteaccountdocument.md)
+- [/api/accounts/{accountId}/accountDocuments/{accountDocumentId}/contacts](https://docs.monetizenow.io/reference/updateaccountdocumentcontacts.md)
+- [/api/accounts/{accountId}/accountDocuments](https://docs.monetizenow.io/reference/searchaccountdocuments.md)
+- [/api/accounts/{accountId}/accountDocuments](https://docs.monetizenow.io/reference/createaccountdocuments.md)
+- [/api/accounts/{accountId}/accountDocuments/{accountDocumentId}/send](https://docs.monetizenow.io/reference/sendforsigning.md)
+- [/api/accounts/{accountId}/accountDocuments/{accountDocumentId}/draft](https://docs.monetizenow.io/reference/draftaccountdocument.md)
+- [/api/accounts/{accountId}/accountDocuments/{accountDocumentId}/signerStats](https://docs.monetizenow.io/reference/getsignerstats.md)
+- [/api/accounts/{accountId}/accountDocuments/{accountDocumentId}/attachments/{storageId}](https://docs.monetizenow.io/reference/downloadaccountdocumentattachment.md)

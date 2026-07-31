@@ -1,0 +1,49 @@
+generated: '2026-07-20'
+method: searched
+source: >-
+  https://docs.monetizenow.io/docs/webhooks,
+  https://docs.monetizenow.io/reference/webhook-payload-examples
+type: Webhooks
+description: >-
+  MonetizeNow delivers real-time webhook events for quote, contract,
+  subscription, invoice, and payment lifecycle changes so downstream systems can
+  react to quote-to-cash activity. Webhooks are configured per tenant via the
+  API/console.
+envelope:
+  media_type: application/json
+  fields:
+    eventId: A unique identifier for the webhook event.
+    userId: The user ID associated with the triggering action.
+    sentTime: ISO 8601 timestamp indicating delivery time.
+    eventType: The specific event classification (see events below).
+    data: Event-specific payload containing the affected resource.
+signature:
+  documented: false
+  note: No signature/verification header is documented in the public webhook reference.
+docs: https://docs.monetizenow.io/reference/webhooks-1
+events:
+- account.created
+- account.updated
+- contact.created
+- contact.updated
+- quote.created
+- quote.updated
+- quote.accepted
+- quote.processed
+- quote.offering.created
+- quote.offering.updated
+- opportunity.created
+- opportunity.updated
+- subscription.created
+- subscription.created.summary
+- subscription.updated
+- invoice.created
+- invoice.paid
+- contract.created
+- contract.updated
+- product.created
+- product.updated
+- offering.created
+- offering.updated
+- rate.created
+- rate.updated

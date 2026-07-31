@@ -1,0 +1,30 @@
+generated: '2026-07-20'
+method: derived
+source: >-
+  Derived from MonetizeNow API docs (auth, webhooks, versioning) and live
+  probes; no published certification/compliance program page was found.
+standards:
+- id: apikey-auth
+  conforms: true
+  evidence: x-api-key header authentication documented at reference/getting-started-with-your-api
+- id: oauth2
+  conforms: false
+  evidence: no OAuth 2.0 flow documented for the public REST API
+- id: oidc
+  conforms: false
+- id: webhooks
+  conforms: true
+  evidence: documented webhook event catalog with JSON envelope (eventId/eventType/data)
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: no application/problem+json envelope observed; standard HTTP status codes used
+- id: api-versioning-policy
+  conforms: true
+  evidence: version-header major versioning + documented breaking-change/deprecation policy
+- id: tls
+  conforms: true
+  evidence: TLSv1.3 with HSTS on www/docs hosts (see security/monetizenow-domain-security.yml)
+notes:
+- No published compliance certifications (SOC 2 / ISO 27001 / PCI DSS / HIPAA)
+  were found on a public trust/security page during this pass; no Compliance
+  pointer emitted.

@@ -1,7 +1,33 @@
 aid: monetizenow
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/monetizenow.png
 name: MonetizeNow
-description: MonetizeNow is a company surfaced as a portfolio company of uncork-capital and added to the
-  API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  MonetizeNow is an enterprise monetization platform that unifies quoting,
+  billing, and usage metering into a single quote-to-cash system for B2B SaaS
+  companies. It combines a CPQ/quote builder with guided selling, a billing
+  engine supporting subscriptions, credits, and usage-based pricing,
+  multi-currency payments (via Stripe), dunning, revenue recognition, and
+  real-time usage metering handling billions of daily events. The platform
+  exposes a REST API (base https://api.monetizeplatform.com) authenticated with
+  an x-api-key header, covering accounts, contacts, quotes, opportunities,
+  contracts, subscriptions, invoices, payments, credits, credit notes,
+  products, offerings, rates, usage events, trials, and a self-service checkout
+  flow, plus a rich webhook event surface for quotes, invoices, subscriptions,
+  and payments. Pre-built connectors integrate Salesforce, HubSpot, Attio,
+  NetSuite, QuickBooks, Xero, DocuSign, Adobe Sign, Anrok, Avalara, and
+  Taxwire. MonetizeNow is backed by Uncork Capital.
 url: https://raw.githubusercontent.com/api-evangelist/monetizenow/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,15 +37,86 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-20'
+x-enrichment:
+  date: '2026-07-20'
+  status: enriched
+  artifacts_added: 15
+  pass: local-v1
 tags:
 - Company
-apis: []
+- Monetization
+- Billing
+- Subscriptions
+- Usage-Based Pricing
+- Quote-to-Cash
+- CPQ
+- Payments
+- Invoicing
+- Revenue
+- SaaS
+- FinTech
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- name: MonetizeNow API
+  description: >-
+    MonetizeNow's REST API for the full quote-to-cash lifecycle — accounts,
+    contacts, quotes, opportunities, contracts, subscriptions, invoices,
+    payments, credits, credit notes, products, offerings, rates, usage-event
+    recording, trials, and self-service checkout. Authenticated with an
+    x-api-key header; versioned via a version header with a documented breaking
+    change and deprecation policy.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  properties:
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: MCPServer
+    url: mcp/monetizenow-mcp.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
 common:
 - type: Website
   url: https://www.monetizenow.io
+- type: DeveloperPortal
+  url: https://docs.monetizenow.io/docs/welcome
+- type: Documentation
+  url: https://docs.monetizenow.io/docs/welcome
+- type: APIReference
+  url: https://docs.monetizenow.io/reference
+- type: GettingStarted
+  url: https://docs.monetizenow.io/reference/getting-started-with-your-api
+- type: Blog
+  url: https://monetizenow.com/blog
+- type: Login
+  url: https://app.monetizeplatform.com/
+- type: TermsOfService
+  url: https://monetizenow.com/terms-of-use
+- type: PrivacyPolicy
+  url: https://monetizenow.com/privacy-policy
+- type: StatusPage
+  url: https://status.monetizeplatform.com
+- type: LLMsTxt
+  url: llms/monetizenow-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DomainSecurity
+  url: security/monetizenow-domain-security.yml

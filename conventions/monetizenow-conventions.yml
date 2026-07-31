@@ -1,0 +1,66 @@
+generated: '2026-07-20'
+method: searched
+source: >-
+  https://docs.monetizenow.io/reference/getting-started-with-your-api,
+  https://docs.monetizenow.io/reference/api-breaking-change-policy,
+  https://docs.monetizenow.io/reference/webhook-payload-examples
+description: >-
+  Cross-cutting request/response conventions for the MonetizeNow REST API that
+  apply across operations (not a single endpoint): authentication, idempotency,
+  versioning, the webhook event envelope, and error signaling.
+base_url: https://api.monetizeplatform.com
+api_style: REST over HTTPS, JSON request and response bodies
+path_prefix: /api
+
+authentication:
+  scheme: API key in the x-api-key request header
+  detail: authentication/monetizenow-authentication.yml
+  docs: https://docs.monetizenow.io/reference/getting-started-with-your-api
+
+idempotency:
+  supported: true
+  mechanism: >-
+    Custom-id / custom-key upsert semantics. Core resources expose
+    get/update/create "by custom id" operations (e.g. getAccountByCustomId,
+    updateAccountByCustomId, getContactByAccountIdAndCustomId,
+    getOpportunityByCustomId) so a client-owned external identifier makes create
+    and update operations safely repeatable without creating duplicates.
+  scope: Resource create/update via caller-supplied custom identifiers.
+  docs: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  note: >-
+    A dedicated Idempotency-Key request header is not documented; idempotency is
+    achieved through the custom-id addressing model above.
+
+versioning:
+  scheme: version header (major versions carried in a version header)
+  policy: >-
+    Major breaking changes are versioned via a version header and do not
+    guarantee backward compatibility; minor changes are additive and backward
+    compatible. Endpoints are deprecated (with documentation) before removal.
+  breaking_change_policy: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  detail: lifecycle/monetizenow-lifecycle.yml
+
+webhooks:
+  supported: true
+  envelope: '{ eventId, userId, sentTime (ISO 8601), eventType, data }'
+  detail: asyncapi/monetizenow-webhooks.yml
+  docs: https://docs.monetizenow.io/docs/webhooks
+
+error_envelope:
+  media_type: application/json
+  rfc9457: false
+  detail: errors/monetizenow-problem-types.yml
+  docs: https://docs.monetizenow.io/reference/getting-started-with-your-api
+
+data_model:
+  detail: data-model/monetizenow-data-model.yml
+
+other_conventions:
+- name: Custom fields
+  detail: >-
+    Most resources support tenant-defined custom fields (setCustomFields,
+    setCustomFieldsForQuote, setCustomFieldsForCreditNote).
+- name: Multi-currency
+  detail: Amounts are multi-currency; tenant-level currency configuration applies.
+- name: Multi-tenancy
+  detail: All API access is scoped to the caller's tenant via the API key.

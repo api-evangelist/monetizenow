@@ -1,0 +1,35 @@
+generated: '2026-07-20'
+method: searched
+source: >-
+  https://docs.monetizenow.io/reference/getting-started-with-your-api,
+  https://docs.monetizenow.io/reference/getaccounts, live probes of
+  https://api.monetizeplatform.com
+format: http-status
+description: >-
+  API-level error responses for the MonetizeNow REST API. The public reference
+  documents standard HTTP status semantics; a dedicated RFC 9457
+  application/problem+json envelope was not observed. This catalogs the error
+  statuses that are documented or directly observed against the API host.
+envelope:
+  media_type: application/json
+  rfc9457: false
+problems:
+- status: 401
+  title: Unauthorized
+  detail: >-
+    Missing or invalid x-api-key. Directly observed: unauthenticated requests to
+    api.monetizeplatform.com return 401.
+  evidence: live probe of api.monetizeplatform.com/.well-known/*
+- status: 404
+  title: Not Found
+  detail: The requested resource or path does not exist.
+  evidence: standard REST semantics
+- status: 500
+  title: Internal Server Error
+  detail: >-
+    Server-side error; documentation instructs consumers to contact the support
+    team.
+  source_operation: https://docs.monetizenow.io/reference/getaccounts
+notes:
+- Per-operation error schemas are not published in a machine-readable OpenAPI at
+  a public URL; this catalog reflects documented and observed statuses only.

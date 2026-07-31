@@ -1,0 +1,29 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.monetizenow.io/reference/getting-started-with-your-api
+docs: https://docs.monetizenow.io/docs/api-keys
+base_url: https://api.monetizeplatform.com
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+  oauth2_flows: []
+schemes:
+- name: apiKey
+  type: apiKey
+  in: header
+  parameter_name: x-api-key
+  description: >-
+    The preferred (and documented) authentication method is a tenant-generated
+    API key sent in the x-api-key request header. Keys are created in the
+    MonetizeNow tenant under Settings -> API Keys ("New Api Key"), named, and
+    displayed only once at creation. A single key authenticates against all
+    MonetizeNow REST APIs.
+  provisioning: MonetizeNow tenant UI (Settings -> API Keys)
+  sources:
+  - https://docs.monetizenow.io/reference/getting-started-with-your-api
+notes:
+- No OAuth 2.0 / OpenID Connect flow is documented for the public REST API; the
+  application UI (app.monetizeplatform.com) uses separate interactive login.
+- No public test-vs-live key prefix scheme is documented.

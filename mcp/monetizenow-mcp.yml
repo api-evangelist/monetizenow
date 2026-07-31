@@ -1,0 +1,89 @@
+generated: '2026-07-20'
+method: derived
+status: candidate
+source: >-
+  Derived from documented MonetizeNow API operations at
+  https://docs.monetizenow.io/reference (no official hosted MCP server was found
+  in the docs, npm @modelcontextprotocol, or MCP registries as of this pass).
+description: >-
+  Candidate MCP tool surface mapping MonetizeNow's core quote-to-cash REST
+  operations to agent tools. Not an official MonetizeNow MCP server; a proposed
+  tool list an MCP wrapper could expose over the x-api-key-authenticated API.
+server:
+  name: monetizenow
+  transport: http
+  base_url: https://api.monetizeplatform.com
+  auth: x-api-key header
+tools:
+- name: list_accounts
+  description: List / search customer accounts.
+  source_operation: getAccounts
+- name: create_account
+  description: Create a customer account.
+  source_operation: createAccount
+- name: get_account
+  description: Retrieve an account by id.
+  source_operation: getAccountByAccountId
+- name: list_contacts
+  description: List contacts for an account.
+  source_operation: getAllContactsByAccountId
+- name: create_contact
+  description: Create a contact.
+  source_operation: createContact
+- name: create_quote
+  description: Create a net-new quote.
+  source_operation: createNetNewQuote
+- name: add_quote_offering
+  description: Add an offering (line) to a quote.
+  source_operation: saveQuoteOffering
+- name: process_quote
+  description: Process a quote.
+  source_operation: processQuote
+- name: accept_quote
+  description: Accept a quote.
+  source_operation: acceptQuote
+- name: send_quote
+  description: Send a quote to the customer.
+  source_operation: sendQuote
+- name: list_contracts
+  description: List contracts for an account.
+  source_operation: getAllContractsByAccountId
+- name: renew_contract
+  description: Renew a contract.
+  source_operation: renewContract
+- name: amend_contract
+  description: Amend a contract.
+  source_operation: amendContract
+- name: get_subscription
+  description: Retrieve a subscription by id.
+  source_operation: getSubscriptionById
+- name: record_usage_events
+  description: Record metered usage events.
+  source_operation: recordEvents
+- name: get_usage_consumption
+  description: Retrieve usage consumption for a subscription.
+  source_operation: getUsageConsumption
+- name: preview_invoice
+  description: Preview an invoice.
+  source_operation: previewInvoice
+- name: get_invoice
+  description: Retrieve an invoice by id.
+  source_operation: getInvoiceById
+- name: pay_invoice
+  description: Pay an invoice.
+  source_operation: payInvoice
+- name: create_credit
+  description: Create a credit.
+  source_operation: createCredit
+- name: list_products
+  description: List products in the catalog.
+  source_operation: getAllProduct
+- name: list_offerings
+  description: List offerings.
+  source_operation: getAllOffering
+- name: list_rates_for_offering
+  description: List rates for an offering.
+  source_operation: getAllRatesByOfferingId
+- name: create_trial
+  description: Create a trial.
+  source_operation: createTrial

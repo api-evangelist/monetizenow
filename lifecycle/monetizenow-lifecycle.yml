@@ -1,0 +1,26 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.monetizenow.io/reference/api-breaking-change-policy
+versioning:
+  scheme: version-header
+  detail: >-
+    Major breaking changes are versioned and indicated in a version header;
+    minor changes are additive and backward compatible.
+  docs: https://docs.monetizenow.io/reference/api-breaking-change-policy
+deprecation:
+  policy_url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  policy: >-
+    Endpoints are deprecated before removal. During the deprecation period,
+    documentation clearly flags the impending removal and consumers are notified
+    via documentation updates, developer announcements/newsletters, and email to
+    registered API consumers.
+  sunset_header: false
+  notice_period: not published
+sla:
+  url: null
+  uptime_target: null
+status_page: https://status.monetizeplatform.com
+deprecated_operations: []
+notes:
+- Status page verified live and titled "MonetizeNow Status" (status.monetizeplatform.com).
+- No numeric API version string or public dated changelog was found (docs /changelog is 404).

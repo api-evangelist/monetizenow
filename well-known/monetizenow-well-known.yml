@@ -1,0 +1,39 @@
+generated: '2026-07-20'
+method: probed
+source: live GET probes of /.well-known/* on the API and web hosts
+description: >-
+  Well-known discovery probe. The API host (api.monetizeplatform.com) is fully
+  auth-walled (401 on every path, including /.well-known/*), so no public
+  discovery documents are served. The marketing host returns a captcha
+  challenge for /.well-known/security.txt. No usable well-known catalog,
+  security.txt, or OAuth/OIDC discovery document was found; no WellKnown or
+  SecurityTxt pointer is emitted.
+hosts:
+- host: https://api.monetizeplatform.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 401
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 401
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 401
+    file: null
+  - path: /.well-known/api-catalog
+    status: 401
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 401
+    file: null
+- host: https://www.monetizenow.io
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+- host: https://monetizenow.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 202
+    file: null
+    note: returns a bot/captcha challenge page, not a security.txt
