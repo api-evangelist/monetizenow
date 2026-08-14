@@ -1,16 +1,17 @@
 aid: monetizenow
 accessModel:
-  pricing: unknown
-  onboarding: self-serve
+  pricing: contact-sales
+  onboarding: sales-led
   trial: false
   try_now: false
   public: false
-  label: Self-serve signup
-  confidence: medium
+  label: Contact sales
+  confidence: high
   source:
+  - plans
   - authentication
-  generated: '2026-07-22'
-  method: derived
+  generated: '2026-08-13'
+  method: searched
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/monetizenow.png
 name: MonetizeNow
 description: >-
@@ -19,13 +20,17 @@ description: >-
   companies. It combines a CPQ/quote builder with guided selling, a billing
   engine supporting subscriptions, credits, and usage-based pricing,
   multi-currency payments (via Stripe), dunning, revenue recognition, and
-  real-time usage metering handling billions of daily events. The platform
-  exposes a REST API (base https://api.monetizeplatform.com) authenticated with
-  an x-api-key header, covering accounts, contacts, quotes, opportunities,
-  contracts, subscriptions, invoices, payments, credits, credit notes,
-  products, offerings, rates, usage events, trials, and a self-service checkout
-  flow, plus a rich webhook event surface for quotes, invoices, subscriptions,
-  and payments. Pre-built connectors integrate Salesforce, HubSpot, Attio,
+  real-time usage metering. The platform exposes a REST API (base
+  https://api.monetizeplatform.com) authenticated with an x-api-key header:
+  156 operations across 124 paths covering accounts, contacts, addresses, bill
+  groups, quotes, opportunities, contracts, subscriptions, invoices, payments,
+  payment methods, credits, credit notes, products, offerings, rates, price
+  uplift, usage events, trials, account documents for e-signature, and a
+  self-service checkout flow, plus a 30-event webhook surface. MonetizeNow
+  publishes OpenAPI 3.0.3 per operation inside its ReadMe reference rather than
+  as one downloadable document, and it operates an OAuth-protected hosted MCP
+  server at https://mcp.monetizeplatform.com/mcp that appears nowhere in its
+  documentation. Pre-built connectors integrate Salesforce, HubSpot, Attio,
   NetSuite, QuickBooks, Xero, DocuSign, Adobe Sign, Anrok, Avalara, and
   Taxwire. MonetizeNow is backed by Uncork Capital.
 url: https://raw.githubusercontent.com/api-evangelist/monetizenow/refs/heads/main/apis.yml
@@ -33,15 +38,15 @@ x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - uncork-capital
-x-tier: stub
+x-tier: profiled
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-20'
+modified: '2026-08-13'
 x-enrichment:
-  date: '2026-07-20'
+  date: '2026-08-13'
   status: enriched
-  artifacts_added: 15
+  artifacts_added: 13
   pass: local-v1
 tags:
 - Company
@@ -65,24 +70,34 @@ apis:
 - name: MonetizeNow API
   description: >-
     MonetizeNow's REST API for the full quote-to-cash lifecycle — accounts,
-    contacts, quotes, opportunities, contracts, subscriptions, invoices,
-    payments, credits, credit notes, products, offerings, rates, usage-event
-    recording, trials, and self-service checkout. Authenticated with an
-    x-api-key header; versioned via a version header with a documented breaking
-    change and deprecation policy.
+    contacts, addresses, bill groups, quotes, opportunities, contracts,
+    subscriptions, invoices, payments, payment methods, credits, credit notes,
+    products, offerings, rates, price uplift configuration, usage-event
+    recording, trials, account documents for e-signature, and self-service
+    checkout. 156 operations across 124 paths. Authenticated with a tenant-wide,
+    unscoped x-api-key header; versioned via a version header with a documented
+    breaking change and deprecation policy.
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
   properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-openapi.json
+  - type: Overlay
+    url: overlays/monetizenow-openapi-overlay.yaml
   - type: Webhooks
     url: asyncapi/monetizenow-webhooks.yml
   - type: Authentication
     url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
   - type: Conventions
     url: conventions/monetizenow-conventions.yml
   - type: Idempotency
     url: conventions/monetizenow-conventions.yml
   - type: ErrorCatalog
     url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
   - type: Lifecycle
     url: lifecycle/monetizenow-lifecycle.yml
   - type: Deprecation
@@ -91,11 +106,13 @@ apis:
     url: data-model/monetizenow-data-model.yml
   - type: MCPServer
     url: mcp/monetizenow-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
   - type: Conformance
     url: conformance/monetizenow-conformance.yml
 common:
 - type: Website
-  url: https://www.monetizenow.io
+  url: https://www.monetizenow.ai/
 - type: DeveloperPortal
   url: https://docs.monetizenow.io/docs/welcome
 - type: Documentation
@@ -105,18 +122,68 @@ common:
 - type: GettingStarted
   url: https://docs.monetizenow.io/reference/getting-started-with-your-api
 - type: Blog
-  url: https://monetizenow.com/blog
+  url: https://www.monetizenow.ai/blog
+- type: Support
+  url: https://www.monetizenow.ai/join-our-slack-community
 - type: Login
   url: https://app.monetizeplatform.com/
 - type: TermsOfService
-  url: https://monetizenow.com/terms-of-use
+  url: https://www.monetizenow.ai/terms-of-use
 - type: PrivacyPolicy
-  url: https://monetizenow.com/privacy-policy
+  url: https://www.monetizenow.ai/privacy-policy
 - type: StatusPage
   url: https://status.monetizeplatform.com
-- type: LLMsTxt
-  url: llms/monetizenow-llms.txt
+- type: ChangeLog
+  url: changelog/monetizenow-changelog.yml
+- type: Deprecation
+  url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+- type: Lifecycle
+  url: lifecycle/monetizenow-lifecycle.yml
+- type: OpenAPI
+  url: openapi/monetizenow-openapi.json
+- type: Overlay
+  url: overlays/monetizenow-openapi-overlay.yaml
+- type: Authentication
+  url: authentication/monetizenow-authentication.yml
+- type: OAuthScopes
+  url: scopes/monetizenow-scopes.yml
+- type: Conventions
+  url: conventions/monetizenow-conventions.yml
+- type: Idempotency
+  url: conventions/monetizenow-conventions.yml
+- type: ErrorCatalog
+  url: errors/monetizenow-problem-types.yml
+- type: RateLimits
+  url: rate-limits/monetizenow-rate-limits.yml
+- type: Plans
+  url: plans/monetizenow-plans-pricing.yml
+- type: DataModel
+  url: data-model/monetizenow-data-model.yml
+- type: Webhooks
+  url: asyncapi/monetizenow-webhooks.yml
+- type: MCPServer
+  url: mcp/monetizenow-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/monetizenow-tool-crosswalk.yml
 - type: AgentSkill
   url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/monetizenow-llms.txt
+- type: WellKnown
+  url: well-known/monetizenow-well-known.yml
+- type: Packages
+  url: packages/monetizenow-packages.yml
+- type: Components
+  url: components/monetizenow-components.yml
+- type: Conformance
+  url: conformance/monetizenow-conformance.yml
+- type: Compliance
+  url: https://www.monetizenow.ai/information-security-policy
+- type: TrustCenter
+  url: security/monetizenow-trust-center.yml
+- type: Security
+  url: https://www.monetizenow.ai/information-security-policy
+- type: VulnerabilityDisclosure
+  url: security/monetizenow-vulnerability-disclosure.yml
 - type: DomainSecurity
   url: security/monetizenow-domain-security.yml
