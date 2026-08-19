@@ -1,89 +1,131 @@
-generated: '2026-07-20'
-method: derived
-status: candidate
+generated: '2026-08-13'
+method: probed
+status: published
 source: >-
-  Derived from documented MonetizeNow API operations at
-  https://docs.monetizenow.io/reference (no official hosted MCP server was found
-  in the docs, npm @modelcontextprotocol, or MCP registries as of this pass).
+  Live probe of https://mcp.monetizeplatform.com/mcp and its OAuth discovery
+  documents on 2026-08-13.
 description: >-
-  Candidate MCP tool surface mapping MonetizeNow's core quote-to-cash REST
-  operations to agent tools. Not an official MonetizeNow MCP server; a proposed
-  tool list an MCP wrapper could expose over the x-api-key-authenticated API.
+  MonetizeNow operates a REAL, first-party, hosted remote MCP server at
+  https://mcp.monetizeplatform.com/mcp. It is not advertised anywhere in the
+  public documentation, the marketing site, or any MCP registry — it was found by
+  probing the platform domain. Ownership is not in doubt:
+  mcp.monetizeplatform.com is a subdomain of the same monetizeplatform.com domain
+  that carries the documented REST base (api.monetizeplatform.com), the console
+  (app.monetizeplatform.com) and the status page (status.monetizeplatform.com),
+  and it resolves through prod-eks-alb.monetizeplatform.com to MonetizeNow's own
+  production EKS load balancer.
+  The server is OAuth-protected and answers every unauthenticated request with
+  HTTP 401, `WWW-Authenticate: Bearer realm="mcp"` and
+  {"error":"missing_token"}. It publishes complete RFC 9728 protected-resource
+  metadata and RFC 8414 authorization-server metadata, including a dynamic client
+  registration endpoint and PKCE S256 — the correct modern MCP authorization
+  posture. Because authorization is required, `tools/list` could not be called and
+  the REAL tool set and inputSchemas are UNKNOWN. Nothing below is presented as the
+  server's actual tool list.
+deployment:
+  mode: remote
+  endpoint: https://mcp.monetizeplatform.com/mcp
+  install: null
+  package: null
+  auth: oauth
+  verified: probed
+  checked: '2026-08-13'
 server:
   name: monetizenow
   transport: http
-  base_url: https://api.monetizeplatform.com
-  auth: x-api-key header
+  url: https://mcp.monetizeplatform.com/mcp
+  base_host: https://mcp.monetizeplatform.com
+  proxy: envoy
+  documented_by_provider: false
+  registry_listed: false
+authorization:
+  scheme: OAuth 2.1 bearer
+  www_authenticate: Bearer realm="mcp"
+  protected_resource_metadata:
+    url: https://mcp.monetizeplatform.com/.well-known/oauth-protected-resource
+    status: 200
+    spec: RFC 9728
+    file: ../well-known/monetizenow-oauth-protected-resource.json
+    resource: https://mcp.monetizeplatform.com
+    authorization_servers: [https://mcp.monetizeplatform.com]
+    bearer_methods_supported: [header]
+    scopes_supported: []
+  authorization_server_metadata:
+    url: https://mcp.monetizeplatform.com/.well-known/oauth-authorization-server
+    status: 200
+    spec: RFC 8414
+    file: ../well-known/monetizenow-oauth-authorization-server.json
+    issuer: https://mcp.monetizeplatform.com
+    authorization_endpoint: https://mcp.monetizeplatform.com/oauth/authorize
+    token_endpoint: https://mcp.monetizeplatform.com/oauth/token
+    registration_endpoint: https://mcp.monetizeplatform.com/oauth/register
+    grant_types_supported: [authorization_code, refresh_token]
+    response_types_supported: [code]
+    token_endpoint_auth_methods_supported: [none]
+    code_challenge_methods_supported: [S256]
+    scopes_supported: []
+  dynamic_client_registration: true
+  pkce: S256
+  note: >-
+    scopes_supported is published as an EMPTY array on both documents, so the
+    server declares no scope vocabulary. See scopes/monetizenow-scopes.yml.
 tools:
-- name: list_accounts
-  description: List / search customer accounts.
-  source_operation: getAccounts
-- name: create_account
-  description: Create a customer account.
-  source_operation: createAccount
-- name: get_account
-  description: Retrieve an account by id.
-  source_operation: getAccountByAccountId
-- name: list_contacts
-  description: List contacts for an account.
-  source_operation: getAllContactsByAccountId
-- name: create_contact
-  description: Create a contact.
-  source_operation: createContact
-- name: create_quote
-  description: Create a net-new quote.
-  source_operation: createNetNewQuote
-- name: add_quote_offering
-  description: Add an offering (line) to a quote.
-  source_operation: saveQuoteOffering
-- name: process_quote
-  description: Process a quote.
-  source_operation: processQuote
-- name: accept_quote
-  description: Accept a quote.
-  source_operation: acceptQuote
-- name: send_quote
-  description: Send a quote to the customer.
-  source_operation: sendQuote
-- name: list_contracts
-  description: List contracts for an account.
-  source_operation: getAllContractsByAccountId
-- name: renew_contract
-  description: Renew a contract.
-  source_operation: renewContract
-- name: amend_contract
-  description: Amend a contract.
-  source_operation: amendContract
-- name: get_subscription
-  description: Retrieve a subscription by id.
-  source_operation: getSubscriptionById
-- name: record_usage_events
-  description: Record metered usage events.
-  source_operation: recordEvents
-- name: get_usage_consumption
-  description: Retrieve usage consumption for a subscription.
-  source_operation: getUsageConsumption
-- name: preview_invoice
-  description: Preview an invoice.
-  source_operation: previewInvoice
-- name: get_invoice
-  description: Retrieve an invoice by id.
-  source_operation: getInvoiceById
-- name: pay_invoice
-  description: Pay an invoice.
-  source_operation: payInvoice
-- name: create_credit
-  description: Create a credit.
-  source_operation: createCredit
-- name: list_products
-  description: List products in the catalog.
-  source_operation: getAllProduct
-- name: list_offerings
-  description: List offerings.
-  source_operation: getAllOffering
-- name: list_rates_for_offering
-  description: List rates for an offering.
-  source_operation: getAllRatesByOfferingId
-- name: create_trial
-  description: Create a trial.
-  source_operation: createTrial
+  status: gated
+  count: null
+  note: >-
+    tools/list returns HTTP 401 without a bearer token. The real tool names and
+    inputSchemas require an authenticated introspection and are NOT recorded here.
+    No tool list is published in the docs or in llms.txt either.
+candidate_tools:
+  status: candidate
+  method: derived
+  source: >-
+    Derived from documented MonetizeNow REST operationIds at
+    https://docs.monetizenow.io/reference — a hypothesis about what the gated
+    server probably exposes, NOT an observation of it. Do not treat as the
+    server's tool list.
+  tools:
+  - {name: list_accounts, description: List / search customer accounts., source_operation: getAccounts}
+  - {name: create_account, description: Create a customer account., source_operation: createAccount}
+  - {name: get_account, description: Retrieve an account by id., source_operation: getAccountByAccountId}
+  - {name: list_contacts, description: List contacts for an account., source_operation: getAllContactsByAccountId}
+  - {name: create_contact, description: Create a contact., source_operation: createContact}
+  - {name: create_quote, description: Create a net-new quote., source_operation: createNetNewQuote}
+  - {name: add_quote_offering, description: Add an offering (line) to a quote., source_operation: saveQuoteOffering}
+  - {name: process_quote, description: Process a quote., source_operation: processQuote}
+  - {name: accept_quote, description: Accept a quote., source_operation: acceptQuote}
+  - {name: send_quote, description: Send a quote to the customer., source_operation: sendQuote}
+  - {name: list_contracts, description: List contracts for an account., source_operation: getAllContractsByAccountId}
+  - {name: renew_contract, description: Renew a contract., source_operation: renewContract}
+  - {name: amend_contract, description: Amend a contract., source_operation: amendContract}
+  - {name: get_subscription, description: Retrieve a subscription by id., source_operation: getSubscriptionById}
+  - {name: record_usage_events, description: Record metered usage events., source_operation: recordEvents}
+  - {name: get_usage_consumption, description: Retrieve usage consumption for a subscription., source_operation: getUsageConsumption}
+  - {name: preview_invoice, description: Preview an invoice., source_operation: previewInvoice}
+  - {name: get_invoice, description: Retrieve an invoice by id., source_operation: getInvoiceById}
+  - {name: pay_invoice, description: Pay an invoice., source_operation: payInvoice}
+  - {name: create_credit, description: Create a credit., source_operation: createCredit}
+  - {name: list_products, description: List products in the catalog., source_operation: getAllProduct}
+  - {name: list_offerings, description: List offerings., source_operation: getAllOffering}
+  - {name: list_rates_for_offering, description: List rates for an offering., source_operation: getAllRatesByOfferingId}
+  - {name: create_trial, description: Create a trial., source_operation: createTrial}
+x-evidence:
+- {fetched: '2026-08-13', url: 'https://mcp.monetizeplatform.com/mcp', method: POST, body: 'tools/list', http_status: 401, response: '{"error":"missing_token","message":"Authorization header with Bearer token required"}'}
+- {fetched: '2026-08-13', url: 'https://mcp.monetizeplatform.com/.well-known/oauth-protected-resource', http_status: 200, content_type: application/json}
+- {fetched: '2026-08-13', url: 'https://mcp.monetizeplatform.com/.well-known/oauth-authorization-server', http_status: 200, content_type: application/json}
+- {fetched: '2026-08-13', dns: 'mcp.monetizeplatform.com', cname: 'prod-eks-alb.monetizeplatform.com -> k8s-prodpublicalbv1-524fba698a-132860428.us-west-2.elb.amazonaws.com'}
+other_mcp_surfaces:
+- url: https://docs.monetizenow.io/mcp
+  status: 401
+  response: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
+  vendor: ReadMe
+  note: >-
+    A second MCP endpoint on the documentation host. This is ReadMe's own
+    platform-provided docs MCP feature served under MonetizeNow's docs domain,
+    not a MonetizeNow-built server. Recorded for completeness; the canonical
+    MonetizeNow MCP endpoint is mcp.monetizeplatform.com.
+notes:
+- >-
+  RECOMMENDATION TO THE PROVIDER: this server is invisible. Document it in the
+  API reference, list it in an MCP registry, and populate scopes_supported so an
+  agent can request least privilege instead of everything.

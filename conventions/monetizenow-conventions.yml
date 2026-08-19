@@ -1,24 +1,48 @@
-generated: '2026-07-20'
+generated: '2026-08-13'
 method: searched
 source: >-
+  The `info.description` block of MonetizeNow's own published OpenAPI 3.0.3
+  (openapi/monetizenow-openapi.json), plus
   https://docs.monetizenow.io/reference/getting-started-with-your-api,
   https://docs.monetizenow.io/reference/api-breaking-change-policy,
-  https://docs.monetizenow.io/reference/webhook-payload-examples
+  https://docs.monetizenow.io/reference/checkout, and
+  https://docs.monetizenow.io/reference/recordevents.
 description: >-
   Cross-cutting request/response conventions for the MonetizeNow REST API that
-  apply across operations (not a single endpoint): authentication, idempotency,
-  versioning, the webhook event envelope, and error signaling.
+  apply across operations (not a single endpoint): authentication, pagination,
+  idempotency, versioning, the webhook event envelope, error signaling, and
+  usage-read consistency. Upgraded this round from the OpenAPI document
+  MonetizeNow publishes inside its reference pages, which states the pagination
+  and error-handling contracts directly.
 base_url: https://api.monetizeplatform.com
 api_style: REST over HTTPS, JSON request and response bodies
 path_prefix: /api
 
 authentication:
   scheme: API key in the x-api-key request header
+  scoped: false
   detail: authentication/monetizenow-authentication.yml
   docs: https://docs.monetizenow.io/reference/getting-started-with-your-api
 
+pagination:
+  supported: true
+  style: page-number
+  request_params:
+    pageSize: Number of elements in the page.
+    currentPage: The page to start with.
+  example: GET /api/accounts?currentPage=3&pageSize=20
+  response_shape: >-
+    List responses carry an MNPageable component alongside the item array,
+    modelled in components.schemas.MNPageable of the published OpenAPI.
+  cursor: false
+  docs: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  note: >-
+    Page-number pagination is not stable across concurrent writes. No cursor or
+    total-count contract is documented.
+
 idempotency:
   supported: true
+  header: null
   mechanism: >-
     Custom-id / custom-key upsert semantics. Core resources expose
     get/update/create "by custom id" operations (e.g. getAccountByCustomId,
@@ -26,13 +50,16 @@ idempotency:
     getOpportunityByCustomId) so a client-owned external identifier makes create
     and update operations safely repeatable without creating duplicates.
   scope: Resource create/update via caller-supplied custom identifiers.
+  retention: not published
   docs: https://docs.monetizenow.io/reference/getting-started-with-your-api
   note: >-
-    A dedicated Idempotency-Key request header is not documented; idempotency is
-    achieved through the custom-id addressing model above.
+    A dedicated Idempotency-Key request header is NOT documented; idempotency is
+    achieved through the custom-id addressing model above. An agent retrying a
+    POST without a custom id can create a duplicate.
 
 versioning:
   scheme: version header (major versions carried in a version header)
+  current: not published
   policy: >-
     Major breaking changes are versioned via a version header and do not
     guarantee backward compatibility; minor changes are additive and backward
@@ -43,14 +70,43 @@ versioning:
 webhooks:
   supported: true
   envelope: '{ eventId, userId, sentTime (ISO 8601), eventType, data }'
+  signature: not documented
   detail: asyncapi/monetizenow-webhooks.yml
   docs: https://docs.monetizenow.io/docs/webhooks
 
 error_envelope:
   media_type: application/json
   rfc9457: false
+  style: >-
+    HTTP status semantics (400 bad request, 404 resource not found by id, 409
+    resource not in the required state, 500 internal server error). The
+    self-service checkout API additionally returns a string error-code enum
+    (INVALID_ACCOUNT, EMPTY_OFFERINGS, INVALID_OFFERINGS, INVALID_RATES,
+    ACCOUNT_RATE_MISMATCH, INVALID_CONTRACT_END_DATE, PRICE_OFFERINGS_FAILED).
   detail: errors/monetizenow-problem-types.yml
   docs: https://docs.monetizenow.io/reference/getting-started-with-your-api
+
+rate_limits:
+  published: false
+  headers: []
+  detail: rate-limits/monetizenow-rate-limits.yml
+
+request_tracing:
+  request_id_header: not documented
+  note: No request-id or correlation-id response header is documented.
+
+consistency:
+  usage_reads: >-
+    Read-after-write on usage events is eventually consistent: near-immediate for
+    events timestamped within 45 days, up to 6 hours for events older than 45
+    days.
+  docs: https://docs.monetizenow.io/reference/getevents
+
+batching:
+  usage_ingest_max_events_per_request: 100
+  partial_success: >-
+    POST /events returns success, partial success, or failed for a batch.
+  docs: https://docs.monetizenow.io/reference/recordevents
 
 data_model:
   detail: data-model/monetizenow-data-model.yml
@@ -58,9 +114,18 @@ data_model:
 other_conventions:
 - name: Custom fields
   detail: >-
-    Most resources support tenant-defined custom fields (setCustomFields,
-    setCustomFieldsForQuote, setCustomFieldsForCreditNote).
+    Most resources support tenant-defined custom fields (setCustomFields_1,
+    setCustomFieldsForQuote, setCustomFieldsForCreditNote — operationIds
+    verified against openapi/monetizenow-openapi.json).
 - name: Multi-currency
   detail: Amounts are multi-currency; tenant-level currency configuration applies.
 - name: Multi-tenancy
   detail: All API access is scoped to the caller's tenant via the API key.
+- name: Field expansion / sparse fieldsets
+  detail: Not supported; no expand or fields parameter is documented.
+- name: Schema naming
+  detail: >-
+    Component schemas are emitted with fully-qualified Java package names
+    (e.g. com.monytyz.billing.customer.dto.account.AccountDto), which leak the
+    internal implementation and generate awkward type names in any client
+    generated from the spec. Note the legacy internal namespace "monytyz".

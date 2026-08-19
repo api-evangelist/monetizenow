@@ -1,0 +1,57 @@
+generated: '2026-08-13'
+method: searched
+source: https://docs.monetizenow.io/reference/recordevents
+description: >-
+  MonetizeNow publishes NO request-rate limits for its REST API. There is no
+  rate-limit page in the reference, the getting-started page does not mention
+  throttling, no 429 response is documented on any operation, and no
+  X-RateLimit-*/RateLimit-*/Retry-After response header is documented anywhere.
+  The only published per-request ceiling is a batch-size cap on the usage
+  ingestion endpoint. Consumers therefore have no runtime signal to back off on
+  and no documented number to design against.
+limit_count: 1
+headers:
+  documented: false
+  request_id: null
+  rate_limit_headers: []
+  retry_after: false
+  note: >-
+    No rate-limit response headers are documented. Live header inspection is not
+    possible: api.monetizeplatform.com returns 401 {"message":"Unauthorized"}
+    from AWS API Gateway on every unauthenticated request, so no unauthenticated
+    response carries usable rate-limit headers.
+response_codes:
+  throttled: null
+  note: No 429 (or equivalent throttling status) is documented on any operation.
+limits:
+- name: Usage event batch size
+  scope: per-request
+  endpoint: POST /events (recordEvents)
+  metric: events_per_request
+  limit: 100
+  window: request
+  burst: null
+  docs: https://docs.monetizenow.io/reference/recordevents
+  note: >-
+    "This is a batch API that can ingest upto 100 events per request. The API
+    will return success or partial success or failed in the response." A payload
+    ceiling, not a request-rate limit.
+consistency:
+- name: Usage read-after-write eventual consistency
+  detail: >-
+    Documented on every usage read/write operation: for usage events with
+    timestamps less than 45 days old, consistency is near-immediate; for events
+    with timestamps older than 45 days, consistency can take up to 6 hours.
+  docs: https://docs.monetizenow.io/reference/getevents
+  note: >-
+    Not a rate limit, but the only published runtime timing contract on the API
+    and the thing an agent actually has to plan retries around.
+notes:
+- >-
+  MonetizeNow's own docs discuss rate limits only in the context of OTHER
+  systems it integrates with (CRM API rate limits, bulk processing limits) — see
+  https://docs.monetizenow.io/docs/architectural-requirements — never its own.
+- >-
+  RECOMMENDATION TO THE PROVIDER: publish per-key request limits and emit
+  RateLimit-Limit / RateLimit-Remaining / RateLimit-Reset (RFC 9331) plus
+  Retry-After on 429.

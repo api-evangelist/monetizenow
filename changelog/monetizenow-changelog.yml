@@ -1,0 +1,221 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.monetizenow.ai/release-notes
+description: >-
+  MonetizeNow publishes a dated, filterable product release-notes feed at
+  www.monetizenow.ai/release-notes. Entries are typed (New Feature /
+  Enhancement) and tagged by product area (Accounting, Billing, Catalog, CRM,
+  General, Metering, Quoting, Self Service & APIs). It is a PRODUCT changelog,
+  not an API changelog: entries do not name added/removed endpoints, fields, or
+  API versions, and API-breaking changes are governed separately by the breaking
+  change policy (see lifecycle/monetizenow-lifecycle.yml). The most recent entry
+  observed on this pass is dated 2025-07-11, so the feed has not been updated in
+  roughly a year.
+scheme:
+  versioning: none-published
+  note: >-
+    Release notes carry a date and a product area but no release/version number.
+    The REST API itself is versioned by a version header for major breaking
+    changes only; no numeric API version string is published.
+current_version: null
+latest_entry_date: '2025-07-11'
+entry_types:
+- New Feature
+- Enhancement
+product_areas:
+- Accounting
+- Billing
+- Catalog
+- CRM
+- General
+- Metering
+- Quoting
+- Self Service & APIs
+entries:
+- date: '2025-07-11'
+  type: New Feature
+  areas: [Catalog, Quoting]
+  title: Flat + Tiered Pricing Model
+  breaking: false
+  highlight: >-
+    Mix a flat-fee floor or ceiling tier with quantity tiers on the same SKU,
+    supporting "floor then tiered" and "tiered then cap" pricing without shadow
+    SKUs.
+- date: '2025-07-04'
+  type: Enhancement
+  areas: [Billing]
+  title: Replace Payment Methods
+  breaking: false
+  highlight: >-
+    Billing admins can view, create, link, deactivate or unlink Stripe customers
+    directly from MonetizeNow; Stripe customer details now show on account
+    screens even with no payment methods.
+- date: '2025-06-20'
+  type: Enhancement
+  areas: [Quoting, Billing]
+  title: Subscription Frequency Changes
+  breaking: false
+  highlight: >-
+    Change billing frequency (e.g. Monthly to Annual) inside an existing
+    subscription while preserving subscription/entitlement identifiers and ARR
+    analytics; invoicing adjusts automatically.
+- date: '2025-06-13'
+  type: Enhancement
+  areas: [Quoting]
+  title: Restrictions on Downsells
+  breaking: false
+  highlight: >-
+    Rules engine can now distinguish invoiced from uninvoiced periods, enabling
+    approval rules that only fire on downsells against already-invoiced periods.
+- date: '2025-06-06'
+  type: New Feature
+  areas: [Quoting, Billing]
+  title: Billing Anchors
+  breaking: false
+  highlight: >-
+    Set a global or deal-specific anchor date for billing; invoices are adjusted
+    to that date regardless of contract dates.
+- date: '2025-05-30'
+  type: New Feature
+  areas: [Quoting]
+  title: Automatic Price Uplift
+  breaking: false
+  highlight: >-
+    Stackable automatic pricing uplifts by product or bundle at any interval.
+    Surfaced in the API as the priceUplift configuration operations.
+- date: '2025-05-23'
+  type: Enhancement
+  areas: [Quoting]
+  title: Additional Esigners
+  breaking: false
+  highlight: >-
+    Any number of internal and external signers/recipients per quote, with
+    received/opened/actioned tracking.
+- date: '2025-05-16'
+  type: New Feature
+  areas: [General, CRM, Quoting]
+  title: Account Documents (for Signature)
+  breaking: false
+  highlight: >-
+    Send non-quote commercial documents (NDA, MSA) for signature against an
+    account. Surfaced in the API as the accountDocuments operations.
+- date: '2025-05-09'
+  type: New Feature
+  areas: [Billing]
+  title: Invoice Term Customization
+  breaking: false
+  highlight: >-
+    Programmatically configure invoice appearance and payment terms per legal
+    entity and per currency.
+- date: '2025-05-02'
+  type: Enhancement
+  areas: [Self Service & APIs, Quoting, Catalog]
+  title: Self-Service Exclusive Pricing
+  breaking: false
+  highlight: >-
+    Differentiate products, bundles and pricing by sales channel (in-product
+    self-serve vs sales-led).
+- date: '2025-04-25'
+  type: Enhancement
+  areas: [Quoting]
+  title: Retain Approvals
+  breaking: false
+  highlight: >-
+    Grant re-approval exceptions so cosmetic quote edits do not re-trigger the
+    approval chain; material changes still do.
+- date: '2025-04-18'
+  type: New Feature
+  areas: [Accounting]
+  title: TaxWire Integration
+  breaking: false
+  highlight: Taxwire added as a supported tax engine alongside Anrok and Avalara.
+- date: '2025-04-11'
+  type: New Feature
+  areas: [General]
+  title: Audit Logs
+  breaking: false
+  highlight: >-
+    Downloadable, filterable audit log of every field change and user action on
+    commercial data.
+- date: '2025-04-04'
+  type: New Feature
+  areas: [Quoting]
+  title: Early Renewals
+  breaking: false
+  highlight: >-
+    Start a revised-term contract while ending the current one early, preserving
+    incremental ARR and subscription identifiers.
+- date: '2025-03-28'
+  type: New Feature
+  areas: [Self Service & APIs]
+  title: Slackbot
+  breaking: false
+  highlight: Team and individual quote approvals directly from Slack.
+- date: '2025-03-21'
+  type: Enhancement
+  areas: [General]
+  title: Improved Onboarding Flows
+  breaking: false
+  highlight: >-
+    Guided setup plus Excel templates for bulk-loading historical contracts
+    (including custom pricing, amendments and ramps).
+- date: '2025-03-14'
+  type: Enhancement
+  areas: [Quoting]
+  title: Quote Item Notes
+  breaking: false
+  highlight: Rich-text notes on any quote line item.
+- date: '2025-03-07'
+  type: New Feature
+  areas: [Self Service & APIs]
+  title: Payment Method Collection
+  breaking: false
+  highlight: >-
+    Secure shareable link for end customers to collect/update direct debit,
+    credit card and billing details.
+- date: '2025-02-28'
+  type: New Feature
+  areas: [Self Service & APIs]
+  title: Self-Service Checkout Pricing
+  breaking: false
+  highlight: >-
+    First collection of purpose-built PLG APIs — price a deal, check out a
+    transaction, and collect payment information in single API interactions.
+    This is the /api/selfService surface documented at
+    docs.monetizenow.io/reference/checkout and /reference/pricing-api.
+- date: '2025-02-21'
+  type: New Feature
+  areas: [General]
+  title: Integration Logs
+  breaking: false
+  highlight: >-
+    Real-time tracking and retry controls for every native integration, with the
+    target system's own error detail.
+- date: '2025-02-14'
+  type: New Feature
+  areas: [Quoting]
+  title: Quote Share Link
+  breaking: false
+  highlight: >-
+    Secure shareable quote link with eSignature capture, payment/billing
+    collection and view tracking.
+- date: '2025-02-07'
+  type: Enhancement
+  areas: [Quoting]
+  title: Start Contract on Signature Date
+  breaking: false
+  highlight: >-
+    Contract start date automatically shifts to the final signature date and
+    propagates to CRM, accounting and billing.
+notes:
+- >-
+  Recent window only. The feed carries entries back to August 2024; the twenty-two
+  most recent are captured here.
+- >-
+  The docs host has no changelog — https://docs.monetizenow.io/changelog is a 404.
+  The Salesforce managed package keeps its own separate release notes at
+  https://docs.monetizenow.io/docs/salesforce-release-notes.
+- >-
+  DECAY SIGNAL: no release-notes entry has been published since 2025-07-11, while
+  the API reference pages carry updatedAt timestamps into 2026-03. The product
+  changelog is stale relative to the documentation.

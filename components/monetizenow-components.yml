@@ -1,0 +1,64 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://docs.monetizenow.io/docs/customer-portal,
+  https://docs.monetizenow.io/docs/quote-share,
+  https://docs.monetizenow.io/docs/collecting-payment-information-from-end-customer-stripe,
+  https://docs.monetizenow.io/docs/building-a-saas-billing-portal
+description: >-
+  MonetizeNow ships NO client-side component library — there is no npm element
+  package, no web-component bundle, no CDN loader script and no documented
+  embeddable JS SDK. What it ships instead is a set of PROVIDER-HOSTED,
+  link-delivered surfaces that a seller shares with an end customer, plus
+  documentation for building your own billing portal against the REST API. The
+  distinction matters for an integrator: you get hosted pages behind a URL, not
+  components you mount in your own app.
+component_library:
+  exists: false
+  loader: null
+  registry_package: null
+families:
+- name: Hosted customer surfaces
+  kind: hosted-link
+  embeddable: false
+  components:
+  - name: Customer Portal
+    docs: https://docs.monetizenow.io/docs/customer-portal
+    description: Hosted portal where an end customer manages their billing relationship.
+  - name: Quote Share Link
+    docs: https://docs.monetizenow.io/docs/quote-share
+    description: >-
+      Secure shareable quote URL with eSignature capture, payment and billing
+      detail collection, and view tracking. Shipped 2025-02-14.
+  - name: Payment Method Collection Link
+    docs: https://docs.monetizenow.io/docs/payment-method-management
+    description: >-
+      Secure link for an end customer to supply or update direct debit, credit
+      card and billing details. Shipped 2025-03-07.
+  - name: Quote PDF
+    docs: https://docs.monetizenow.io/docs/customization-of-quote-pdf
+    description: Customizable generated quote document.
+- name: Build-your-own surfaces (API-backed, no components supplied)
+  kind: api-only
+  embeddable: false
+  components:
+  - name: Self-service checkout
+    docs: https://docs.monetizenow.io/docs/new-customer-checkout-with-credit-card-flow
+    description: >-
+      PLG checkout built by the integrator against /api/selfService/checkout and
+      the pricing API. MonetizeNow supplies the API; the UI is yours. Payment
+      element rendering is delegated to Stripe's own libraries.
+  - name: SaaS billing portal
+    docs: https://docs.monetizenow.io/docs/building-a-saas-billing-portal
+    description: Guide to constructing a billing portal from the REST API. No component package.
+third_party_dependencies:
+- name: Stripe payment collection
+  docs: https://docs.monetizenow.io/docs/collecting-payment-information-from-end-customer-stripe
+  note: >-
+    Card collection in a self-serve flow uses Stripe's own client libraries; the
+    resulting paymentToken is handed to MonetizeNow. The embeddable piece belongs
+    to Stripe, not MonetizeNow.
+notes:
+- >-
+  No Components pointer is emitted for a JS/web-component library because none
+  exists. The pointer emitted covers the hosted-surface catalog above.

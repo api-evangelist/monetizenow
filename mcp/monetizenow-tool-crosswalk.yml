@@ -1,0 +1,103 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  mcp/monetizenow-mcp.yml (probed 2026-08-13) and
+  openapi/monetizenow-openapi.json (156 published operations).
+description: >-
+  Crosswalk between MonetizeNow's agent surface and its REST surface. READ THE
+  CONFIDENCE COLUMN: MonetizeNow's hosted MCP server at
+  mcp.monetizeplatform.com/mcp is real and reachable, but `tools/list` requires
+  an OAuth bearer token, so its ACTUAL tool names and inputSchemas are unknown.
+  MonetizeNow also publishes no tool list in its docs and no llms.txt tool
+  section. Every row below is therefore a HYPOTHESIS about a tool that probably
+  exists, bound to the REST operation that would back it — not an observed
+  binding. Confidence is `low` on every row for exactly that reason, and it will
+  stay low until someone with a tenant runs an authenticated tools/list.
+surfaces:
+  openapi:
+    file: openapi/monetizenow-openapi.json
+    operations: 156
+    paths: 124
+    servers: [https://api.monetizeplatform.com]
+    gated: false
+    note: >-
+      Published as 156 per-operation fragments inside the ReadMe reference; no
+      single downloadable document is offered.
+  mcp:
+    url: https://mcp.monetizeplatform.com/mcp
+    gated: true
+    gate: OAuth 2.x bearer (RFC 9728 + RFC 8414 discovery, PKCE S256, open DCR)
+    tools_list_status: 401
+    detail: mcp/monetizenow-mcp.yml
+  graphql:
+    present: false
+    note: No GraphQL surface exists on any MonetizeNow host.
+coverage:
+  tools_named_by_provider: 0
+  tools_observed: 0
+  tools_hypothesized: 24
+  tools_bound_to_rest: 24
+  mcp_only: 0
+  rest_operations_total: 156
+  rest_operations_with_a_hypothesized_tool: 24
+  rest_operations_without: 132
+  confidence_overall: low
+crosswalk:
+- {tool: list_accounts, category: accounts, rest: [getAccounts], binding: rest, confidence: low}
+- {tool: get_account, category: accounts, rest: [getAccountByAccountId, getAccountByCustomId], binding: rest, confidence: low, note: fans out to id and custom-id addressing}
+- {tool: create_account, category: accounts, rest: [createAccount], binding: rest, confidence: low}
+- {tool: list_contacts, category: contacts, rest: [getAllContactsByAccountId], binding: rest, confidence: low}
+- {tool: create_contact, category: contacts, rest: [createContact, createAccountContact], binding: rest, confidence: low, note: two creates exist — global and account-scoped}
+- {tool: create_quote, category: quoting, rest: [createNetNewQuote], binding: rest, confidence: low}
+- {tool: add_quote_offering, category: quoting, rest: [saveQuoteOffering], binding: rest, confidence: low}
+- {tool: process_quote, category: quoting, rest: [processQuote], binding: rest, confidence: low}
+- {tool: send_quote, category: quoting, rest: [sendQuote], binding: rest, confidence: low}
+- {tool: accept_quote, category: quoting, rest: [acceptQuote_1], binding: rest, confidence: low, note: 'the published operationId carries the _1 suffix'}
+- {tool: list_contracts, category: contracts, rest: [getAllContractsByAccountId, getAllContracts], binding: rest, confidence: low}
+- {tool: get_contract, category: contracts, rest: [getContractById], binding: rest, confidence: low}
+- {tool: amend_contract, category: contracts, rest: [amendContract], binding: rest, confidence: low}
+- {tool: renew_contract, category: contracts, rest: [renewContract], binding: rest, confidence: low}
+- {tool: get_subscription, category: subscriptions, rest: [getSubscriptionById], binding: rest, confidence: low}
+- {tool: record_usage_events, category: usage, rest: [recordEvents], binding: rest, confidence: low, note: 'batch, max 100 events, partial-success envelope'}
+- {tool: get_usage_consumption, category: usage, rest: [getUsageConsumption, getUsageConsumptionPerDay], binding: rest, confidence: low}
+- {tool: preview_invoice, category: billing, rest: [previewInvoice], binding: rest, confidence: low}
+- {tool: get_invoice, category: billing, rest: [getInvoiceById], binding: rest, confidence: low}
+- {tool: pay_invoice, category: billing, rest: [payInvoice, invoiceManualPayment], binding: rest, confidence: low}
+- {tool: create_credit, category: billing, rest: [createCredit], binding: rest, confidence: low}
+- {tool: list_products, category: catalog, rest: [getAllProduct], binding: rest, confidence: low}
+- {tool: list_offerings, category: catalog, rest: [getAllOffering], binding: rest, confidence: low}
+- {tool: list_rates_for_offering, category: catalog, rest: [getAllRatesByOfferingId], binding: rest, confidence: low}
+mcp_only: []
+rest_only:
+- {capability: Quote, operations: 25, bound: 5, note: 'largest tag; edit/review/retract/archive/cancel/share, contacts and addresses on a quote, price uplift, primary-quote and opportunity linking are unbound'}
+- {capability: Account, operations: 11, bound: 3}
+- {capability: AccountDocument, operations: 10, bound: 0, note: 'e-signature document lifecycle (draft, send for signing, signer stats, attachments) — entirely unbound'}
+- {capability: Contact, operations: 10, bound: 2}
+- {capability: Offering, operations: 10, bound: 1}
+- {capability: Rate, operations: 9, bound: 1}
+- {capability: Payment, operations: 8, bound: 2}
+- {capability: PaymentMethod, operations: 7, bound: 0}
+- {capability: Products, operations: 7, bound: 1}
+- {capability: CreditNote, operations: 7, bound: 0}
+- {capability: Contract, operations: 7, bound: 3}
+- {capability: BillGroup, operations: 6, bound: 0}
+- {capability: Credit, operations: 6, bound: 1}
+- {capability: Invoice, operations: 6, bound: 2}
+- {capability: Opportunity, operations: 6, bound: 0}
+- {capability: Usage, operations: 6, bound: 3}
+- {capability: Trial, operations: 5, bound: 0}
+- {capability: Subscription, operations: 4, bound: 1}
+- {capability: Account Overview, operations: 2, bound: 0}
+- {capability: Payment Gateway, operations: 2, bound: 0}
+- {capability: Price Uplift Configuration, operations: 2, bound: 0}
+divergences:
+- >-
+  The self-service checkout surface (POST /api/selfService/checkout,
+  operation provisionContract, and the pricing API) is documented with TypeScript
+  types on ReadMe guide pages and does NOT appear in any published OpenAPI
+  fragment. It is a REST capability with no machine-readable contract at all, so
+  it cannot be crosswalked — a real hole, recorded rather than papered over.
+notes:
+- >-
+  This file will be worth rewriting the moment an authenticated tools/list is
+  available. Until then, do not present any row as a verified binding.

@@ -1,0 +1,52 @@
+generated: '2026-08-13'
+method: probed
+source: https://mcp.monetizeplatform.com/.well-known/oauth-authorization-server
+docs: null
+description: >-
+  MonetizeNow runs one OAuth 2.x authorization server — the one protecting its
+  hosted MCP server at mcp.monetizeplatform.com. Its RFC 8414 and RFC 9728
+  discovery documents are public and were read directly. Both declare
+  `scopes_supported: []`. That is the finding: the authorization server exists,
+  supports dynamic client registration and PKCE S256, and publishes NO scope
+  vocabulary at all, so a client cannot request least privilege and a resource
+  owner cannot see what an agent is being granted. The REST API
+  (api.monetizeplatform.com) is not OAuth-protected at all — it uses a single
+  tenant-wide x-api-key with no scoping, so it contributes no scopes either.
+schemes:
+- name: MonetizeNow MCP OAuth
+  type: oauth2
+  source: https://mcp.monetizeplatform.com/.well-known/oauth-authorization-server
+  issuer: https://mcp.monetizeplatform.com
+  protects: https://mcp.monetizeplatform.com/mcp
+  dynamic_client_registration: https://mcp.monetizeplatform.com/oauth/register
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://mcp.monetizeplatform.com/oauth/authorize
+    tokenUrl: https://mcp.monetizeplatform.com/oauth/token
+    pkce: S256
+    token_endpoint_auth_methods: [none]
+    scopes: {}
+  refresh: true
+scope_count: 0
+scopes: []
+non_oauth_surfaces:
+- name: MonetizeNow REST API
+  base_url: https://api.monetizeplatform.com
+  auth: apiKey (x-api-key header)
+  scoped: false
+  note: >-
+    One tenant-generated key authenticates all MonetizeNow REST APIs. No scopes,
+    no per-resource permissions, no read-only key type is documented. See
+    authentication/monetizenow-authentication.yml.
+evidence:
+- {url: 'https://mcp.monetizeplatform.com/.well-known/oauth-authorization-server', status: 200, fetched: '2026-08-13'}
+- {url: 'https://mcp.monetizeplatform.com/.well-known/oauth-protected-resource', status: 200, fetched: '2026-08-13'}
+notes:
+- >-
+  No scopes/permissions reference page exists in the MonetizeNow documentation;
+  the MCP server is not documented publicly at all.
+- >-
+  RECOMMENDATION TO THE PROVIDER: publish a scope vocabulary (at minimum
+  read/write splits per domain — quotes, contracts, billing, usage) in
+  scopes_supported. An empty scopes_supported on an agent-facing MCP server means
+  every authorized agent gets whatever the token carries, unbounded.

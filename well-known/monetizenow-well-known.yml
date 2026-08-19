@@ -1,15 +1,39 @@
-generated: '2026-07-20'
+generated: '2026-08-13'
 method: probed
-source: live GET probes of /.well-known/* on the API and web hosts
+source: live GET probes of /.well-known/* on every MonetizeNow host
 description: >-
-  Well-known discovery probe. The API host (api.monetizeplatform.com) is fully
-  auth-walled (401 on every path, including /.well-known/*), so no public
-  discovery documents are served. The marketing host returns a captcha
-  challenge for /.well-known/security.txt. No usable well-known catalog,
-  security.txt, or OAuth/OIDC discovery document was found; no WellKnown or
-  SecurityTxt pointer is emitted.
+  Well-known discovery probe across every MonetizeNow host. The REST API host
+  (api.monetizeplatform.com) is fully auth-walled (401 on every path, including
+  /.well-known/*). The marketing host (www.monetizenow.ai, which
+  www.monetizenow.io now redirects to) returns "Invalid .well-known request"
+  404s. The console host (app.monetizeplatform.com) answers 200 with the SPA
+  HTML shell for EVERY /.well-known/* path — a catch-all, not a document, and
+  recorded here as a miss. The real hit is the MCP host,
+  mcp.monetizeplatform.com, which serves genuine RFC 8414 OAuth Authorization
+  Server Metadata and RFC 9728 OAuth Protected Resource Metadata as JSON. A
+  WellKnown pointer is emitted on the strength of those two documents only.
 hosts:
+- host: https://mcp.monetizeplatform.com
+  note: MonetizeNow's hosted MCP server; the only host serving real well-known documents.
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: monetizenow-oauth-authorization-server.json
+    spec: RFC 8414
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: monetizenow-oauth-protected-resource.json
+    spec: RFC 9728
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/mcp.json
+    status: 404
+    file: null
 - host: https://api.monetizeplatform.com
+  note: AWS API Gateway; returns {"message":"Unauthorized"} on every path.
   documents:
   - path: /.well-known/security.txt
     status: 401
@@ -26,14 +50,70 @@ hosts:
   - path: /.well-known/ai-plugin.json
     status: 401
     file: null
-- host: https://www.monetizenow.io
+- host: https://www.monetizenow.ai
+  note: >-
+    Current marketing site (www.monetizenow.io 301s here). Serves an "Invalid
+    .well-known request" page with a 404 status.
   documents:
   - path: /.well-known/security.txt
     status: 404
     file: null
-- host: https://monetizenow.com
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+- host: https://docs.monetizenow.io
+  note: ReadMe-hosted documentation.
   documents:
   - path: /.well-known/security.txt
-    status: 202
+    status: 404
     file: null
-    note: returns a bot/captcha challenge page, not a security.txt
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+- host: https://app.monetizeplatform.com
+  note: >-
+    SPA catch-all — every /.well-known/* path returns HTTP 200 with the same
+    text/html application shell. NOT a served document; treated as a miss.
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    file: null
+    verdict: spa-shell
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    file: null
+    verdict: spa-shell
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    file: null
+    verdict: spa-shell
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    file: null
+    verdict: spa-shell
+notes:
+- No security.txt is served on any host. A responsible-disclosure contact IS
+  published, but as prose on https://www.monetizenow.ai/information-security-policy
+  (security@monetizenow.io) rather than at /.well-known/security.txt. No
+  SecurityTxt pointer is emitted.
+- No agent card was found at /.well-known/agent-card.json or /.well-known/agent.json
+  on any host; see the a2a note in this repo's apis.yml (nothing written).

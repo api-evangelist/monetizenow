@@ -1,15 +1,46 @@
-generated: '2026-07-20'
+generated: '2026-08-13'
 method: derived
 source: >-
-  Derived from the documented MonetizeNow API resource operations at
-  https://docs.monetizenow.io/reference (operationIds and path shapes), the
-  product catalog hierarchy in https://docs.monetizenow.io/docs/product-catalog-overview,
-  and the quote-to-invoice data flow docs.
+  openapi/monetizenow-openapi.json — 305 component schemas (117 *Dto types) and
+  124 paths, cross-checked against the product catalog hierarchy in
+  https://docs.monetizenow.io/docs/product-catalog-overview and the
+  quote-to-invoice data flow docs. Upgraded 2026-08-13 from a docs-only
+  derivation to one grounded in the provider's own published schemas.
 description: >-
-  Entity-relationship graph for the MonetizeNow quote-to-cash domain, inferred
-  from the API's by-parent-id operations (e.g. getAllContactsByAccountId,
-  getAllRatesByOfferingId) and the documented product -> offering -> rate and
+  Entity-relationship graph for the MonetizeNow quote-to-cash domain. Derived
+  from the API's by-parent-id path shapes (e.g. getAllContactsByAccountId,
+  getAllRatesByOfferingId), the *Id reference fields present on the published
+  component schemas, and the documented product -> offering -> rate and
   quote -> contract -> subscription -> invoice flows.
+schema_stats:
+  component_schemas: 305
+  dto_types: 117
+  paths: 124
+  operations: 156
+  id_reference_fields_observed:
+    customId: 50
+    accountId: 25
+    quoteId: 13
+    productId: 13
+    financeId: 11
+    rateId: 10
+    offeringId: 9
+    billGroupId: 9
+    legalEntityId: 9
+    subscriptionId: 8
+    billingAccountId: 8
+    contractId: 7
+    paymentMethodId: 5
+    subscriptionItemId: 5
+    quoteItemId: 5
+    creditNoteId: 4
+    contactId: 4
+  note: >-
+    `customId` is the single most common reference field in the whole model (50
+    schemas). That is the idempotency mechanism showing up in the data model:
+    almost every entity is addressable by a caller-owned identifier. Schema
+    names are fully-qualified internal Java packages under
+    com.monytyz.billing.* — note the legacy "monytyz" namespace.
 entities:
 - name: account
   description: Customer account; root of most relationships.
@@ -37,6 +68,20 @@ entities:
 - name: trial
 - name: accountDocument
   description: E-signature document (DocuSign/Adobe) tied to an account.
+- name: legalEntity
+  description: >-
+    Selling entity a quote/contract/invoice is issued from; drives invoice terms
+    and currency. Referenced by legalEntityId on 9 schemas.
+- name: quoteItem
+  description: Line item on a quote offering (quoteItemId on 5 schemas).
+- name: subscriptionItem
+  description: Line item on a subscription (subscriptionItemId on 5 schemas).
+- name: priceUpliftConfiguration
+  description: Automatic price-uplift rule attached to a quote offering.
+- name: esignEnvelope
+  description: >-
+    Signature envelope (esignEnvelopeId on 4 schemas), the DocuSign/Adobe Sign
+    handle behind quote sending and account documents.
 relationships:
 - from: account
   type: has_many
@@ -154,3 +199,60 @@ relationships:
   type: has_many
   to: rate
   via: offeringId
+- from: quote
+  type: belongs_to
+  to: legalEntity
+  via: legalEntityId
+- from: contract
+  type: belongs_to
+  to: legalEntity
+  via: legalEntityId
+- from: invoice
+  type: belongs_to
+  to: legalEntity
+  via: legalEntityId
+- from: quoteOffering
+  type: has_many
+  to: quoteItem
+  via: quoteItemId
+- from: subscription
+  type: has_many
+  to: subscriptionItem
+  via: subscriptionItemId
+- from: quoteOffering
+  type: has_one
+  to: priceUpliftConfiguration
+  via: priceUpliftConfigurationId
+- from: accountDocument
+  type: has_one
+  to: esignEnvelope
+  via: esignEnvelopeId
+- from: contract
+  type: belongs_to
+  to: contract
+  via: previousContractId
+  note: self-reference; a renewal/amendment points at the contract it supersedes
+- from: quote
+  type: belongs_to
+  to: quote
+  via: originalQuoteId
+  note: self-reference; an amendment/renewal quote points at its original
+- from: rate
+  type: belongs_to
+  to: offering
+  via: offeringId
+- from: creditNote
+  type: belongs_to
+  to: invoice
+  via: invoiceId
+provenance:
+  docs_derived:
+  - account/contact/address/billGroup/opportunity/quote/contract/subscription/invoice/payment/credit/creditNote/product/offering/rate/trial/accountDocument
+  spec_derived_2026_08_13:
+  - legalEntity
+  - quoteItem
+  - subscriptionItem
+  - priceUpliftConfiguration
+  - esignEnvelope
+  - contract self-reference via previousContractId
+  - quote self-reference via originalQuoteId

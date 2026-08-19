@@ -42,6 +42,22 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-MonetizeNow is a company surfaced as a portfolio company of uncork-capital and added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+MonetizeNow is an enterprise quote-to-cash platform (CPQ, billing, usage metering) for B2B SaaS, first
+surfaced as a portfolio company of uncork-capital. This profile has been through the API Evangelist
+enrichment pipeline.
 
-Backed by: uncork-capital — https://www.monetizenow.io
+What is captured here:
+
+- **`openapi/`** — 156 operations across 124 paths and 305 component schemas, assembled from the
+  per-operation OpenAPI 3.0.3 fragments MonetizeNow publishes inside its own ReadMe reference. The
+  company does not offer a single downloadable spec document.
+- **`mcp/`** — MonetizeNow runs a live, OAuth-protected hosted MCP server at
+  `https://mcp.monetizeplatform.com/mcp` with RFC 8414 / RFC 9728 discovery, dynamic client
+  registration and PKCE S256. It is not mentioned anywhere in the public documentation.
+- **`asyncapi/`** — a 30-event webhook catalog with no AsyncAPI document and no delivery signature.
+- **`plans/`, `rate-limits/`** — honest zeros: no pricing is published anywhere, and no request-rate
+  limits or rate-limit response headers are documented.
+- **`security/`** — a substantive public Information Security Policy carrying a responsible-disclosure
+  contact and a SOC 2 Type II *alignment* claim (the report itself is NDA-gated).
+
+Backed by: uncork-capital — https://www.monetizenow.ai/

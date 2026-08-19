@@ -1,0 +1,44 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.monetizenow.ai/
+description: >-
+  MonetizeNow publishes NO pricing. There is no pricing page anywhere on the
+  company site or in its sitemap, no pricing link in the site navigation, and no
+  published tiers, list prices, quotas or overage rates. Every commercial path
+  on the site terminates in "Request a Demo" (https://www.monetizenow.ai/demo).
+  The only pricing-adjacent surfaces are an ROI calculator page (/roi-new) and a
+  startup program page (/startup-program), neither of which states a price.
+  This is a sales-gated, enterprise-quoted product — which is notable given that
+  MonetizeNow's own product is a quote-to-cash and pricing platform.
+plan_count: 0
+currency: null
+billing_periods: []
+plans: []
+sales_gate:
+  demo_request: https://www.monetizenow.ai/demo
+  login: https://app.monetizeplatform.com/
+programs:
+- name: Startup Program
+  url: https://www.monetizenow.ai/startup-program
+  note: A named program page exists; no price, discount rate or eligibility quota is published on it.
+- name: ROI calculator
+  url: https://www.monetizenow.ai/roi-new
+  note: Interactive ROI page; models savings, does not state MonetizeNow's own price.
+evidence:
+- url: https://www.monetizenow.ai/pricing
+  status: 404
+- url: https://www.monetizenow.ai/plans
+  status: 404
+- url: https://www.monetizenow.ai/sitemap.xml
+  status: 200
+  note: Full sitemap walked; no pricing or plans URL present.
+- url: https://www.monetizenow.ai/demo
+  status: 200
+notes:
+- >-
+  Third-party review aggregators (G2, TrustRadius, research.com) carry
+  second-hand price figures for MonetizeNow. None of them are provider-published,
+  so none are recorded here.
+- >-
+  No API-metered pricing, per-call rate card, or usage tier is published either;
+  see rate-limits/monetizenow-rate-limits.yml.

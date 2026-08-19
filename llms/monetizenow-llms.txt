@@ -29,7 +29,7 @@
 - [Dunning](https://docs.monetizenow.io/docs/dunning.md)
 - [Invoice Terms](https://docs.monetizenow.io/docs/invoice-terms.md)
 - [Invoice Settings](https://docs.monetizenow.io/docs/invoice-settings.md)
-- [Quote Settings](https://docs.monetizenow.io/docs/quote-settings.md)
+- [Quote Settings & Templates](https://docs.monetizenow.io/docs/quote-settings.md)
 - [Teams](https://docs.monetizenow.io/docs/teams.md)
 - [Rules Engine](https://docs.monetizenow.io/docs/rules-engine.md)
 - [Approval Rules](https://docs.monetizenow.io/docs/approval-rules.md)
@@ -125,7 +125,7 @@
 - [Evergreen Contracts](https://docs.monetizenow.io/docs/evergreen-contracts.md)
 - [Building a SaaS billing portal](https://docs.monetizenow.io/docs/building-a-saas-billing-portal.md)
 - [Collecting Payment Information from End-Customer (Stripe)](https://docs.monetizenow.io/docs/collecting-payment-information-from-end-customer-stripe.md)
-- [Customer Portal](https://docs.monetizenow.io/docs/customer-portal.md): Allow your customers to manage their billing relationship
+- [Customer Portal](https://docs.monetizenow.io/docs/customer-portal.md)
 - [NetSuite](https://docs.monetizenow.io/docs/authentication-setup.md)
 - [Credit Memos](https://docs.monetizenow.io/docs/credit-memos.md)
 - [Payments](https://docs.monetizenow.io/docs/payments-1.md)

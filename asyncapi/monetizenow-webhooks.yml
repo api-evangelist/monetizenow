@@ -1,14 +1,21 @@
-generated: '2026-07-20'
+generated: '2026-08-13'
 method: searched
 source: >-
   https://docs.monetizenow.io/docs/webhooks,
-  https://docs.monetizenow.io/reference/webhook-payload-examples
+  https://docs.monetizenow.io/reference/webhook-payload-examples,
+  and the `info.description` webhook table carried inside MonetizeNow's own
+  published OpenAPI 3.0.3 document (see openapi/monetizenow-openapi.json).
 type: Webhooks
 description: >-
-  MonetizeNow delivers real-time webhook events for quote, contract,
-  subscription, invoice, and payment lifecycle changes so downstream systems can
-  react to quote-to-cash activity. Webhooks are configured per tenant via the
-  API/console.
+  MonetizeNow delivers real-time webhook events for account, contact, quote,
+  opportunity, offering, contract, rate, product, subscription, invoice and
+  dunning lifecycle changes so downstream systems can react to quote-to-cash
+  activity. Webhooks are configured per tenant via the API/console. MonetizeNow
+  publishes NO AsyncAPI document for this surface — the catalog below is the
+  union of the webhook table embedded in the OpenAPI `info.description` and the
+  webhook documentation pages.
+spec_type: none
+asyncapi_published: false
 envelope:
   media_type: application/json
   fields:
@@ -19,31 +26,52 @@ envelope:
     data: Event-specific payload containing the affected resource.
 signature:
   documented: false
-  note: No signature/verification header is documented in the public webhook reference.
+  note: >-
+    No signature, HMAC, or verification header is documented in the public
+    webhook reference. A consumer has no published way to verify that a delivery
+    came from MonetizeNow.
+delivery:
+  retry_policy: not published
+  ordering: not published
+  replay: not published
 docs: https://docs.monetizenow.io/reference/webhooks-1
+event_count: 30
 events:
-- account.created
-- account.updated
-- contact.created
-- contact.updated
-- quote.created
-- quote.updated
-- quote.accepted
-- quote.processed
-- quote.offering.created
-- quote.offering.updated
-- opportunity.created
-- opportunity.updated
-- subscription.created
-- subscription.created.summary
-- subscription.updated
-- invoice.created
-- invoice.paid
-- contract.created
-- contract.updated
-- product.created
-- product.updated
-- offering.created
-- offering.updated
-- rate.created
-- rate.updated
+- {event: account.created, entity: Account, occurs_when: an account is created}
+- {event: account.updated, entity: Account, occurs_when: an account is updated}
+- {event: contact.created, entity: Contact, occurs_when: a contact is created}
+- {event: contact.updated, entity: Contact, occurs_when: a contact is updated}
+- {event: quote.created, entity: Quote, occurs_when: a quote is created}
+- {event: quote.updated, entity: Quote, occurs_when: a quote is updated}
+- {event: quote.accepted, entity: Quote, occurs_when: a quote is accepted}
+- {event: quote.processed, entity: Quote, occurs_when: a quote is processed}
+- {event: quote.cancelled, entity: Quote, occurs_when: a quote is cancelled}
+- {event: quote.offering.created, entity: Quote, occurs_when: an offering is added to a quote}
+- {event: quote.offering.updated, entity: Quote, occurs_when: an offering on a quote is updated}
+- {event: quote.offering.deleted, entity: Quote, occurs_when: an offering is deleted from a quote}
+- {event: opportunity.created, entity: Opportunity, occurs_when: an opportunity is created}
+- {event: opportunity.updated, entity: Opportunity, occurs_when: an opportunity is updated}
+- {event: offering.created, entity: Offering, occurs_when: an offering is created}
+- {event: offering.updated, entity: Offering, occurs_when: an offering is updated}
+- {event: contract.created, entity: Contract, occurs_when: a contract is created}
+- {event: contract.updated, entity: Contract, occurs_when: a contract is updated}
+- {event: rate.created, entity: Rate, occurs_when: a rate is created}
+- {event: rate.updated, entity: Rate, occurs_when: a rate is updated}
+- {event: rate.deleted, entity: Rate, occurs_when: a rate is deleted}
+- {event: price.deleted, entity: Rate, occurs_when: a rate's price is deleted}
+- {event: dunning.step.tiggered, entity: Bill Group, occurs_when: a dunning step is triggered, note: 'spelling "tiggered" is MonetizeNow''s own; reproduced verbatim'}
+- {event: subscription.created, entity: Subscription, source: docs/webhooks}
+- {event: subscription.created.summary, entity: Subscription, source: docs/webhooks}
+- {event: subscription.updated, entity: Subscription, source: docs/webhooks}
+- {event: invoice.created, entity: Invoice, source: docs/webhooks}
+- {event: invoice.paid, entity: Invoice, source: docs/webhooks}
+- {event: product.created, entity: Product, source: docs/webhooks}
+- {event: product.updated, entity: Product, source: docs/webhooks}
+notes:
+- >-
+  Events carrying a `source: docs/webhooks` marker appear on the webhooks
+  documentation page but not in the OpenAPI-embedded table; the two lists have
+  drifted apart. Neither list is a machine-readable schema.
+- >-
+  RECOMMENDATION TO THE PROVIDER: publish an AsyncAPI 3.x document for this
+  surface with a message schema per event, and document a delivery signature.

@@ -1,0 +1,65 @@
+generated: '2026-08-13'
+method: searched
+probe: true
+url: https://www.monetizenow.ai/information-security-policy
+description: >-
+  MonetizeNow does not run a hosted trust center (no trust.<domain>, no
+  security.<domain>, no Vanta/Drata/SafeBase portal was found). What it publishes
+  instead is a single, substantive public Information Security Policy page that
+  states its control environment, encryption, access, SDLC, vulnerability
+  management, continuity and privacy posture. Read the certification claim
+  carefully: the page says "SOC 2 Type II-ALIGNED control environment" and that
+  the SOC 2 Type II summary and penetration-test attestation are "available to
+  customers under NDA" — that is an alignment claim plus a gated report, not a
+  published certificate. Nothing here is independently verifiable from the public
+  surface.
+certifications:
+- name: SOC 2 Type II
+  status: claimed-aligned
+  verifiable_publicly: false
+  detail: >-
+    "SOC 2 Type II-aligned control environment"; the report summary is offered to
+    customers under NDA. No certificate, auditor name, report date or audit
+    period is published.
+- name: GDPR
+  status: claimed
+  verifiable_publicly: false
+  detail: >-
+    Acts as processor; documented DSAR workflow (access, deletion, correction),
+    sub-processor erasure propagation, 30-day standard completion. A Data
+    Processing Addendum is published at
+    https://www.monetizenow.ai/legal/data-processing-addendum.
+- name: Independent penetration testing
+  status: claimed
+  verifiable_publicly: false
+  detail: At least annually, with targeted re-tests after remediation; attestation under NDA.
+controls:
+  encryption_at_rest: AES-256 via AWS KMS-managed keys (databases, volumes, object storage, backups, logs), keys segregated by environment with rotation
+  encryption_in_transit: TLS 1.2+ for external and inter-service traffic
+  secrets_management: AWS Secrets Manager / Parameter Store with least-privilege IAM and audit logging
+  identity: SSO/SAML with MFA required; RBAC/ABAC least privilege; periodic access reviews; just-in-time privilege elevation
+  secure_sdlc: peer review, SAST/DAST/SCA, container and image scanning, IaC checks, gated CI/CD
+  vulnerability_management: time-bound remediation SLAs by severity with re-scan validation
+  monitoring: centralized logging/alerting across authentication, APIs and infrastructure; 24x7 on-call; documented IR with post-incident review
+  continuity: multi-AZ, multi-region with automated backups and replication; defined RTO/RPO for Tier 1 services; annual DR exercises
+  endpoint: third-party MDM, full-disk encryption, EDR, screen-lock, patch baselines
+  hosting: AWS (physical data center controls governed by AWS); network segmentation, security groups, WAF
+related_documents:
+- {name: Data Processing Addendum, url: 'https://www.monetizenow.ai/legal/data-processing-addendum'}
+- {name: Master Services Agreement, url: 'https://www.monetizenow.ai/msa'}
+- {name: Privacy Policy, url: 'https://www.monetizenow.ai/privacy-policy'}
+- {name: Terms of Use, url: 'https://www.monetizenow.ai/terms-of-use'}
+evidence:
+- source: https://www.monetizenow.ai/information-security-policy
+  http_status: 200
+  fetched: '2026-08-13'
+  keywords: [soc 2 type ii, gdpr, penetration testing, aes-256, aws kms, dsar, rto, rpo, sub-processor]
+last_updated_by_provider: '2024-09-24'
+notes:
+- >-
+  A named certifications list is published, so a Compliance pointer is emitted —
+  but the qualifier "aligned" is deliberately preserved above. Do not restate this
+  as "SOC 2 certified".
+- >-
+  No sub-processor list, no uptime SLA and no audit report date are published.
+  status.monetizeplatform.com carries live status but no SLA target.

@@ -1,0 +1,58 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  Registry searches against npm, PyPI, RubyGems, crates.io and GitHub, plus the
+  MonetizeNow documentation index (https://docs.monetizenow.io/llms.txt).
+description: >-
+  MonetizeNow ships NO first-party client libraries. Every public registry
+  search returns zero results, the documentation index contains no occurrence of
+  "SDK", "client library" or "Postman", and the github.com/monetizenow
+  organization exists but publishes zero public repositories. The only
+  distributed package MonetizeNow ships is a Salesforce managed package, which
+  is distributed through Salesforce (AppExchange / installation URL supplied
+  during onboarding) and has no public registry entry to version-check. Every
+  documented integration path is a raw HTTPS call with an x-api-key header.
+package_count: 0
+official_sdk_count: 0
+packages: []
+non_registry_distributions:
+- name: MonetizeNow Salesforce Managed Package
+  kind: salesforce-managed-package
+  registry: salesforce
+  official: true
+  version: null
+  published: null
+  docs: https://docs.monetizenow.io/docs/salesforce-1
+  release_notes: https://docs.monetizenow.io/docs/salesforce-release-notes
+  note: >-
+    Real, first-party, and versioned by Salesforce — but distributed through
+    Salesforce rather than a package registry, so there is no unauthenticated
+    metadata endpoint to read a version or publish date from. version/published
+    recorded as null: checked, nothing publishable to record. Not a client SDK
+    for the REST API.
+- name: MonetizeNow Slackbot
+  kind: slack-app
+  registry: slack
+  official: true
+  version: null
+  published: null
+  docs: https://docs.monetizenow.io/docs/slack-approvals
+  note: >-
+    Slack app for quote approvals, installed from within MonetizeNow. No registry
+    metadata endpoint exists for it.
+registry_probes:
+- {registry: npm, query: monetizenow, endpoint: 'https://registry.npmjs.org/-/v1/search?text=monetizenow', results: 0}
+- {registry: npm, query: monetizeplatform, endpoint: 'https://registry.npmjs.org/-/v1/search?text=monetizeplatform', results: 0}
+- {registry: pypi, query: monetizenow, endpoint: 'https://pypi.org/pypi/monetizenow/json', status: 404}
+- {registry: rubygems, query: monetizenow, endpoint: 'https://rubygems.org/api/v1/search.json?query=monetizenow', results: 0}
+- {registry: crates.io, query: monetizenow, endpoint: 'https://crates.io/api/v1/crates?q=monetizenow', results: 0}
+- {registry: github, query: 'org:monetizenow', endpoint: 'https://api.github.com/orgs/monetizenow/repos', results: 0, note: 'org exists (created 2023-04-24) with public_repos: 0 and no profile metadata; ownership not independently confirmable, so no GitHubOrganization pointer is emitted'}
+notes:
+- >-
+  package_count is 0 and no SDKs pointer is emitted. This is an honest zero, not
+  an unchecked field.
+- >-
+  RECOMMENDATION TO THE PROVIDER: MonetizeNow already publishes a per-operation
+  OpenAPI 3.0.3 in its ReadMe reference (see openapi/). Generating and publishing
+  even one TypeScript and one Python client from it would close the largest single
+  ergonomics gap in this profile.

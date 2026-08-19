@@ -1,35 +1,146 @@
-generated: '2026-07-20'
-method: searched
+generated: '2026-08-13'
+method: derived
 source: >-
-  https://docs.monetizenow.io/reference/getting-started-with-your-api,
-  https://docs.monetizenow.io/reference/getaccounts, live probes of
-  https://api.monetizeplatform.com
+  openapi/monetizenow-openapi.json (derived from the 4xx/5xx responses of all 156
+  published operations), enriched from the error table in the spec's own
+  info.description and from
+  https://docs.monetizenow.io/reference/checkout.
 format: http-status
 description: >-
-  API-level error responses for the MonetizeNow REST API. The public reference
-  documents standard HTTP status semantics; a dedicated RFC 9457
-  application/problem+json envelope was not observed. This catalogs the error
-  statuses that are documented or directly observed against the API host.
+  API-level error responses for the MonetizeNow REST API. MonetizeNow does NOT
+  use RFC 9457 problem+json — there is no application/problem+json media type
+  anywhere in the published spec, no `type` URI, and no stable machine-readable
+  error identifier on the main REST surface. Errors are ordinary HTTP statuses
+  with a free-text `message`. Two error envelopes exist side by side, plus a
+  third string-enum error-code scheme that appears only on the self-service
+  checkout API.
 envelope:
   media_type: application/json
   rfc9457: false
+  primary:
+    schema: com.monytyz.billing.common.dto.ResponseDto
+    shape: '{ status: integer(int32), message: string }'
+    used_on: 400, 404, 500
+  secondary:
+    schema: ResponseDto
+    shape: '{ status: string enum of "400 BAD_REQUEST" style labels, ... }'
+    note: >-
+      A second, incompatible ResponseDto in which `status` is a STRING label
+      ("400 BAD_REQUEST") rather than an integer. Two different shapes named
+      ResponseDto are served by the same API; a generated client will collide on
+      the name and a consumer cannot rely on the type of `status`.
+  untyped:
+    note: >-
+      The majority of error responses declare `schema: {type: object}` with no
+      properties at all, so the body shape is undefined in the contract.
+coverage:
+  operations: 156
+  with_400: 93
+  with_403: 5
+  with_404: 80
+  with_409: 6
+  with_500: 143
+  with_401: 0
+  with_429: 0
+  note: >-
+    No operation documents a 401, even though every unauthenticated call to
+    api.monetizeplatform.com returns 401 {"message":"Unauthorized"} from AWS API
+    Gateway. No operation documents a 429.
 problems:
+- status: 400
+  title: Bad Request
+  detail: >-
+    The request submitted was not acceptable. Missing parameters or a malformed
+    request body will produce this error.
+  occurrences: 93
+  schema: com.monytyz.billing.common.dto.ResponseDto
+  variants:
+  - Invalid quote ID supplied.
+  - Quote state is invalid; cannot be processed.
+  - Invalid payload.
+  evidence: openapi/monetizenow-openapi.json
 - status: 401
   title: Unauthorized
   detail: >-
-    Missing or invalid x-api-key. Directly observed: unauthenticated requests to
-    api.monetizeplatform.com return 401.
-  evidence: live probe of api.monetizeplatform.com/.well-known/*
+    Missing or invalid x-api-key. Directly observed on every unauthenticated
+    request to api.monetizeplatform.com; body is {"message":"Unauthorized"} from
+    AWS API Gateway. NOT documented on any operation in the spec.
+  occurrences: 0
+  documented: false
+  evidence: live probe of https://api.monetizeplatform.com/openapi.json -> 401
+- status: 403
+  title: Forbidden
+  detail: The authenticated principal is not authorized for this resource or action.
+  occurrences: 5
+  variants:
+  - Not authorized to update contract
+  - Not authorized to view quote
+  - Principal unauthorized to archive quote.
+  - Principal unauthorized to read opportunity of supplied quote.
+  - Principal unauthorized to process quote.
+  evidence: openapi/monetizenow-openapi.json
 - status: 404
-  title: Not Found
-  detail: The requested resource or path does not exist.
-  evidence: standard REST semantics
-- status: 500
-  title: Internal Server Error
+  title: Resource not found by ID
   detail: >-
-    Server-side error; documentation instructs consumers to contact the support
-    team.
-  source_operation: https://docs.monetizenow.io/reference/getaccounts
+    The request submitted an identifier that does not match a record for the
+    target entity.
+  occurrences: 80
+  variants:
+  - Account not found.
+  - Quote not found
+  - Quote Offering not found
+  - Credit not found
+  - Credit note not found
+  - Invoice not found
+  - Usage record could not be found for the given event identifier
+  evidence: openapi/monetizenow-openapi.json
+- status: 409
+  title: Resource is not in the required state / duplicate custom id
+  detail: >-
+    The identified resource is not an eligible target — for example attempting to
+    restore an offering that has not been archived. Also returned when a
+    caller-supplied custom id already exists, which is the failure mode of the
+    custom-id idempotency model.
+  occurrences: 6
+  variants:
+  - 'Custom Id already exists'
+  - '%s: Custom Id (%s) already exists'
+  - Another opportunity has already been linked to this quote.
+  evidence: openapi/monetizenow-openapi.json
+- status: 500
+  title: Internal server error
+  detail: 'Internal server error. Please contact the support team.'
+  occurrences: 143
+  note: >-
+    Documented identically on 143 of 156 operations with no sub-classification
+    and no retry guidance.
+  evidence: openapi/monetizenow-openapi.json
+self_service_error_codes:
+  api: POST /api/selfService/checkout (provisionContract)
+  docs: https://docs.monetizenow.io/reference/checkout
+  format: string enum in the response body
+  note: >-
+    The self-service checkout API is the only MonetizeNow surface with stable,
+    machine-readable error identifiers. It is also the only surface documented
+    with TypeScript types rather than OpenAPI.
+  codes:
+  - {code: INVALID_ACCOUNT, meaning: Account ID nonexistent}
+  - {code: EMPTY_OFFERINGS, meaning: Request contains no offerings}
+  - {code: INVALID_OFFERINGS, meaning: Request contains nonexistent offerings}
+  - {code: INVALID_RATES, meaning: Request contains nonexistent rates}
+  - {code: ACCOUNT_RATE_MISMATCH, meaning: Specified rates belong to other accounts}
+  - {code: INVALID_CONTRACT_END_DATE, meaning: Specified end date of contract is greater than the start date}
+  - {code: PRICE_OFFERINGS_FAILED, meaning: Pricing of offerings failed due to validation error(s)}
+partial_success:
+  api: POST /events (recordEvents)
+  schema: EventResponse
+  shape: '{ status: SUCCESS | PARTIAL | FAILED, failedEvents: [FailedEvent] }'
+  note: >-
+    Usage ingestion is the one batch surface: a 2xx can still carry per-event
+    failures, so a consumer must inspect `status` and `failedEvents` rather than
+    trusting the status code.
 notes:
-- Per-operation error schemas are not published in a machine-readable OpenAPI at
-  a public URL; this catalog reflects documented and observed statuses only.
+- >-
+  RECOMMENDATION TO THE PROVIDER: adopt RFC 9457 application/problem+json with a
+  stable `type` URI per error, document the 401, and reconcile the two conflicting
+  ResponseDto schemas.

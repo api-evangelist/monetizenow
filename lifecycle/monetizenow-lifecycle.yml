@@ -1,12 +1,23 @@
-generated: '2026-07-20'
+generated: '2026-08-13'
 method: searched
-source: https://docs.monetizenow.io/reference/api-breaking-change-policy
+source: >-
+  https://docs.monetizenow.io/reference/api-breaking-change-policy,
+  https://status.monetizeplatform.com,
+  https://www.monetizenow.ai/release-notes
 versioning:
   scheme: version-header
+  current: not published
   detail: >-
     Major breaking changes are versioned and indicated in a version header;
-    minor changes are additive and backward compatible.
+    minor changes are additive and backward compatible. No numeric API version
+    string is published anywhere, and the OpenAPI MonetizeNow serves declares
+    info.version "v0".
   docs: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  note: >-
+    Path-level version drift exists in practice: most operations sit under /api/,
+    while a small number are published under /api/v2/ (e.g.
+    /api/v2/accounts/{accountId}/subscriptions/overview). The version header
+    policy does not explain that.
 deprecation:
   policy_url: https://docs.monetizenow.io/reference/api-breaking-change-policy
   policy: >-
@@ -15,12 +26,34 @@ deprecation:
     via documentation updates, developer announcements/newsletters, and email to
     registered API consumers.
   sunset_header: false
+  deprecation_header: false
   notice_period: not published
+  note: >-
+    Notification is entirely out-of-band (docs, newsletter, email). There is no
+    RFC 8594 Sunset or Deprecation response header, so an integration cannot
+    detect a pending removal at runtime.
 sla:
   url: null
   uptime_target: null
+  note: >-
+    No uptime target or SLA document is published. The Information Security
+    Policy states RTO/RPO objectives exist for Tier 1 services but does not
+    publish the numbers.
 status_page: https://status.monetizeplatform.com
+status_page_title: MonetizeNow Status
+changelog:
+  url: https://www.monetizenow.ai/release-notes
+  detail: changelog/monetizenow-changelog.yml
+  kind: product
+  api_changelog: false
+  latest_entry: '2025-07-11'
 deprecated_operations: []
 notes:
 - Status page verified live and titled "MonetizeNow Status" (status.monetizeplatform.com).
-- No numeric API version string or public dated changelog was found (docs /changelog is 404).
+- >-
+  The docs host has no changelog — https://docs.monetizenow.io/changelog is a
+  404. The product release-notes feed on the marketing site is the only dated
+  change record, it does not describe API changes, and it has not been updated
+  since 2025-07-11.
+- >-
+  No operation in the published OpenAPI carries `deprecated: true`.

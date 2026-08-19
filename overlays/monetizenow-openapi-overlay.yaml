@@ -1,0 +1,115 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the MonetizeNow API
+  version: 1.0.0
+extends: openapi/monetizenow-openapi.json
+x-provenance:
+  generated: '2026-08-13'
+  method: generated
+  source: >-
+    openapi/monetizenow-openapi.json — assembled 2026-08-13 from the 156
+    per-operation OpenAPI 3.0.3 fragments MonetizeNow publishes inside its own
+    ReadMe reference pages (the `# OpenAPI definition` block served on
+    https://docs.monetizenow.io/reference/<operation>.md). All 156 fragments
+    declare the same servers[] (https://api.monetizeplatform.com) and the same
+    info block; merging produced zero conflicts and the union resolves every
+    $ref with no dangling or unused schemas. The base document is left EXACTLY as
+    published — including info.title "OpenAPI definition" and info.version "v0" —
+    and every API Evangelist change lives here instead.
+  ownership_check: >-
+    servers[0].url is https://api.monetizeplatform.com, identical to the baseURL
+    MonetizeNow documents at
+    https://docs.monetizenow.io/reference/getting-started-with-your-api, and
+    info.description is entirely MonetizeNow product prose (product catalog,
+    quote-to-cash, MonetizeNow API keys). The spec is MonetizeNow's own.
+actions:
+- target: $.info
+  description: Name the document and record where the assembled spec came from.
+  update:
+    title: MonetizeNow API
+    x-apievangelist-source: https://docs.monetizenow.io/reference
+    x-apievangelist-assembled: '2026-08-13'
+    x-apievangelist-assembly: >-
+      Union of 156 per-operation OpenAPI 3.0.3 fragments published in the
+      MonetizeNow ReadMe reference. MonetizeNow does not publish a single
+      downloadable spec document.
+- target: $.info
+  description: >-
+    The published document declares info.version "v0". MonetizeNow's breaking
+    change policy says major versions are carried in a version header, so "v0"
+    is not a real API version — flag it rather than overwrite it.
+  update:
+    x-apievangelist-version-note: >-
+      info.version "v0" is a placeholder emitted by the generator, not the API
+      version. MonetizeNow versions major breaking changes via a version header
+      and publishes no version string. See lifecycle/monetizenow-lifecycle.yml.
+- target: $
+  description: >-
+    The published document declares NO securitySchemes and NO security, yet every
+    operation requires the x-api-key header. Record the real scheme our
+    authentication artifact captured without editing the provider's components.
+  update:
+    x-apievangelist-security:
+      note: >-
+        components.securitySchemes is absent from the published document. The
+        real scheme is an apiKey in the x-api-key header, tenant-wide and
+        unscoped, documented at
+        https://docs.monetizenow.io/reference/getting-started-with-your-api.
+      scheme:
+        type: apiKey
+        in: header
+        name: x-api-key
+      detail: authentication/monetizenow-authentication.yml
+- target: $
+  description: Attach the cross-cutting conventions the spec does not encode.
+  update:
+    x-apievangelist-conventions:
+      pagination:
+        style: page-number
+        params: [currentPage, pageSize]
+        component: MNPageable
+      idempotency:
+        header: null
+        mechanism: caller-supplied custom identifiers (*ByCustomId operations)
+      errors:
+        rfc9457: false
+        statuses: [400, 403, 404, 409, 500]
+      rate_limits:
+        published: false
+      detail: conventions/monetizenow-conventions.yml
+- target: $
+  description: Point at the event surface the REST document does not describe.
+  update:
+    x-apievangelist-events:
+      webhooks: 30
+      asyncapi_published: false
+      detail: asyncapi/monetizenow-webhooks.yml
+- target: $
+  description: Point at MonetizeNow's live but undocumented MCP server.
+  update:
+    x-apievangelist-mcp:
+      endpoint: https://mcp.monetizeplatform.com/mcp
+      auth: oauth
+      documented_by_provider: false
+      detail: mcp/monetizenow-mcp.yml
+- target: $.info
+  description: >-
+    Record the content gaps this pipeline can surface but must never fabricate
+    into the provider's spec.
+  update:
+    x-apievangelist-gaps:
+      operations: 156
+      operations_with_summary: 99
+      operations_without_summary: 57
+      operations_with_description: 99
+      operations_tagged: 156
+      operation_ids_unique: 156
+      operations_with_examples: 0
+      security_schemes_declared: 0
+      note: >-
+        57 of 156 operations carry no summary and no description — their
+        reference pages show only the raw path. No request or response example is
+        embedded anywhere in the document. Component schemas are named with
+        fully-qualified internal Java packages
+        (com.monytyz.billing.*), which leak implementation detail into every
+        generated client.
