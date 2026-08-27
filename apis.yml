@@ -80,23 +80,16 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 apis:
-- name: MonetizeNow API
-  description: >-
-    MonetizeNow's REST API for the full quote-to-cash lifecycle — accounts,
-    contacts, addresses, bill groups, quotes, opportunities, contracts,
-    subscriptions, invoices, payments, payment methods, credits, credit notes,
-    products, offerings, rates, price uplift configuration, usage-event
-    recording, trials, account documents for e-signature, and self-service
-    checkout. 156 operations across 124 paths. Authenticated with a tenant-wide,
-    unscoped x-api-key header; versioned via a version header with a documented
-    breaking change and deprecation policy.
+- aid: monetizenow:monetizenow-account-api
+  name: MonetizeNow Account API
+  description: Accounts track all billing and selling details for a customer.
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
+  tags:
+  - Account
   properties:
   - type: OpenAPI
-    url: openapi/monetizenow-openapi.json
-  - type: Overlay
-    url: overlays/monetizenow-openapi-overlay.yaml
+    url: openapi/monetizenow-account-api-openapi.yml
   - type: Webhooks
     url: asyncapi/monetizenow-webhooks.yml
   - type: Authentication
@@ -117,8 +110,699 @@ apis:
     url: https://docs.monetizenow.io/reference/api-breaking-change-policy
   - type: DataModel
     url: data-model/monetizenow-data-model.yml
-  - type: MCPServer
-    url: mcp/monetizenow-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-account-overview-api
+  name: MonetizeNow Account Overview API
+  description: The Account Overview API from MonetizeNow — 2 operation(s) for account overview.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Account Overview
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-account-overview-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-accountdocument-api
+  name: MonetizeNow Account Document API
+  description: The AccountDocument API from MonetizeNow — 7 operation(s) for accountdocument.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - AccountDocument
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-accountdocument-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-billgroup-api
+  name: MonetizeNow Bill Group API
+  description: >-
+    Billgroup is an object that allows you to group subscriptions. An account can have multiple bill groups
+    representing different departments, people or groups under the account. The bill group is where the
+    payment method and dunning method is linked.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - BillGroup
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-billgroup-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-contact-api
+  name: MonetizeNow Contact API
+  description: Contacts represent individual, address, and company deatils for your customers.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Contact
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-contact-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-contract-api
+  name: MonetizeNow Contract API
+  description: The Contract API from MonetizeNow — 6 operation(s) for contract.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Contract
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-contract-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-credit-api
+  name: MonetizeNow Credit API
+  description: Credits can be used to adjust account balances.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Credit
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-credit-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-creditnote-api
+  name: MonetizeNow Credit Note API
+  description: The CreditNote API from MonetizeNow — 6 operation(s) for creditnote.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - CreditNote
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-creditnote-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-invoice-api
+  name: MonetizeNow Invoice API
+  description: >-
+    An invoice is an itemized commercial document that records the products or services delivered to the
+    customer, the total amount due, and the preferred payment method.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Invoice
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-invoice-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-offering-api
+  name: MonetizeNow Offering API
+  description: >-
+    Offerings are collections of products that you can sell to customers, they can be subscriptions, one-time,
+    or minimum commit types.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Offering
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-offering-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-opportunity-api
+  name: MonetizeNow Opportunity API
+  description: The Opportunity API from MonetizeNow — 5 operation(s) for opportunity.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Opportunity
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-opportunity-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-payment-api
+  name: MonetizeNow Payment API
+  description: Payment is an object that represents an amount paid to an invoice.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Payment
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-payment-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-payment-gateway-api
+  name: MonetizeNow Payment Gateway API
+  description: Payment gateway is a service that helps customer transfer money to pay for invoices.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Payment Gateway
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-payment-gateway-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-paymentmethod-api
+  name: MonetizeNow Payment Method API
+  description: >-
+    Payment methods are entities representing the instrument used to collect payments for invoices on
+    a bill group. This can be Credit Cards, Direct Debit, ACH Credit etc.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - PaymentMethod
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-paymentmethod-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-price-uplift-configuration-api
+  name: MonetizeNow Price Uplift Configuration API
+  description: >-
+    The Price Uplift Configuration API from MonetizeNow — 1 operation(s) for price uplift configuration.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Price Uplift Configuration
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-price-uplift-configuration-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-products-api
+  name: MonetizeNow Products API
+  description: A product is an item that a business sells to its customers.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Products
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-products-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-quote-api
+  name: MonetizeNow Quote API
+  description: The Quote API from MonetizeNow — 18 operation(s) for quote.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Quote
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-quote-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-rate-api
+  name: MonetizeNow Rate API
+  description: >-
+    Rates allow you to add prices, pricing logic, currency details, and billing frequency to an offering
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Rate
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-rate-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-subscription-api
+  name: MonetizeNow Subscription API
+  description: >-
+    Subscriptions are things your customers have been sold or signed up for that can be billed on a recurring
+    basis.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Subscription
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-subscription-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-trial-api
+  name: MonetizeNow Trial API
+  description: The Trial API from MonetizeNow — 4 operation(s) for trial.
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Trial
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-trial-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
+  - type: ToolCrosswalk
+    url: mcp/monetizenow-tool-crosswalk.yml
+  - type: Conformance
+    url: conformance/monetizenow-conformance.yml
+- aid: monetizenow:monetizenow-usage-api
+  name: MonetizeNow Usage API
+  description: APIs to record, update and query usage events
+  humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
+  baseURL: https://api.monetizeplatform.com
+  tags:
+  - Usage
+  properties:
+  - type: OpenAPI
+    url: openapi/monetizenow-usage-api-openapi.yml
+  - type: Webhooks
+    url: asyncapi/monetizenow-webhooks.yml
+  - type: Authentication
+    url: authentication/monetizenow-authentication.yml
+  - type: OAuthScopes
+    url: scopes/monetizenow-scopes.yml
+  - type: Conventions
+    url: conventions/monetizenow-conventions.yml
+  - type: Idempotency
+    url: conventions/monetizenow-conventions.yml
+  - type: ErrorCatalog
+    url: errors/monetizenow-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/monetizenow-rate-limits.yml
+  - type: Lifecycle
+    url: lifecycle/monetizenow-lifecycle.yml
+  - type: Deprecation
+    url: https://docs.monetizenow.io/reference/api-breaking-change-policy
+  - type: DataModel
+    url: data-model/monetizenow-data-model.yml
   - type: ToolCrosswalk
     url: mcp/monetizenow-tool-crosswalk.yml
   - type: Conformance
