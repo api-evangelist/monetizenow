@@ -1,0 +1,1163 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI definition Bill Group API
+  version: v0
+  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+servers:
+- url: https://api.monetizeplatform.com
+tags:
+- name: BillGroup
+  description: Billgroup is an object that allows you to group subscriptions. An account can have multiple bill groups representing different departments, people or groups under the account. The bill group is where the payment method and dunning method is linked.
+paths:
+  /api/accounts/{accountId}/billGroups:
+    get:
+      tags:
+      - BillGroup
+      summary: Get billgroups for an account
+      description: Get all of the billgroups for an account with account id
+      operationId: getAllBillGroups_1
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: addressSource
+        in: query
+        schema:
+          type: string
+          example: ACCOUNT
+      - name: billDay
+        in: query
+        schema:
+          type: string
+          example: '2022-04-07'
+      - name: billingContactId
+        in: query
+        schema:
+          type: string
+          example: cntct_QEPqCDqeaVte5WzM
+      - name: collectInvoiceBalanceAutomatically
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: createDate
+        in: query
+        schema:
+          type: string
+          example: '2022-04-07'
+      - name: currency
+        in: query
+        schema:
+          type: string
+          example: USD
+      - name: customId
+        in: query
+        schema:
+          type: string
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+      - name: dunningProcessId
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+      - name: dunningStepId
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+      - name: id
+        in: query
+        schema:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+      - name: invoiceDelay
+        in: query
+        schema:
+          type: integer
+          example: 2
+      - name: invoicingFrequency
+        in: query
+        schema:
+          type: string
+          example: Monthly
+      - name: invoicingFrequencyInMonths
+        in: query
+        schema:
+          type: integer
+          example: 1
+      - name: legalEntityId
+        in: query
+        schema:
+          type: string
+          example: lgen_cf77b4252b0e4
+      - name: locked
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: modifyDate
+        in: query
+        schema:
+          type: string
+          example: '2022-04-07'
+      - name: name
+        in: query
+        schema:
+          type: string
+          example: Netflix Bill Group
+      - name: netTerms
+        in: query
+        schema:
+          type: string
+          example: NET_30
+      - name: nextInvoiceDate
+        in: query
+        schema:
+          type: string
+          example: '2022-04-07'
+      - name: purchaseOrderNumber
+        in: query
+        schema:
+          type: string
+          example: PO 12345
+      - name: registrationNumber
+        in: query
+        schema:
+          type: string
+          example: 12345
+      - name: status
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: name
+      - name: currentPage
+        in: query
+        schema:
+          type: string
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: string
+          example: 10
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'Object list retrieved '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupBillGroupListDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/billGroups/{billGroupId}:
+    get:
+      tags:
+      - BillGroup
+      summary: Get a single billgroup
+      description: Get a single billgroup information by id
+      operationId: getBillGroup_1
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: billGroupId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        example: billg_tDbC2FxuCwQoxcjm
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get bill group by account Id and billgroup Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+    put:
+      tags:
+      - BillGroup
+      summary: Update a billgroup
+      description: Update a billgroup which holds the billing information for a quote in a specific account
+      operationId: updateBillGroup
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: billGroupId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        example: billg_tDbC2FxuCwQoxcjm
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupSaveDto'
+        required: true
+      responses:
+        '200':
+          description: Update object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/billGroups/{billGroupId}/activate:
+    put:
+      tags:
+      - BillGroup
+      summary: Activate a billgroup
+      description: Activate a billgroup
+      operationId: activateBillGroup
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: billGroupId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        example: billg_tDbC2FxuCwQoxcjm
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Activate bill group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/billGroups/{billGroupId}/deactivate:
+    put:
+      tags:
+      - BillGroup
+      summary: Deactivate a billgroup
+      description: Deactivate a billgroup
+      operationId: deactivateBillGroup
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: billGroupId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        example: billg_tDbC2FxuCwQoxcjm
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Deactivate bill group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/billGroups/{billGroupId}:
+    get:
+      tags:
+      - BillGroup
+      summary: Get a single billgroup
+      description: Get a single billgroup information by id
+      operationId: getBillGroup
+      parameters:
+      - name: billGroupId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        example: billg_tDbC2FxuCwQoxcjm
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'get BillGroup by accountId and billGroupId '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+components:
+  schemas:
+    com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the billgroup
+          example: billg_tDbC2FxuCwQoxcjm
+        accountId:
+          type: string
+          description: Unique identifier for the billgroup account
+          example: acct_m0CB9LflojZxytfC
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        contractId:
+          type: string
+          description: Unique identifier for the bill group's active contract
+          example: cntct_ItU2G9ZEkUvyBX9q
+        activeContract:
+          type: boolean
+          description: A boolean field indicating whether the bill group has active contract
+          example: true
+        paymentMethodId:
+          type: string
+          description: Unique identifier for the billgroup payment method
+          example: pmtmd_vFQZjKnb7mUpDYud
+        billingContactId:
+          type: string
+          description: Unique identifier for the billgroup billing contact
+          example: cntct_E9jLE3Rz3VTGfDuM
+        billingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupContactDto'
+        shippingContactId:
+          type: string
+          description: Unique identifier for the BillGroup's shipping contact
+          example: cntct_E9jLE3Rz3VTGfDuM
+        shippingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupContactDto'
+        customId:
+          type: string
+          description: A user provided identifier for the billgroup
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        name:
+          type: string
+          description: Name of the billgroup
+          example: Default
+        billDay:
+          type: integer
+          description: This is the specific day of the month on which the bill will be generated
+          format: int32
+          example: 14
+        netTerms:
+          type: string
+          description: Net terms of an invoice
+          example: NET_10
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        invoicingFrequency:
+          type: string
+          description: Billgroup invoice frequency like DAILY, MONTHLY, QUARTERLY, SEMIANNUALLY, ANNUALLY OR CUSTOM
+          example: MONTHLY
+          enum:
+          - DAILY
+          - MONTHLY
+          - QUARTERLY
+          - SEMIANNUALLY
+          - ANNUALLY
+          - CUSTOM
+        invoicingFrequencyInMonths:
+          type: integer
+          description: Invoicing frequency in month of an invoice
+          format: int32
+          example: 12
+        nextInvoiceDate:
+          type: string
+          description: Next invoice date of an invoice
+          format: date
+          example: '2024-09-24'
+        previousInvoiceDate:
+          type: string
+          description: Previous invoice date of an invoice
+          format: date
+          example: '2022-09-24'
+        status:
+          type: string
+          description: Billgroup status like ACTIVE, INACTIVE, CANCELED OR SUSPENDED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - SUSPENDED
+        dunningProcessId:
+          type: string
+          description: Unique identifier for the dunning process
+          example: '14'
+        dunningStepId:
+          type: string
+          description: Unique identifier for the dunning step
+          example: dunpr_zZMnmty165PC1dKa
+        invoicingFailed:
+          type: boolean
+          description: A boolean field indicating that invoice failed or not
+          example: true
+        collectInvoiceBalanceAutomatically:
+          type: boolean
+          description: If you want to override the global payment configuration and prevent collection at invoice time
+          example: false
+        locked:
+          type: boolean
+        purchaseOrderNumber:
+          type: string
+          description: The corresponding purchase order number
+          example: '124556789'
+        autoEmailInvoice:
+          type: boolean
+          description: Automatically send invoice by email if true
+          example: false
+        invoiceCreation:
+          type: string
+          description: The invoice creation type like AUTOMATIC or MANUAL
+          example: AUTOMATIC
+          enum:
+          - AUTOMATIC
+          - MANUAL
+        invoiceDelay:
+          type: integer
+          description: Delay associated with invoice creation with minimum zero and maximum two days
+          format: int32
+          example: 1
+        firstInvoiceCreationStrategy:
+          type: string
+          description: First invoice creation strategy when invoice is being created manually
+          example: GENERATE_ON_QUOTE_PROCESSED
+          enum:
+          - FOLLOW_EXISTING_SETTINGS
+          - GENERATE_ON_QUOTE_PROCESSED
+        defaultPaymentGateway:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayBasicDto'
+        ccEmails:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        legalEntityId:
+          type: string
+          description: Unique identifier for the legal entity. Account's legal entity will be linked if no legal entity is specified
+          example: lgen_e33f05749111f
+        currency:
+          type: string
+          description: Currency for the BillGroup. It is the ISO 4217 assigned three-digit code. If no currency is provided, the account's default currency will be set
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the bill group
+          description: User configured custom fields for the bill group
+        errorStatus:
+          type: string
+          description: BillGroup status shows if there’s an error. It can be 'NONE' or 'TAX_CALCULATION_ERROR'.
+          enum:
+          - NONE
+          - TAX_CALCULATION_ERROR
+          - OVERINVOICING_HEURISTIC_FAILED
+        addressSource:
+          type: string
+          description: Source of the bill groups address
+          enum:
+          - ACCOUNT
+          - CONTACT
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        vatNumber:
+          type: string
+          description: The corresponding vat number
+        registrationNumber:
+          type: string
+          description: The corresponding registration number
+        contractRenewalDatePolicy:
+          type: string
+          enum:
+          - FOLLOW_CONTRACT_START_DATE
+          - FOLLOW_BILL_GROUP_BILL_DAY
+        accountingDateCalculationStrategy:
+          type: string
+          description: The accounting date calculation strategy
+          enum:
+          - BILLING_ANNIVERSARY
+          - CLOSEST_DATE_WITHIN_INVOICING_PERIOD
+          - CLOSEST_DATE_WITHIN_USAGE_PERIOD
+        linkedAccountId:
+          type: string
+          description: Unique identifier for the billgroup account
+        billingAccountId:
+          type: string
+          description: Unique identifier for the billgroup account
+    com.monytyz.billing.customer.dto.address.SourcedAddressData:
+      required:
+      - addressSource
+      type: object
+      properties:
+        addressSource:
+          type: string
+          enum:
+          - ACCOUNT
+          - CONTACT
+      discriminator:
+        propertyName: addressSource
+    com.monytyz.billing.customer.dto.account.AccountDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the account
+          example: acct_m0CB9LflojZxytfC
+        customId:
+          type: string
+          description: A user provided identifier for the account
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        isTestAccount:
+          type: boolean
+          description: Boolean value indicating if the account is a test account
+        locale:
+          type: string
+          description: 'Locale of the account. Example: en_US'
+          example: en
+        accountName:
+          type: string
+          description: Name of the account.
+          example: Netflix
+        defaultCurrency:
+          type: string
+          description: Represents the currency of the account. It is the ISO 4217 assigned three-digit code. If no currency is specified, the tenant's default currency will be set for the account.
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        status:
+          type: string
+          description: Status of the account. An account can be ACTIVE, INACTIVE, CANCELED or SUSPENDED
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          description: Type of the account. An account can be CUSTOMER, PARTNER
+          enum:
+          - CUSTOMER
+          - PARTNER
+        primaryContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        noteCount:
+          type: integer
+          description: Number of notes that is associated with this account
+          format: int64
+          example: 100000
+        defaultLegalEntityId:
+          type: string
+          description: Legal entity ID for this account. Default legal entity will be used as default when no legal entity is specified
+          example: lgen_e33f05749111f
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the account
+          description: User configured custom fields for the account
+        taxEntityUseCode:
+          type: string
+          description: Tax entity use code for the account
+          example: M
+        taxExemptionNumber:
+          type: string
+          description: Tax exemption number for the account
+          example: F60730EE-4127-49C0-B490-CBDF29BFD235
+        defaultDunningProcessId:
+          type: string
+          description: Optional dunning process id for the account
+          example: dunpr_tDbC2FxuCwQoxcjm
+        ccEmails:
+          type: string
+          description: A list of account level email addresses to which the dunning mail will be copied
+          example: abc@gmail.com,def@gmail.com
+    com.monytyz.billing.customer.dto.contact.ContactDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        customId:
+          type: string
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        accountId:
+          type: string
+          description: Account ID where the contact belongs
+          example: acct_m0CB9LflojZxytfC
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        status:
+          type: string
+          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+          - ARCHIVED
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type: string
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type: string
+          description: Title of the contact
+          example: CFO
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        primary:
+          type: boolean
+          description: Boolean value indicating if the contact is primary or not
+          example: true
+        defaultESigner:
+          type: boolean
+          description: Boolean value indicating if the contact is default eSigner
+          example: false
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the contact
+          description: User configured custom fields for the contact
+        esigner:
+          type: boolean
+      description: Primary contact information for this account
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayBasicDto:
+      required:
+      - defaultGateway
+      - description
+      - id
+      - locked
+      - status
+      - testGateway
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          example: pmtgw_EMfbqn56S9h9CweL
+        description:
+          type: string
+          example: Description about PGW
+        type:
+          type: string
+          example: STRIPEV2
+          enum:
+          - STRIPEV2
+          - BRAINTREE
+          - WORLDPAY
+          - AUTHNET
+          - ADYEN
+          - VANTIV
+          - PAYPAL_PRO
+          - PAYMENT_TECH
+          - TEST_PASS
+          - TEST_FAIL
+        status:
+          type: string
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - ARCHIVED
+        testGateway:
+          type: boolean
+          example: false
+        defaultGateway:
+          type: boolean
+          example: true
+        locked:
+          type: boolean
+          example: true
+    com.monytyz.billing.customer.dto.billgroup.BillGroupContactDto:
+      required:
+      - email
+      - fullName
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+      description: Shipping contact details
+    com.monytyz.billing.customer.dto.billgroup.BillGroupBillGroupListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.dto.billgroup.BillGroupSaveDto:
+      required:
+      - billDay
+      - name
+      - netTerms
+      - status
+      type: object
+      properties:
+        paymentMethodId:
+          type:
+          - string
+          - 'null'
+          description: Unique identifier for the billgroup payment method
+          example: pmtmd_vFQZjKnb7mUpDYud
+        defaultPaymentGatewayId:
+          type:
+          - string
+          - 'null'
+          description: Unique identifier for the payment gateway. If found empty, BE will set the default one.
+          example: pmtgw_EMfbqn56S9h9CweL
+        contactId:
+          type: string
+          description: Unique identifier for the billgroup billing contact
+          example: ctrct_QEPqCDqeaVte5WzM
+        shippingContactId:
+          type: string
+          description: Unique identifier for the BillGroup's shipping contact
+          example: ctrct_QEPqCDqeaVte5WzM
+        customId:
+          type:
+          - string
+          - 'null'
+          description: A user provided identifier for the billgroup
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        name:
+          type: string
+          description: Name of the billgroup
+          example: Demo BillGroup
+        billDay:
+          type: integer
+          description: This is the specific day of the month on which the bill will be generated
+          format: int32
+          example: 5
+        netTerms:
+          type: string
+          description: Net terms of an invoice
+          example: NET_30
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        status:
+          type: string
+          description: Billgroup status like ACTIVE, INACTIVE, CANCELED OR SUSPENDED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - SUSPENDED
+        dunningProcessId:
+          type:
+          - string
+          - 'null'
+          description: Unique identifier for the dunning process
+          example: dunpr_QEPqCDqeaVte5WzM
+        collectInvoiceBalanceAutomatically:
+          type: boolean
+          description: If you want to override the global payment configuration and prevent collection at invoice time
+          example: false
+        autoEmailInvoice:
+          type: boolean
+          description: Automatically send invoice by email if true
+          example: false
+        invoiceCreation:
+          type: string
+          description: The invoice creation type like AUTOMATIC or MANUAL
+          example: AUTOMATIC
+          enum:
+          - AUTOMATIC
+          - MANUAL
+        invoiceDelay:
+          type: integer
+          description: Delay associated with invoice creation with minimum zero and maximum two days
+          format: int32
+          example: 0
+        firstInvoiceCreationStrategy:
+          type: string
+          description: First invoice creation strategy when invoice is being created manually
+          example: GENERATE_ON_QUOTE_PROCESSED
+          enum:
+          - FOLLOW_EXISTING_SETTINGS
+          - GENERATE_ON_QUOTE_PROCESSED
+        ccEmails:
+          uniqueItems: true
+          type: array
+          description: A list of email addresses to which the invoice will be copied
+          example: '[''abc@gmail.com'', ''def@gmail.com'']'
+          items:
+            type: string
+            description: A list of email addresses to which the invoice will be copied
+            example: '[''abc@gmail.com'', ''def@gmail.com'']'
+        purchaseOrderNumber:
+          type: string
+          description: The corresponding purchase order number
+          example: PO-123
+        legalEntityId:
+          type: string
+          description: Unique identifier for the legal entity. Account's legal entity will be linked if no legal entity is specified
+          example: lgen_e33f05749111f
+        currency:
+          type: string
+          description: Currency for the BillGroup. It is the ISO 4217 assigned three-digit code. If no currency is provided, the account's default currency will be set
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        addressData:
+          oneOf:
+          - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData.Account'
+          - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData.Contact'
+        vatNumber:
+          type: string
+          description: The corresponding vat number
+          example: '12345678901'
+        registrationNumber:
+          type: string
+          description: The corresponding registration number
+          example: 123-45-6789
+        accountingDateCalculationStrategy:
+          type: string
+          description: The accounting date calculation strategy
+          example: BILLING_ANNIVERSARY
+          enum:
+          - BILLING_ANNIVERSARY
+          - CLOSEST_DATE_WITHIN_INVOICING_PERIOD
+          - CLOSEST_DATE_WITHIN_USAGE_PERIOD
+        linkedAccountId:
+          type:
+          - string
+          - 'null'
+          description: Linked account ID for this bill group
+          example: acct_linked123
+        billingAccountId:
+          type:
+          - string
+          - 'null'
+          description: Billing account ID for this bill group
+          example: acct_billing456
+      example: "\n            {\n                \"name\": \"Demo BillGroup\",\n                \"contactId\": \"cont_KmKel632AmnUp\",\n                \"defaultPaymentGatewayId\": \"pmgw_MkAi8Eno4mXta\",\n                \"paymentMethodId\": \"pmtmd_vFQZjKnb7mUpDYud\",\n                \"dunningProcessId\": \"dunpr_QEPqCDqeaVte5WzM,\n                \"billDay\": 1,\n                \"status\": \"ACTIVE\",\n                \"collectInvoiceBalanceAutomatically\": true,\n                \"customId\": \"6b48c3f6-852e-4cd7-b4f4-a35ad60ad483\",\n                \"netTerms\": \"NET_30\",\n                \"autoEmailInvoice\": true,\n                \"invoiceCreation\": \"AUTOMATIC\",\n                \"invoiceDelay\": 0\n            }\n            "
+    com.monytyz.billing.customer.dto.address.SourcedAddressData.Contact:
+      required:
+      - addressSource
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData'
+    com.monytyz.billing.customer.dto.address.SourcedAddressData.Account:
+      required:
+      - addressSource
+      - billingAddressId
+      - shippingAddressId
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData'
+      - type: object
+        properties:
+          shippingAddressId:
+            type: string
+          billingAddressId:
+            type: string
+    com.monytyz.billing.customer.dto.address.AddressDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the address
+          example: addr_bkoY6dCoLRblllsJ
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street, Apartment 3D
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Billing address for the account

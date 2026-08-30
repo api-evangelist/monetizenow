@@ -1,0 +1,188 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI definition Price Uplift Configuration API
+  version: v0
+  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+servers:
+- url: https://api.monetizeplatform.com
+tags:
+- name: Price Uplift Configuration
+paths:
+  /api/priceUplift/{priceUpliftConfigurationId}:
+    get:
+      tags:
+      - Price Uplift Configuration
+      operationId: getPriceUpliftConfiguration
+      parameters:
+      - name: priceUpliftConfigurationId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: pucfg_cHCX0TFN79rDgDyg
+        example: pucfg_cHCX0TFN79rDgDyg
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get price uplift configuration by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                type: object
+    put:
+      tags:
+      - Price Uplift Configuration
+      operationId: updatePriceUpliftConfiguration
+      parameters:
+      - name: priceUpliftConfigurationId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: pucfg_cHCX0TFN79rDgDyg
+        example: pucfg_cHCX0TFN79rDgDyg
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ApplyToAllProducts'
+              - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ProductSpecific'
+        required: true
+      responses:
+        '200':
+          description: Update price uplift configuration by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.ProductConfiguration:
+      required:
+      - amount
+      - percentageType
+      - productId
+      type: object
+      properties:
+        productId:
+          type: string
+        amount:
+          type: number
+          format: double
+        percentageType:
+          type: string
+          enum:
+          - MAX
+          - FIXED
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - APPLY_TO_ALL_PRODUCTS
+          - PRODUCT_SPECIFIC
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigDto:
+      required:
+      - id
+      - locked
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+          - APPLY_TO_ALL_PRODUCTS
+          - PRODUCT_SPECIFIC
+        locked:
+          type: boolean
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ApplyToAllProducts:
+      required:
+      - amount
+      - percentageType
+      - type
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData'
+      - type: object
+        properties:
+          percentageType:
+            type: string
+            enum:
+            - MAX
+            - FIXED
+          amount:
+            type: number
+            format: double
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ProductSpecific:
+      required:
+      - productConfigurations
+      - type
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData'
+      - type: object
+        properties:
+          productConfigurations:
+            uniqueItems: true
+            type: array
+            items:
+              $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.ProductConfiguration'

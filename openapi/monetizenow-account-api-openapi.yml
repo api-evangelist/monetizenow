@@ -1,0 +1,5443 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI definition Account API
+  version: v0
+  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+servers:
+- url: https://api.monetizeplatform.com
+tags:
+- name: Account
+  description: Accounts track all billing and selling details for a customer.
+paths:
+  /api/accounts:
+    post:
+      tags:
+      - Account
+      summary: Create account
+      description: Create account
+      operationId: createAccount
+      parameters:
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountSaveDto'
+        required: true
+      responses:
+        '201':
+          description: Create Object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        '409':
+          description: Custom Id already exists
+        '500':
+          description: Internal server error. Please contact the support team.
+    get:
+      tags:
+      - Account
+      summary: Get all accounts
+      description: Get all account as a list
+      operationId: getAccounts
+      parameters:
+      - name: id
+        in: query
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+      - name: accountName
+        in: query
+        schema:
+          type: string
+          example: USW Sales
+      - name: customId
+        in: query
+        schema:
+          type: string
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+      - name: status
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+      - name: createDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: modifyDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: id
+      - name: currentPage
+        in: query
+        schema:
+          type: string
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: string
+          example: 10
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'Object list retrieved '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountListDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/customId/{customId}:
+    get:
+      tags:
+      - Account
+      summary: Get account
+      description: Get account by custom Id
+      operationId: getAccountByCustomId
+      parameters:
+      - name: customId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get object by custom id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+    put:
+      tags:
+      - Account
+      summary: Update account
+      description: Update account by custom Id
+      operationId: updateAccountByCustomId
+      parameters:
+      - name: customId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountSaveDto'
+        required: true
+      responses:
+        '200':
+          description: Update object by custom id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/search:
+    get:
+      tags:
+      - Account
+      summary: Search accounts by id, customId, and name
+      description: Get all that meet the search criteria account as a list
+      operationId: searchAccounts
+      parameters:
+      - name: query
+        in: query
+        schema:
+          type: string
+          example: query string
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: id
+      - name: currentPage
+        in: query
+        schema:
+          type: string
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: string
+          example: 10
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'Object list retrieved '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountListDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}:
+    get:
+      tags:
+      - Account
+      summary: Get account
+      description: Get account by account Id
+      operationId: getAccountByAccountId
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: get account by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+    put:
+      tags:
+      - Account
+      summary: Update account
+      description: Update account by Id
+      operationId: updateAccountByAccountId
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountSaveDto'
+        required: true
+      responses:
+        '200':
+          description: Update object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/activate:
+    put:
+      tags:
+      - Account
+      summary: Activate account
+      description: Activate account
+      operationId: activateAccount
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Activating object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/addresses:
+    put:
+      tags:
+      - Account
+      summary: Update account's shipping or billing address
+      description: Update account's shipping or billing address
+      operationId: updateAccountAddresses
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: type
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressSaveDto'
+        required: true
+      responses:
+        '200':
+          description: Update object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.common.dto.ResponseDto'
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.common.dto.ResponseDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/cancel:
+    put:
+      tags:
+      - Account
+      summary: Cancel account
+      description: Cancel account
+      operationId: cancelAccount
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Cancel object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.common.dto.ResponseDto'
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.common.dto.ResponseDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/manualBatchRun:
+    post:
+      tags:
+      - Account
+      summary: Run Billing Batch for Account
+      description: Run a Batch Manually
+      operationId: manualBatchRun_1
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '202':
+          description: Scheduled billing batch for account
+components:
+  schemas:
+    com.monytyz.billing.customer.dto.address.AddressSnapshotData:
+      required:
+      - city
+      - country
+      - description
+      - line1
+      - line2
+      - postalCode
+      - state
+      - type
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressType'
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+        description:
+          type: string
+    com.monytyz.billing.invoice.model.InvoiceCreditCompositeId:
+      type: object
+    com.monytyz.billing.subscription.model.SubscriptionItem:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        subscription:
+          $ref: '#/components/schemas/com.monytyz.billing.subscription.model.Subscription'
+        product:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Product'
+        description:
+          type: string
+        units:
+          type: number
+          format: double
+        charges:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.charge.model.Charge'
+        applicableItemDiscounts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.subscription.model.SubscriptionItemDiscount'
+        customPrice:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.CustomPrice'
+        quoteItemId:
+          type: string
+        active:
+          type: boolean
+    com.monytyz.billing.customer.model.Contact:
+      required:
+      - customFields
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        customId:
+          type: string
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - ARCHIVED
+        fullName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        title:
+          type: string
+        internal:
+          type: boolean
+        primary:
+          type: boolean
+        defaultESigner:
+          type: boolean
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        esigner:
+          type: boolean
+      description: the billing contact for the order.
+    com.monytyz.billing.customer.model.BillGroup:
+      required:
+      - netTerms
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        contracts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.contract.model.Contract'
+        paymentMethod:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.model.PaymentMethod'
+        billingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        shippingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        name:
+          type: string
+        customId:
+          type: string
+        billDay:
+          type: integer
+          format: int32
+        netTerms:
+          type: string
+          description: Default Net terms for this bill group
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        invoicingFrequency:
+          type: string
+          enum:
+          - DAILY
+          - MONTHLY
+          - QUARTERLY
+          - SEMIANNUALLY
+          - ANNUALLY
+          - CUSTOM
+        invoicingFrequencyInMonths:
+          type: integer
+          format: int32
+        nextInvoiceDate:
+          type: string
+          format: date
+        previousInvoiceDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - SUSPENDED
+        dunningStatus:
+          type: string
+          enum:
+          - CANCELED
+          - GOOD_STANDING
+          - IN_DUNNING
+          - SUSPENDED
+        dunningProcessId:
+          type: string
+        dunningStepId:
+          type: string
+        nextDunningStepDate:
+          type: string
+          format: date
+        dunningStartDate:
+          type: string
+          format: date
+        invoicingFailed:
+          type: boolean
+        collectInvoiceBalanceAutomatically:
+          type: boolean
+          description: If you want to override the global payment configuration and prevent collection at invoice time
+        autoEmailInvoice:
+          type: boolean
+        purchaseOrderNumber:
+          type: string
+          description: The corresponding purchase order number
+        invoiceCreation:
+          type: string
+          description: The invoice creation type
+          enum:
+          - AUTOMATIC
+          - MANUAL
+        invoiceDelay:
+          type: integer
+          description: Delay associated with invoice creation
+          format: int32
+        firstInvoiceCreationStrategy:
+          type: string
+          description: First invoice creation strategy when invoice is being created manually
+          enum:
+          - FOLLOW_EXISTING_SETTINGS
+          - GENERATE_ON_QUOTE_PROCESSED
+        subscriptions:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.subscription.model.Subscription'
+        defaultPaymentGateway:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.model.PaymentGateway'
+        ccEmails:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        legalEntity:
+          $ref: '#/components/schemas/com.monytyz.billing.configuration.model.LegalEntity'
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        errorStatus:
+          type: string
+          enum:
+          - NONE
+          - TAX_CALCULATION_ERROR
+          - OVERINVOICING_HEURISTIC_FAILED
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        addressSource:
+          type: string
+        originalQuoteId:
+          type: string
+        vatNumber:
+          type: string
+          description: The corresponding VAT number of this Bill group
+        registrationNumber:
+          type: string
+          description: The corresponding Registration number of this Bill group
+        billingVersion:
+          $ref: '#/components/schemas/com.monytyz.billing.data.billing.BillingVersion'
+        latestInvoiceId:
+          type: string
+        contractRenewalDatePolicy:
+          type: string
+          enum:
+          - FOLLOW_CONTRACT_START_DATE
+          - FOLLOW_BILL_GROUP_BILL_DAY
+        accountingDateCalculationStrategy:
+          type: string
+          description: Accounting date calculation strategy
+          enum:
+          - BILLING_ANNIVERSARY
+          - CLOSEST_DATE_WITHIN_INVOICING_PERIOD
+          - CLOSEST_DATE_WITHIN_USAGE_PERIOD
+        linkedAccount:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        billingAccountId:
+          type: string
+          description: Billing account ID for this bill group
+        locked:
+          type: boolean
+        canceled:
+          type: boolean
+        contractManaged:
+          type: boolean
+        activePendingContracts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.contract.model.Contract'
+        eligiblePaymentMethod:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.model.PaymentMethod'
+        invoiceable:
+          type: boolean
+    com.monytyz.billing.data.cpq.BillingAnchorData:
+      required:
+      - day
+      - month
+      type: object
+      properties:
+        day:
+          type: integer
+          format: int32
+        month:
+          type: integer
+          format: int32
+    com.monytyz.billing.quote.model.QuoteOffering:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        quote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        items:
+          uniqueItems: true
+          type: array
+          description: Quote items that are part of this quote group
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteItem'
+        offeringId:
+          type: string
+          description: The Offering ID for this item, null if a stand alone one time order.
+        rateId:
+          type: string
+          description: The Rate ID for this item, null if a stand alone one time order.
+        priceUpliftConfigId:
+          type: string
+          description: The PriceUpliftConfig Id for this offering, null if price uplift isn't configured
+        subscriptionId:
+          type: string
+          description: The subscription ID for this item
+        description:
+          type: string
+        debitProrationMultiplier:
+          type: number
+        debit:
+          type: number
+        creditProrationMultiplier:
+          type: number
+        credit:
+          type: number
+        amount:
+          type: number
+        amountWithoutDiscount:
+          type: number
+        discountAmount:
+          type: number
+        discountPercent:
+          type: number
+        previousId:
+          type: string
+        previousRateId:
+          type: string
+        previousAmount:
+          type: number
+        position:
+          type: integer
+          format: int32
+        offeringName:
+          type: string
+        offeringDescription:
+          type: string
+        rateName:
+          type: string
+        rateDescription:
+          type: string
+        billingFrequency:
+          type: string
+          enum:
+          - DAILY
+          - MONTHLY
+          - QUARTERLY
+          - SEMIANNUALLY
+          - ANNUALLY
+          - ONETIME
+          - CUSTOM
+        billingFrequencyInMonths:
+          type: integer
+          format: int32
+        subscriptionTiming:
+          type: string
+          example: ADVANCE
+          enum:
+          - ADVANCE
+          - ARREARS
+        mrr:
+          type: number
+        arr:
+          type: number
+        incrementalMrr:
+          type: number
+        incrementalArr:
+          type: number
+        endDate:
+          type: string
+          format: date
+        effectiveDate:
+          type: string
+          format: date
+        parentQuoteOfferingId:
+          type: string
+        subscriptionChangeId:
+          type: string
+        accountSpecificRate:
+          type: boolean
+        options:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteOfferingOptions'
+        role:
+          type: string
+          enum:
+          - STANDARD
+          - REFERENCE
+        root:
+          type: boolean
+        billingPeriod:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.internal.quote.BillingPeriod'
+        reference:
+          type: boolean
+        editable:
+          type: boolean
+        removed:
+          type: boolean
+        ramp:
+          type: boolean
+      description: Represents an offering on quote, which is a group of quote items
+    com.monytyz.billing.credit.model.CreditNoteSource:
+      required:
+      - source
+      type: object
+      properties:
+        source:
+          type: string
+    com.monytyz.billing.quote.model.QuoteItemDiscount:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        quoteItem:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteItem'
+        discount:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Discount'
+        discountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        discountAmountOrPercent:
+          type: number
+        calculatedDiscount:
+          type: number
+      description: Discounts that are finally applied to this quote item
+    com.monytyz.billing.payment.model.PaymentMethod:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        billGroups:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        paymentMethodName:
+          type: string
+          description: Name for this payment method
+        customId:
+          type: string
+          description: a provided id to reference this payment method uniquely
+        defaultPaymentMethod:
+          type: boolean
+        creditCardType:
+          type: string
+          enum:
+          - VISA
+          - MASTERCARD
+          - DISCOVER
+          - AMEX
+          - DINERS
+          - JCB
+          - UNIONPAY
+        creditCardNumber:
+          type: string
+        lastFour:
+          type: string
+        expirationYear:
+          type: integer
+          format: int32
+        expirationMonth:
+          type: integer
+          format: int32
+        cvcValidation:
+          type: boolean
+        addressValidation:
+          type: boolean
+        postalValidation:
+          type: boolean
+        paymentMethodType:
+          type: string
+          description: The type of payment method
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        creditCardGateWayToken:
+          type: string
+        gatewayCustomerId:
+          type: string
+          description: a provided id to reference this payment method uniquely
+        description:
+          type: string
+          description: The description for this payment method
+        status:
+          type: string
+          description: The status for this payment method
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - EXPIRED
+        oneTime:
+          type: boolean
+          description: False if this payment method should be available for further user
+        testPaymentMethod:
+          type: boolean
+          description: True if this payment method is associated with a test/staging payment gateway
+        externalPaymentMethodId:
+          type: string
+        accountType:
+          type: string
+        bankName:
+          type: string
+        routingNumber:
+          type: string
+        swiftCode:
+          type: string
+        accountNumber:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        title:
+          type: string
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+        cancellationDate:
+          type: string
+          format: date-time
+        cancellationReason:
+          type: string
+        active:
+          type: boolean
+        notActive:
+          type: boolean
+        paymentMethodAllowed:
+          type: boolean
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.quote.model.QuoteItem:
+      required:
+      - position
+      - quoteOffering
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        customId:
+          type: string
+          description: Id provided by the external system
+        quoteOffering:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteOffering'
+        quoteItemDiscounts:
+          uniqueItems: true
+          type: array
+          description: Discounts that are finally applied to this quote item
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteItemDiscount'
+        customPrice:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.CustomPrice'
+        productId:
+          type: string
+          description: The product ID for this item
+        productName:
+          type: string
+          description: The product name of the item
+        productDescription:
+          type: string
+          description: The product description of the item
+        productType:
+          type: string
+          description: The product type of the item
+          enum:
+          - ADVANCE
+          - ARREARS
+          - USAGE
+          - ONETIME
+          - ONETIME_PREPAID_CREDIT
+          - MIN_COMMIT
+        subscriptionItemId:
+          type: string
+          description: The subscription item ID for this item
+        endDate:
+          type: string
+          format: date
+        isAddon:
+          type: boolean
+        addonId:
+          type: string
+        quantity:
+          type: number
+          format: double
+        unitPriceAfterDiscount:
+          type: number
+        unitPrice:
+          type: number
+        debitProrationMultiplier:
+          type: number
+        debit:
+          type: number
+        creditProrationMultiplier:
+          type: number
+        credit:
+          type: number
+        contractAmount:
+          type: number
+        amount:
+          type: number
+        amountWithoutDiscount:
+          type: number
+        customDiscountId:
+          type: string
+        customDiscountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        customDiscountAmountOrPercent:
+          type: number
+        customDiscountName:
+          type: string
+        customDiscountDescription:
+          type: string
+        discountAmount:
+          type: number
+        discountPercent:
+          type: number
+        previousDiscountAmount:
+          type: number
+        previousDiscountPercent:
+          type: number
+        mrr:
+          type: number
+        arr:
+          type: number
+        incrementalMrr:
+          type: number
+        incrementalArr:
+          type: number
+        amendmentStatus:
+          type: string
+          enum:
+          - ADDED
+          - NO_CHANGE
+          - REMOVED
+          - UPDATED
+        previousItemId:
+          type: string
+        previousAmount:
+          type: number
+        previousQuantity:
+          type: number
+          format: double
+        previousCustomPriceId:
+          type: string
+        previousCustomDiscountId:
+          type: string
+        previousCustomDiscountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        previousCustomDiscountAmountOrPercent:
+          type: number
+        options:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.internal.quoteitem.QuoteItemOptions'
+        position:
+          type: integer
+          format: int32
+        notes:
+          type: string
+        customDiscountLifecyclePolicies:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - EXCLUDE_FROM_RENEWAL
+        included:
+          type: boolean
+        unchanged:
+          type: boolean
+      description: An individual line on a quote, each item represents a product, discount, or fee
+    com.monytyz.billing.quote.v2.core.DateData:
+      required:
+      - billingAnchorConfig
+      - effectiveDate
+      - length
+      - previousLength
+      - startDateSource
+      - term
+      type: object
+      properties:
+        length:
+          type: integer
+          format: int32
+        billingAnchorConfig:
+          $ref: '#/components/schemas/com.monytyz.billing.data.cpq.BillingAnchorConfig'
+        term:
+          $ref: '#/components/schemas/com.monytyz.billing.data.cpq.ContractTerm'
+        effectiveDate:
+          type: string
+          format: date
+        startDateSource:
+          type: string
+          enum:
+          - ORIGINAL_CONTRACT_START
+          - AT_TIME_OF_SIGNING
+          - MANUAL
+        previousLength:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.model.ContactSnapshot.AddressSnapshot:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        description:
+          type: string
+    com.monytyz.billing.customer.model.CompanyInfoSnapshot.CompanyInfoAddressSnapshot:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+    com.monytyz.billing.dealroom.model.DealRoomESignContactId:
+      required:
+      - contactId
+      - dealRoomId
+      type: object
+      properties:
+        contactId:
+          type: string
+        dealRoomId:
+          type: string
+    com.monytyz.billing.contract.model.Contract:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+          description: Internal (unique) id
+        owner:
+          type: string
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        billGroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        latestQuote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        quotes:
+          type: array
+          description: All quotes for this contract, including open ones
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        status:
+          type: string
+          description: Contract status
+          enum:
+          - ACTIVE
+          - CANCELED
+          - PENDING
+          - FINISHED
+        startDate:
+          type: string
+          description: The date when this contract comes into effect first
+          format: date
+        endDate:
+          type: string
+          description: The date when this contract ends
+          format: date
+        endAction:
+          type: string
+          description: Action to take when this contract ends
+          enum:
+          - MANUAL_RENEW
+          - RENEW
+          - CANCEL
+        renewalContractLength:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.renewal.RenewalContractLength'
+        autoRenewalNoticePeriod:
+          type: integer
+          format: int32
+        totalValue:
+          type: number
+          description: '''total value'' of the contract; sum of Closed Won quotes'' contract amounts'
+        renewed:
+          type: boolean
+        previousContractId:
+          type: string
+          description: The previous contract that this contract is a renewal of
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        cancelled:
+          type: boolean
+        v2MigratedQuote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        contractTerm:
+          $ref: '#/components/schemas/com.monytyz.billing.data.cpq.ContractTerm'
+        autoRenewable:
+          type: boolean
+        endActionCancel:
+          type: boolean
+        contractFinished:
+          type: boolean
+    com.monytyz.billing.catalog.model.FieldValueOverride:
+      required:
+      - fieldName
+      - userGivenValue
+      type: object
+      properties:
+        fieldName:
+          type: string
+        userGivenValue:
+          type: string
+    com.monytyz.billing.quote.model.QuoteOfferingOptions:
+      required:
+      - priceDisplay
+      type: object
+      properties:
+        priceDisplay:
+          type: string
+          enum:
+          - PRODUCT
+          - OFFERING
+    com.monytyz.billing.payment.model.PaymentGateway:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - ARCHIVED
+        type:
+          type: string
+          enum:
+          - STRIPEV2
+          - BRAINTREE
+          - WORLDPAY
+          - AUTHNET
+          - ADYEN
+          - VANTIV
+          - PAYPAL_PRO
+          - PAYMENT_TECH
+          - TEST_PASS
+          - TEST_FAIL
+        endpointOverride:
+          type: string
+          description: If you don't want to use the default endpoint provided by a gateway you can override here for mocking/testing
+        testGateway:
+          type: boolean
+          description: By setting this to true this gateway will not use a real gateway and will succeed or fail based on test credit card numbers
+        description:
+          type: string
+        secretKey:
+          type: string
+        publicKey:
+          type: string
+        defaultGateway:
+          type: boolean
+          description: If set to true this gateway will be used by default for payment methods of the gateway type
+        authAmount:
+          type: number
+          deprecated: true
+        authOnNew:
+          type: boolean
+          deprecated: true
+        authOnUpdate:
+          type: boolean
+          deprecated: true
+        acceptVisa:
+          type: boolean
+          deprecated: true
+        acceptMastercard:
+          type: boolean
+          deprecated: true
+        acceptAmex:
+          type: boolean
+          deprecated: true
+        acceptDiscover:
+          type: boolean
+          deprecated: true
+        acceptJCB:
+          type: boolean
+          deprecated: true
+        acceptDiners:
+          type: boolean
+          deprecated: true
+        locked:
+          type: boolean
+        webhookId:
+          type: string
+        webhookSecret:
+          type: string
+        allowedPaymentMethods:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSupport'
+        paymentConfiguration:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfigurations'
+        active:
+          type: boolean
+        notActive:
+          type: boolean
+    com.monytyz.billing.catalog.model.jpa.Rate:
+      required:
+      - currency
+      - name
+      - offering
+      - revenueChannels
+      - status
+      - subscriptionTiming
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        customId:
+          type: string
+        parent:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.jpa.Rate'
+        offering:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Offering'
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Price'
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        billingFrequency:
+          type: string
+          enum:
+          - DAILY
+          - MONTHLY
+          - QUARTERLY
+          - SEMIANNUALLY
+          - ANNUALLY
+          - ONETIME
+          - CUSTOM
+        billingFrequencyInMonths:
+          type: integer
+          format: int32
+        subscriptionTiming:
+          type: string
+          example: ADVANCE
+          enum:
+          - ADVANCE
+          - ARREARS
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        accountSpecificRate:
+          type: boolean
+          description: if this rate can only be applied to a certain account, it will be hidden from GET rate results unless you specify it in a query param
+        accountId:
+          type: string
+        usageBillingFrequency:
+          type: string
+          enum:
+          - MONTHLY
+          - QUARTERLY
+          - ANNUALLY
+          - SEMIANNUALLY
+        locked:
+          type: boolean
+        quotable:
+          type: boolean
+        internalDescription:
+          type: string
+        options:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.RateOptions'
+        revenueChannels:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - SELF_SERVICE
+            - SALES
+        priceDisplayOption:
+          type: string
+          enum:
+          - PRODUCT
+          - OFFERING
+        customRateOrPrices:
+          type: boolean
+    com.monytyz.billing.credit.model.Credit:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+          description: Internal (unique) id
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        billGroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        creditNote:
+          $ref: '#/components/schemas/com.monytyz.billing.credit.model.CreditNote'
+        prepaidInvoiceItem:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceItem'
+        prepaidProduct:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Product'
+        status:
+          type: string
+          description: Credit status
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - VOID
+          - EXPIRED
+          - APPLIED
+        type:
+          type: string
+          description: Credit type
+          enum:
+          - CREDIT_NOTE
+          - SERVICE
+          - PREPAID
+        currency:
+          type: string
+          description: Currency
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        amount:
+          type: number
+          description: Amount
+        amountApplied:
+          type: number
+          description: Amount applied
+          deprecated: true
+        amountRemaining:
+          type: number
+          description: Amount remaining
+          deprecated: true
+        expirationDate:
+          type: string
+          description: Expiration date, if any, for this credit
+          format: date
+        reason:
+          type: string
+          description: Credit creation reason
+        name:
+          type: string
+          description: Name given to this credit
+        voidReason:
+          type: string
+          description: Voiding reason, if any for this credit.
+        invoiceCredits:
+          type: array
+          deprecated: true
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceCredit'
+        appliedDate:
+          type: string
+          description: Date when this credit was applied
+          format: date
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        sourceType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.SourceType'
+        sourceId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.SourceId'
+        fullyAppliedDate:
+          type: string
+          format: date-time
+        transactableAppliedAmount:
+          type: number
+        transactableAmount:
+          type: number
+    com.monytyz.billing.catalog.model.UsageType:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        name:
+          type: string
+        pluralName:
+          type: string
+        description:
+          type: string
+        unitName:
+          type: string
+        decimalPlaces:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+    com.monytyz.billing.subscription.model.Subscription:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        referenceId:
+          type: string
+        customId:
+          type: string
+        billGroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        offering:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Offering'
+        rate:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.jpa.Rate'
+        subscriptionItems:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.subscription.model.SubscriptionItem'
+        description:
+          type: string
+        nextBillDate:
+          type: string
+          format: date
+        nextUsageBillDate:
+          type: string
+          format: date
+        addOn:
+          type: boolean
+        billingStatus:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - PENDING
+          - SUSPENDED
+        provisioningStatus:
+          type: string
+          enum:
+          - CANCELED
+          - PENDING
+          - PROVISIONED
+          - SUSPENDED
+          - INACTIVE
+          - DELETED
+        periodStartDate:
+          type: string
+          format: date-time
+        periodEndDate:
+          type: string
+          format: date-time
+        usagePeriodStart:
+          type: string
+          format: date-time
+        usagePeriodEnd:
+          type: string
+          format: date-time
+        prorationDate:
+          type: string
+          format: date
+        mrr:
+          type: number
+        firstPaidDate:
+          type: string
+          format: date
+        quoteOfferingId:
+          type: string
+          description: The ID of the quote offering that was most recently used to create/update this subscription.
+        billingVersion:
+          type: string
+        canceled:
+          type: boolean
+    com.monytyz.billing.payment.dto.paymentgateway.AmountConfiguration:
+      required:
+      - currency
+      type: object
+      properties:
+        currency:
+          type: string
+          description: Currency to which the amount configuration applies
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        minimum:
+          type: number
+          description: Minimum payment amount allowed for payment type and currency
+          example: 25
+        maximum:
+          type: number
+          description: Maximum payment amount allowed for payment type and currency
+          example: 500
+      description: Minimum and maximum amounts for payment type per currency
+    com.monytyz.billing.customer.dto.address.AddressSaveDto:
+      required:
+      - city
+      - country
+      - description
+      - line1
+      - line2
+      - postalCode
+      - state
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        description:
+          type: string
+      description: Address of the contact
+    com.monytyz.billing.quote.v2.core.QuoteCreationSource:
+      required:
+      - serialized
+      type: object
+      properties:
+        serialized:
+          type: string
+    com.monytyz.billing.invoice.model.Invoice:
+      required:
+      - customFields
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        userId:
+          type: string
+        accountCompanyName:
+          type: string
+          description: a snapshot of the account's company name at the time of invoicing.
+        fromCompanyInfo:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.CompanyInfoSnapshot'
+        billingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        billingContactSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.ContactSnapshot'
+        shippingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        shippingContactSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.ContactSnapshot'
+        billGroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        previousInvoice:
+          type: string
+        invoiceItems:
+          uniqueItems: true
+          type: array
+          description: the invoice items that are part of this invoice.
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceItem'
+        payments:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.model.Payment'
+        invoicingDate:
+          type: string
+          description: The date at which this invoice is active if created in a non-active status, the date at whichit's created if it was created in an active status.
+          format: date
+        currency:
+          type: string
+          description: The currency for this invoice, only one currency per-invoice.
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        locale:
+          type: string
+          description: The locale for this invoice to use for internationalization.
+        startDate:
+          type: string
+          description: The billing period start date for this invoice.
+          format: date
+        endDate:
+          type: string
+          description: The billing period end date for this invoice.
+          format: date
+        usageStartDate:
+          type: string
+          description: The usage billing period start date for this invoice.
+          format: date
+        usageEndDate:
+          type: string
+          description: The usage billing period end date for this invoice.
+          format: date
+        orderId:
+          type: string
+          description: The corresponding order ID if this invoice was created as part of a one time order.
+        quoteId:
+          type: string
+          description: The corresponding quote ID if this invoice was created from a quote.
+        status:
+          type: string
+          description: The status of this invoice, see InvoiceStatus for possible values.
+          enum:
+          - DRAFT
+          - CANCELED
+          - UNPAID
+          - PENDING
+          - PAID
+          - REVERSED
+        testAccount:
+          type: boolean
+          description: If this invoice was created by a test account, collection won't be possible using a productionpayment processor.
+        dueDate:
+          type: string
+          description: The date in which this invoice is due in full.
+          format: date
+        amount:
+          type: number
+          description: The amount due as part of this invoice, this is the sum of all the line items amounts.
+        amountWithoutTax:
+          type: number
+          description: The amount due as part of this invoice not including tax, this is the sum of all the line items amounts.
+        tax:
+          type: number
+          description: Total tax due as part of this invoice.
+        exchangeRate:
+          type: number
+          description: The exchange rate at time of invoicing against the base currency you have set.
+        amountDue:
+          type: number
+          description: The amount that is still due if a partial payment was applied to this invoice.
+        amountPaid:
+          type: number
+          description: The amount paid, when this value is the same as the amount field, this invoice is considered paid
+        paidDate:
+          type: string
+          description: The date on which this invoice was considered paid in full
+          format: date
+        collectionAttempts:
+          type: integer
+          description: The number of collection attempts that have been made against this invoice
+          format: int32
+          deprecated: true
+        netTerms:
+          type: string
+          description: Net terms for this invoice
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        netTermsDays:
+          type: integer
+          description: The net terms days that have been applied to this invoice, this is used to determine if an invoice is past due
+          format: int32
+        recreatedInvoice:
+          type: boolean
+          description: True if this invoice has been void and recreated
+        amountWrittenOff:
+          type: number
+          description: The amount that has been writed off of this invoice, this is the sum of all item amounts that have been written off
+        amountCredited:
+          type: number
+          description: The amount credited if this invoice had a credit that was applied
+        pastDue:
+          type: boolean
+          description: This is true if the invoice is past due
+        amountWithoutDiscount:
+          type: number
+        discount:
+          type: number
+        contractId:
+          type: string
+        purchaseOrderNumber:
+          type: string
+          description: The corresponding purchase order number
+        invoiceTerms:
+          type: string
+        lastSent:
+          type: string
+          format: date-time
+        paymentInstruction:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.dto.PaymentInstruction'
+        billDate:
+          type: string
+          format: date
+        invoiceCredits:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceCredit'
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        taxStatus:
+          type: string
+          enum:
+          - NOT_APPLICABLE
+          - CALCULATED
+          - FAILED
+          - FINALIZED_WITH_ERROR
+        taxError:
+          type: string
+        taxCommitted:
+          type: boolean
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        shippingAddressLine1:
+          type: string
+        shippingAddressLine2:
+          type: string
+        shippingAddressCity:
+          type: string
+        shippingAddressState:
+          type: string
+        shippingAddressCountry:
+          type: string
+        shippingAddressPostalCode:
+          type: string
+        shippingAddressDescription:
+          type: string
+        billingAddressLine1:
+          type: string
+        billingAddressLine2:
+          type: string
+        billingAddressCity:
+          type: string
+        billingAddressState:
+          type: string
+        billingAddressCountry:
+          type: string
+        billingAddressPostalCode:
+          type: string
+        billingAddressDescription:
+          type: string
+        invoiceNumber:
+          type: string
+        originalQuoteId:
+          type: string
+        billingVersion:
+          type: string
+        creditRebilledTargetInvoiceId:
+          type: string
+        creditRebilledSourceInvoiceId:
+          type: string
+        creditRebilledTimestamp:
+          type: string
+          format: date-time
+        invoiceType:
+          type: string
+          enum:
+          - REBILLED
+          - ONETIME
+          - INCREMENTAL
+          - RECURRING
+        vatNumber:
+          type: string
+          description: The corresponding VAT number regarding this invoice
+        registrationNumber:
+          type: string
+          description: The corresponding Registration number regarding this invoice
+        migrated:
+          type: boolean
+        invoiceMemo:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceMetadata'
+        accountingDate:
+          type: string
+          format: date
+        canceled:
+          type: boolean
+        unpaid:
+          type: boolean
+        finalized:
+          type: boolean
+        draft:
+          type: boolean
+        paid:
+          type: boolean
+        taxEstimatedInDraft:
+          type: boolean
+        oneTimeInvoice:
+          type: boolean
+        shippingAddressDto:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        billingAddressDto:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        invoiceEmailSent:
+          type: boolean
+      description: The core financial object, subscriptions, orders, activation fees, all are grouped by bill groupto created an invoice.
+    com.monytyz.billing.catalog.model.CustomPrice:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        unitAmount:
+          minimum: 0
+          type: number
+        referenceObjectType:
+          type: string
+          enum:
+          - QUOTE_ITEM
+        referenceObjectId:
+          type: string
+        type:
+          type: string
+          enum:
+          - USER_SPECIFIED
+          - SYSTEM_DERIVED
+      description: Optional custom price for entity
+    com.monytyz.billing.order.model.Order:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+          - NEW
+          - AMENDMENT
+          - RENEWAL
+        quote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        invoice:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.Invoice'
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        billingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        billGroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        amount:
+          type: number
+          description: The total dollar value of this order
+        amountWithoutTax:
+          type: number
+          description: The total pre-tax dollar value of this order
+        discountAmount:
+          type: number
+          description: The total discount amount for this order
+        discountPercent:
+          type: number
+          description: The total percentage discount amount for this order
+        amountWithoutDiscount:
+          type: number
+          description: The total amount of this quote without discount
+        documentLocation:
+          type: string
+        status:
+          type: string
+          description: The status of this quote, see QuoteStatus for possible values.
+          enum:
+          - DRAFT
+          - CANCELED
+          - PENDING
+          - PROCESSED
+          - EXPIRED
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        netTerms:
+          type: string
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        orderOfferings:
+          uniqueItems: true
+          type: array
+          description: Order offerings that are part of this order.
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.order.model.OrderOffering'
+        notes:
+          uniqueItems: true
+          type: array
+          description: Notes that are set on this order.
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.order.model.OrderNote'
+        contractStartDate:
+          type: string
+          description: The date on which the services in the order need to start
+          format: date
+        contractAmendmentDate:
+          type: string
+          description: The date on which the services in the order need to be amended
+          format: date
+        contractEndDate:
+          type: string
+          description: The date on which the services in the order need to end
+          format: date
+        billDate:
+          type: string
+          format: date
+      description: Corresponding order
+    com.monytyz.billing.order.model.OrderOffering:
+      required:
+      - order
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        order:
+          $ref: '#/components/schemas/com.monytyz.billing.order.model.Order'
+        items:
+          uniqueItems: true
+          type: array
+          description: Order items that are part of this order offering
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.order.model.OrderItem'
+        quoteOfferingId:
+          type: string
+          description: Corresponding Quote Offering Id
+        offeringId:
+          type: string
+          description: The Offering ID for this item, null if a stand alone one time order.
+        rateId:
+          type: string
+          description: The Rate ID for this item, null if a stand alone one time order.
+        subscriptionId:
+          type: string
+          description: The subscription ID for this item
+        endDate:
+          type: string
+          format: date
+        description:
+          type: string
+        debitProrationMultiplier:
+          type: number
+        debit:
+          type: number
+        creditProrationMultiplier:
+          type: number
+        credit:
+          type: number
+        amount:
+          type: number
+        amountWithoutDiscount:
+          type: number
+        discountAmount:
+          type: number
+        discountPercent:
+          type: number
+        amendmentStatus:
+          type: string
+          enum:
+          - ADDED
+          - NO_CHANGE
+          - REMOVED
+          - UPDATED
+        previousId:
+          type: string
+        previousRateId:
+          type: string
+        previousAmount:
+          type: number
+        effectiveDate:
+          type: string
+          format: date
+        parentQuoteOfferingId:
+          type: string
+        subscriptionChangeId:
+          type: string
+        subscriptionTiming:
+          type: string
+          example: ADVANCE
+          enum:
+          - ADVANCE
+          - ARREARS
+        cancelled:
+          type: boolean
+        futureDatedAmendment:
+          type: boolean
+        currentOrPastDatedAmendment:
+          type: boolean
+        futureDatedNewSubscription:
+          type: boolean
+        futureDated:
+          type: boolean
+        unchanged:
+          type: boolean
+        currentOrPastDated:
+          type: boolean
+      description: Represents an offering on order, which is a group of order items
+    com.monytyz.billing.quote.model.AmendmentVersion:
+      required:
+      - versionString
+      type: object
+      properties:
+        versionString:
+          type: string
+    com.monytyz.billing.subscription.model.SubscriptionItemDiscount:
+      type: object
+      properties:
+        id:
+          type: string
+        subscriptionItem:
+          $ref: '#/components/schemas/com.monytyz.billing.subscription.model.SubscriptionItem'
+        discount:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Discount'
+        applicableDiscountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        applicableDiscountAmount:
+          type: number
+    com.monytyz.billing.customer.model.Address:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        description:
+          type: string
+        countryUSA:
+          type: boolean
+      description: The address object, can be attached to Contacts
+    com.monytyz.billing.catalog.model.OfferingProductId:
+      required:
+      - offeringId
+      - productId
+      type: object
+      properties:
+        offeringId:
+          type: string
+        productId:
+          type: string
+    com.monytyz.billing.quote.model.QuoteESignContactId:
+      type: object
+      properties:
+        contactId:
+          type: string
+        quoteId:
+          type: string
+    com.monytyz.billing.invoice.dto.PaymentInstruction:
+      required:
+      - accountNumber
+      - bankName
+      - routingNumber
+      - swiftCode
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        bankName:
+          type: string
+        routingNumber:
+          type: string
+        swiftCode:
+          type: string
+      description: Stores the instruction for payment if any
+    com.monytyz.billing.configuration.dto.legalEntity.InvoiceTerms:
+      required:
+      - currencyTerms
+      type: object
+      properties:
+        currencyTerms:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.configuration.dto.legalEntity.CurrencyWiseInvoiceTerms'
+    com.monytyz.billing.dealroom.dto.Document:
+      required:
+      - sections
+      type: object
+      properties:
+        sections:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.dealroom.dto.Section'
+    com.monytyz.billing.customer.model.CompanyInfoSnapshot:
+      required:
+      - addressFormat
+      type: object
+      properties:
+        id:
+          type: string
+        snapshotTimestamp:
+          type: string
+          format: date-time
+        name:
+          type: string
+        legalEntityId:
+          type: string
+        customId:
+          type: string
+        logoStorageId:
+          type: string
+        email:
+          type: string
+        addressFormat:
+          type: string
+          enum:
+          - US_FORMAT
+          - EUROPEAN_FORMAT
+        addressSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.CompanyInfoSnapshot.CompanyInfoAddressSnapshot'
+      description: a snapshot of the company issuing the invoice, at the time of invoicing.
+    com.monytyz.billing.common.dto.ResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+    com.monytyz.billing.payment.model.Refund:
+      required:
+      - account
+      - amount
+      - currency
+      - description
+      - id
+      - payment
+      - reason
+      - sourceId
+      - sourceType
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        externalId:
+          type: string
+          deprecated: true
+        payment:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.model.Payment'
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        amount:
+          type: number
+        status:
+          type: string
+          enum:
+          - SUCCEEDED
+          - PENDING
+          - FAILED
+          - CANCELED
+        description:
+          type: string
+        referenceNo:
+          type: string
+        settledDate:
+          type: string
+          format: date-time
+        gatewayReference:
+          type: string
+        sourceId:
+          type: string
+        sourceType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.SourceType'
+        reason:
+          type: string
+          deprecated: true
+          enum:
+          - BILLING_ERROR
+          - SERVICE_ISSUE
+          - CANCELLATION
+          - ADJUSTMENT
+          - OTHER
+        otherReason:
+          type: string
+          deprecated: true
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+    com.monytyz.billing.dealroom.model.DealRoomESignContact:
+      required:
+      - contact
+      - dealRoom
+      - id
+      - role
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/com.monytyz.billing.dealroom.model.DealRoomESignContactId'
+        contact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        dealRoom:
+          $ref: '#/components/schemas/com.monytyz.billing.dealroom.model.DealRoom'
+        role:
+          type: string
+          enum:
+          - PRIMARY_SIGNER
+          - SECONDARY_SIGNER
+          - CARBON_COPY
+    com.monytyz.billing.order.model.OrderItem:
+      required:
+      - orderOffering
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        orderOffering:
+          $ref: '#/components/schemas/com.monytyz.billing.order.model.OrderOffering'
+        productId:
+          type: string
+          description: The Product ID for this item
+        sku:
+          type: string
+          description: The SKU of the product
+        subscriptionItemId:
+          type: string
+          description: The subscription item ID for this item
+        quoteItemId:
+          type: string
+          description: Corresponding QuoteItem ID for this item
+        endDate:
+          type: string
+          format: date
+        description:
+          type: string
+        isAddon:
+          type: boolean
+        addonId:
+          type: string
+        quantity:
+          type: number
+          format: double
+        unitPriceAfterDiscount:
+          type: number
+        unitPrice:
+          type: number
+        debitProrationMultiplier:
+          type: number
+        debit:
+          type: number
+        creditProrationMultiplier:
+          type: number
+        credit:
+          type: number
+        contractAmount:
+          type: number
+        amount:
+          type: number
+        amountWithoutDiscount:
+          type: number
+        discountAmount:
+          type: number
+        discountPercent:
+          type: number
+        customDiscountId:
+          type: string
+        customDiscountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        customDiscountAmountOrPercent:
+          type: number
+        amendmentStatus:
+          type: string
+          enum:
+          - ADDED
+          - NO_CHANGE
+          - REMOVED
+          - UPDATED
+        previousItemId:
+          type: string
+        previousAmount:
+          type: number
+        previousQuantity:
+          type: number
+          format: double
+        previousCustomDiscountId:
+          type: string
+        previousCustomDiscountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        previousCustomDiscountAmountOrPercent:
+          type: number
+        customPriceId:
+          type: string
+        previousCustomPriceId:
+          type: string
+      description: An individual line on an order. Each item represents a product, discount, or fee
+    com.monytyz.billing.quote.model.QuoteConditionalTerms:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        ruleId:
+          type: string
+          format: uuid
+        quote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        terms:
+          type: string
+        displayOrder:
+          type: integer
+          format: int32
+        editableOnQuote:
+          type: boolean
+        ruleName:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+        edited:
+          type: boolean
+    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSupport:
+      required:
+      - enabled
+      - method
+      type: object
+      properties:
+        method:
+          type: string
+          description: Payment method type like CREDIT_CARD, DIRECT_DEBIT, ACH_CREDIT etc
+          example: DIRECT_DEBIT
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        enabled:
+          type: boolean
+          description: A boolean field indicating that the payment method type should be enabled or not
+          example: true
+      description: A list of allowed payment methods
+    com.monytyz.billing.catalog.model.Product:
+      required:
+      - customFields
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        customId:
+          type: string
+        financeId:
+          type: string
+        offeringProducts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.OfferingProduct'
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+        productType:
+          type: string
+          enum:
+          - ADVANCE
+          - ARREARS
+          - USAGE
+          - ONETIME
+          - ONETIME_PREPAID_CREDIT
+          - MIN_COMMIT
+        usageTypes:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.UsageType'
+        sku:
+          type: string
+        locked:
+          type: boolean
+        recognitionMethod:
+          type: string
+          enum:
+          - IMMEDIATE
+          - EVENLY_MONTHLY_IN_ADVANCE
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        taxItemCode:
+          type: string
+        taxExempt:
+          type: boolean
+        prePaidCreditConfig:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
+        notTaxExempt:
+          type: boolean
+      description: Product associated with the credit note
+    com.monytyz.billing.credit.model.CreditNote:
+      required:
+      - customFields
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+          description: Internal (unique) id
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        billGroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        invoice:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.Invoice'
+        credit:
+          $ref: '#/components/schemas/com.monytyz.billing.credit.model.Credit'
+        creditNoteItems:
+          uniqueItems: true
+          type: array
+          description: Credit note items that are part of this credit note
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.credit.model.CreditNoteItem'
+        description:
+          type: string
+          description: Credit note description
+        type:
+          type: string
+          description: Credit note type
+          enum:
+          - ADJUSTMENT
+          - WRITE_OFF
+        status:
+          type: string
+          description: Credit note status
+          enum:
+          - APPLIED
+          - VOID
+        amount:
+          type: number
+          description: Amount
+          deprecated: true
+        amountWithoutTax:
+          type: number
+        tax:
+          type: number
+        taxCalculationStatus:
+          type: string
+          enum:
+          - NOT_APPLICABLE
+          - CALCULATED
+          - FAILED
+          - FINALIZED_WITH_ERROR
+        taxCalculationError:
+          type: string
+        refundable:
+          type: boolean
+          description: Is the credit corresponding to this credit note refundable?
+          deprecated: true
+        currency:
+          type: string
+          description: The currency for this credit note, only one currency per-credit note.
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        billingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        billingContactSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.ContactSnapshot'
+        shippingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        shippingContactSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.ContactSnapshot'
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        shippingAddressLine1:
+          type: string
+        shippingAddressLine2:
+          type: string
+        shippingAddressCity:
+          type: string
+        shippingAddressState:
+          type: string
+        shippingAddressCountry:
+          type: string
+        shippingAddressPostalCode:
+          type: string
+        shippingAddressDescription:
+          type: string
+        billingAddressLine1:
+          type: string
+        billingAddressLine2:
+          type: string
+        billingAddressCity:
+          type: string
+        billingAddressState:
+          type: string
+        billingAddressCountry:
+          type: string
+        billingAddressPostalCode:
+          type: string
+        billingAddressDescription:
+          type: string
+        voidReason:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/com.monytyz.billing.credit.model.CreditNoteMetadata'
+        shippingAddressInfo:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressSnapshotData'
+        sourceType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.SourceType'
+        sourceId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.SourceId'
+        fullyAppliedDate:
+          type: string
+          format: date-time
+        transactableAppliedAmount:
+          type: number
+        transactableAmount:
+          type: number
+      description: Corresponding credit note, if credit is for credit note
+    com.monytyz.billing.transactable.SourceId:
+      required:
+      - value
+      type: object
+      properties:
+        value:
+          type: string
+    com.monytyz.billing.quote.model.internal.quote.BillingPeriod:
+      type: object
+      properties:
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+    com.monytyz.billing.dealroom.dto.Section:
+      required:
+      - contents
+      - key
+      type: object
+      properties:
+        key:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        contents:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.dealroom.dto.DealRoomContent'
+    com.monytyz.billing.dunning.model.DunningProcess:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        name:
+          type: string
+        dunningSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.dunning.model.DunningStep'
+        defaultProcess:
+          type: boolean
+    com.monytyz.billing.catalog.model.Price:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        from:
+          type: integer
+          format: int64
+        to:
+          type: integer
+          format: int64
+        amount:
+          minimum: 0
+          type: number
+        description:
+          type: string
+        priceModel:
+          type: string
+          enum:
+          - VOLUME
+          - TIERED
+          - FLAT
+          - CUSTOM
+          - PERCENT_OF_TOTAL
+        rateId:
+          type: string
+        productId:
+          type: string
+    com.monytyz.billing.data.billing.BillingVersion:
+      required:
+      - version
+      type: object
+      properties:
+        version:
+          type: string
+    com.monytyz.billing.invoice.model.InvoiceItem:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        invoice:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.Invoice'
+        subscriptionId:
+          type: string
+        referenceId:
+          type: string
+        subscription:
+          type: boolean
+        quoteItemId:
+          type: string
+        productId:
+          type: string
+        productName:
+          type: string
+        offeringId:
+          type: string
+        offeringName:
+          type: string
+        offeringDescription:
+          type: string
+        offeringType:
+          type: string
+          enum:
+          - SUBSCRIPTION
+          - ONETIME
+          - MIN_COMMIT
+          - CUSTOM_PERCENT_OF_TOTAL
+        rateId:
+          type: string
+        subscriptionItemId:
+          type: string
+        rateName:
+          type: string
+        multiTier:
+          type: boolean
+        productType:
+          type: string
+          enum:
+          - ADVANCE
+          - ARREARS
+          - USAGE
+          - ONETIME
+          - ONETIME_PREPAID_CREDIT
+          - MIN_COMMIT
+        description:
+          type: string
+        isAddon:
+          type: boolean
+        addonId:
+          type: string
+        quantity:
+          type: number
+          format: double
+        amount:
+          type: number
+        amountWithoutTax:
+          type: number
+        tax:
+          type: number
+        previousQuantity:
+          type: number
+          format: double
+        unitPrice:
+          type: number
+        amountCredited:
+          type: number
+        amountWrittenOff:
+          type: number
+        writeOffDate:
+          type: string
+          format: date
+        priceModel:
+          type: string
+          enum:
+          - VOLUME
+          - TIERED
+          - FLAT
+          - CUSTOM
+          - PERCENT_OF_TOTAL
+        amountWithoutDiscount:
+          type: number
+        discount:
+          type: number
+        periodStartDate:
+          type: string
+          format: date
+        periodEndDate:
+          type: string
+          format: date
+        prorationMultiplier:
+          type: number
+        minCommitAvailableAmount:
+          type: number
+        minCommitAdditionalBilledAmount:
+          type: number
+        financeId:
+          type: string
+        lineNumber:
+          type: integer
+          format: int32
+        priceDisplayOption:
+          type: string
+          enum:
+          - PRODUCT
+          - OFFERING
+        discounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceItemDiscount'
+      description: the invoice items that are part of this invoice.
+    com.monytyz.billing.quote.model.Quote:
+      required:
+      - startDateSource
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+          description: Internal (unique) id
+        owner:
+          type: string
+        customId:
+          type: string
+          description: Id provided by the external system
+        type:
+          type: string
+          enum:
+          - NEW
+          - AMENDMENT
+          - RENEWAL
+        newQuoteType:
+          type: string
+          description: Types of new quotes
+          enum:
+          - NET_NEW
+          - MANUAL_RENEWAL
+          - EARLY_RENEWAL
+        migrated:
+          type: boolean
+          description: Migration data
+        description:
+          type: string
+          description: Quote description
+        order:
+          $ref: '#/components/schemas/com.monytyz.billing.order.model.Order'
+        contract:
+          $ref: '#/components/schemas/com.monytyz.billing.contract.model.Contract'
+        previousContract:
+          $ref: '#/components/schemas/com.monytyz.billing.contract.model.Contract'
+        originalQuote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        previousQuote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        companyInfoSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.CompanyInfoSnapshot'
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        secondaryAccount:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        billingAccountId:
+          type: string
+          description: Account Id that drives billing associated with this quote
+        primaryContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        primaryContactSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.ContactSnapshot'
+        billingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        billingContactSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.ContactSnapshot'
+        billGroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        opportunity:
+          $ref: '#/components/schemas/com.monytyz.billing.opportunity.model.Opportunity'
+        expirationDate:
+          type: string
+          description: The date on which this quote becomes invalid
+          format: date
+        approvalSubmittedAt:
+          type: string
+          description: The date/time on which this quote was submitted for approval
+          format: date-time
+        approvalGrantedAt:
+          type: string
+          description: The date/time on which this quote was approved
+          format: date-time
+        credit:
+          type: number
+          description: The total credit issued against this quote
+        contractAmount:
+          type: number
+          description: The total dollar value of this quote
+        amount:
+          type: number
+          description: Amount to be paid each invoice
+        amountWithoutTax:
+          type: number
+          description: The total pre-tax dollar value of this quote
+        discountAmount:
+          type: number
+          description: The total discounted amount of this quote
+        amountWithoutDiscount:
+          type: number
+          description: The total amount of this quote without discount
+        discountPercent:
+          type: number
+          description: Calculated discount percent for the overall quote
+        documentLocation:
+          type: string
+        documentUrl:
+          type: string
+        status:
+          type: string
+          description: The status of this quote, see QuoteStatus for possible values
+          enum:
+          - DRAFT
+          - REVIEW
+          - APPROVED
+          - DENIED
+          - SENT
+          - ACCEPTED
+          - ACCEPTED_ADMIN_EDITABLE
+          - PROCESSED
+          - CANCELED
+          - EXPIRED
+          - ARCHIVED
+        manualAcceptanceReason:
+          type: string
+          description: Reason quote was manually accepted
+        cancellationReason:
+          type: string
+          description: Optional reason associated with the Canceled status
+          enum:
+          - EXPIRED
+          - CUSTOMER_DECLINED
+          - DUPLICATE
+          - BY_USER
+          - SUPERSEDED_BY_PROCESSED_QUOTE
+          - BY_MIGRATION
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        netTerms:
+          type: string
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        quoteOfferings:
+          uniqueItems: true
+          type: array
+          description: Quote offerings that are part of this quote
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteOffering'
+        notes:
+          uniqueItems: true
+          type: array
+          description: Notes for this Quote
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteNote'
+        contractStartDate:
+          type: string
+          description: The date on which the services in the quote need to start
+          format: date
+        originalContractStartDate:
+          type: string
+          description: The date on which the services in the quote were originally slated to start
+          format: date
+        contractAmendmentDate:
+          type: string
+          description: The amended date on which the services in the quote need to start
+          format: date
+        contractEndDate:
+          type: string
+          description: The date on which the services in the quote need to end
+          format: date
+        contractLength:
+          type: integer
+          description: Length of the contract in months
+          format: int32
+        contractTerms:
+          type: string
+          description: Contract terms
+        contractEndAction:
+          type: string
+          enum:
+          - MANUAL_RENEW
+          - RENEW
+          - CANCEL
+        renewalTermLength:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.renewal.RenewalTermLength'
+        autoRenewalNoticePeriod:
+          type: integer
+          format: int32
+        signedDocumentStorageId:
+          type: string
+        sowDocumentStorageId:
+          type: string
+        approvals:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteApproval'
+        validations:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteValidation'
+        eSignContacts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteESignContact'
+        eSignContactSnapshots:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteESignContactSnapshot'
+        signingOrder:
+          type: string
+          enum:
+          - INTERNAL_FIRST
+          - EXTERNAL_FIRST
+          - EXTERNAL_ONLY
+          - INSTANTANEOUS
+        showProration:
+          type: boolean
+        showCredits:
+          type: boolean
+        showPricePerUnit:
+          type: boolean
+        showOfferingDescription:
+          type: boolean
+        showProductDescription:
+          type: boolean
+        showPricing:
+          type: boolean
+        showDiscount:
+          type: boolean
+        showBillingSchedule:
+          type: boolean
+        showBillingFrequency:
+          type: boolean
+        showPriorContractOnAmendments:
+          type: boolean
+        showDeltaViewOnAmendments:
+          type: boolean
+        hideUpdatedContractWhenDeltaViewIsSuccessfulOnAmendments:
+          type: boolean
+        showRateName:
+          type: boolean
+        mrr:
+          type: number
+        arr:
+          type: number
+        incrementalMrr:
+          type: number
+        incrementalArr:
+          type: number
+        previousMrr:
+          type: number
+        previousArr:
+          type: number
+        declinedDate:
+          type: string
+          format: date-time
+        sentDate:
+          type: string
+          format: date-time
+        autoRenewContract:
+          type: boolean
+          deprecated: true
+        requiresEsign:
+          type: boolean
+        acceptedAt:
+          type: string
+          description: The date/time on which this quote was accepted
+          format: date-time
+        processedAt:
+          type: string
+          description: The date/time on which this quote was processed
+          format: date-time
+        collaborationAccess:
+          type: string
+          enum:
+          - NONE
+          - VIEW
+          - EDIT
+        purchaseOrderNumber:
+          type: string
+          description: The corresponding purchase order number
+        vatNumber:
+          type: string
+          description: The corresponding VAT number
+        showUnusedItems:
+          type: boolean
+        showSigningPage:
+          type: boolean
+        coverDocumentStorageId:
+          type: string
+        footerDocumentStorageId:
+          type: string
+        source:
+          type: string
+          description: The _creation_ source of this quote
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        legalEntity:
+          $ref: '#/components/schemas/com.monytyz.billing.configuration.model.LegalEntity'
+        conditionalTerms:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteConditionalTerms'
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        addressSource:
+          type: string
+        startDateSource:
+          type: string
+        shippingAddressLine1:
+          type: string
+        shippingAddressLine2:
+          type: string
+        shippingAddressCity:
+          type: string
+        shippingAddressState:
+          type: string
+        shippingAddressCountry:
+          type: string
+        shippingAddressPostalCode:
+          type: string
+        shippingAddressDescription:
+          type: string
+        billingAddressLine1:
+          type: string
+        billingAddressLine2:
+          type: string
+        billingAddressCity:
+          type: string
+        billingAddressState:
+          type: string
+        billingAddressCountry:
+          type: string
+        billingAddressPostalCode:
+          type: string
+        billingAddressDescription:
+          type: string
+        amendmentVersion:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.AmendmentVersion'
+        billingAnchor:
+          $ref: '#/components/schemas/com.monytyz.billing.data.cpq.BillingAnchorData'
+        activeConditionalTerms:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteConditionalTerms'
+        esignContacts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteESignContact'
+        currentOrPastDatedAmendment:
+          type: boolean
+        typedStartDateSource:
+          type: string
+          enum:
+          - ORIGINAL_CONTRACT_START
+          - AT_TIME_OF_SIGNING
+          - MANUAL
+        dateData:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.v2.core.DateData'
+        billingAnchorConfig:
+          $ref: '#/components/schemas/com.monytyz.billing.data.cpq.BillingAnchorConfig'
+        contractTerm:
+          $ref: '#/components/schemas/com.monytyz.billing.data.cpq.ContractTerm'
+        renewal:
+          type: boolean
+        esignEnvelopeId:
+          type: string
+        esignContactSnapshots:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteESignContactSnapshot'
+        expirationDateExtendable:
+          type: boolean
+        typedAddressSource:
+          type: string
+          enum:
+          - ACCOUNT
+          - CONTACT
+        typedCreationSource:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.v2.core.QuoteCreationSource'
+        previousContractLength:
+          type: integer
+          format: int32
+      description: latest processed quote for this contract
+    com.monytyz.billing.invoice.model.InvoiceCredit:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceCreditCompositeId'
+        invoice:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.Invoice'
+        credit:
+          $ref: '#/components/schemas/com.monytyz.billing.credit.model.Credit'
+        amountApplied:
+          type: number
+    com.monytyz.billing.invoice.model.InvoiceMetadata:
+      required:
+      - invoiceDelay
+      - source
+      - sourceId
+      - type
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceSource'
+        invoiceDelay:
+          type: integer
+          format: int32
+        sourceId:
+          type: string
+        type:
+          type: string
+      description: Invoice metadata mainly about source of the invoice and other details
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.credit.model.CreditNoteItem:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+          description: Internal (unique) id
+        creditNote:
+          $ref: '#/components/schemas/com.monytyz.billing.credit.model.CreditNote'
+        invoiceItem:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceItem'
+        product:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Product'
+        description:
+          type: string
+        periodStartDate:
+          type: string
+          format: date
+        periodEndDate:
+          type: string
+          format: date
+        quantity:
+          type: number
+          format: double
+        amount:
+          type: number
+        amountWithoutTax:
+          type: number
+        tax:
+          type: number
+        prorationMultiplier:
+          type: number
+      description: Credit note items that are part of this credit note
+    com.monytyz.billing.quote.model.QuoteValidation:
+      required:
+      - errorLevel
+      - message
+      - ruleId
+      type: object
+      properties:
+        ruleId:
+          type: string
+          format: uuid
+        ruleDescription:
+          type: string
+        errorLevel:
+          type: string
+          enum:
+          - INFO
+          - WARN
+          - ERROR
+        message:
+          type: string
+    com.monytyz.billing.dealroom.model.DealRoomQuote:
+      required:
+      - id
+      - position
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/com.monytyz.billing.dealroom.model.DealRoomQuoteId'
+        dealRoom:
+          $ref: '#/components/schemas/com.monytyz.billing.dealroom.model.DealRoom'
+        position:
+          type: integer
+          format: int32
+        quoteName:
+          type: string
+        note:
+          type: string
+    com.monytyz.billing.data.cpq.ContractTerm:
+      required:
+      - billDay
+      - end
+      - start
+      type: object
+      properties:
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+        billDay:
+          type: integer
+          format: int32
+        lengthInDays:
+          type: integer
+          format: int64
+    com.monytyz.billing.dealroom.dto.DealRoomContractDocument:
+      required:
+      - storageType
+      type: object
+      properties:
+        storageType:
+          type: string
+          enum:
+          - MSA
+          - DPA
+          - NPA
+          - NDA
+          - LOGO
+          - ESIGN
+          - SOW
+          - COVER
+          - FOOTER
+          - ATTACHMENT
+      discriminator:
+        propertyName: storageType
+    com.monytyz.billing.opportunity.model.Opportunity:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        customId:
+          type: string
+        name:
+          type: string
+        quotes:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        primaryQuote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        owner:
+          type: string
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Account'
+        dealRoomId:
+          type: string
+        dealRoom:
+          $ref: '#/components/schemas/com.monytyz.billing.dealroom.model.DealRoom'
+        opportunityStatus:
+          type: string
+          enum:
+          - WON
+          - CANCELED
+          - ACTIVE
+          - LOST
+    com.monytyz.billing.configuration.dto.legalEntity.LegalEntityOptions:
+      required:
+      - invoiceTerms
+      type: object
+      properties:
+        invoiceTerms:
+          $ref: '#/components/schemas/com.monytyz.billing.configuration.dto.legalEntity.InvoiceTerms'
+      description: Options for the legal entity, contains the custom invoice terms for legal entity an other options
+      example:
+        currencyWiseInvoiceTerms:
+        - currency: USD
+          terms: <p>I am the terms</p>
+        - currency: SEK
+          terms: <p>I am the terms</p>
+        invoiceTermsActive: true
+    com.monytyz.billing.customer.dto.account.AccountListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.order.model.OrderNote:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        order:
+          $ref: '#/components/schemas/com.monytyz.billing.order.model.Order'
+      description: Notes that are set on this order.
+    com.monytyz.billing.configuration.model.LegalEntity:
+      required:
+      - addressFormat
+      - defaultEntity
+      type: object
+      properties:
+        id:
+          type: string
+        customId:
+          type: string
+        defaultEntity:
+          type: boolean
+        name:
+          type: string
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+        logoStorageId:
+          type: string
+        email:
+          type: string
+        addressFormat:
+          type: string
+          enum:
+          - US_FORMAT
+          - EUROPEAN_FORMAT
+        quoteTemplate:
+          type: string
+        options:
+          $ref: '#/components/schemas/com.monytyz.billing.configuration.dto.legalEntity.LegalEntityOptions'
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+    com.monytyz.billing.data.cpq.BillingAnchorConfig:
+      required:
+      - anchoredDate
+      type: object
+      properties:
+        anchoredDate:
+          type: string
+          format: date
+    com.monytyz.billing.payment.model.Payment:
+      required:
+      - currency
+      - sourceId
+      - sourceType
+      - transactableAmount
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        account:
+          type: string
+        paymentDate:
+          type: string
+          format: date
+        collectionDate:
+          type: string
+          format: date
+          deprecated: true
+        settledDate:
+          type: string
+          format: date-time
+        refundDate:
+          type: string
+          format: date
+          deprecated: true
+        voidDate:
+          type: string
+          format: date
+        description:
+          type: string
+        gatewayId:
+          type: string
+        gatewayReference:
+          type: string
+        gatewayCode:
+          type: string
+        gatewayMessage:
+          type: string
+        amount:
+          type: number
+          deprecated: true
+        appliedAmount:
+          type: number
+          deprecated: true
+        unAppliedAmount:
+          type: number
+          deprecated: true
+        fullyApplied:
+          type: boolean
+          deprecated: true
+        paymentStatus:
+          type: string
+          enum:
+          - PROCESSING
+          - SUCCESS
+          - FAILED
+          - CANCELED
+          - REFUNDED
+          - PARTIAL_REFUND
+        paymentType:
+          type: string
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        paymentMethod:
+          type: string
+        paymentApplications:
+          uniqueItems: true
+          type: array
+          deprecated: true
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.invoice.model.Invoice'
+        referenceNo:
+          type: string
+          description: Manual payment reference number
+        refunds:
+          uniqueItems: true
+          type: array
+          deprecated: true
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.model.Refund'
+        sourceType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.SourceType'
+        refundableType:
+          type: boolean
+        directDebit:
+          type: boolean
+        successful:
+          type: boolean
+        sourceId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.SourceId'
+        manualPayment:
+          type: boolean
+        fullyAppliedDate:
+          type: string
+          format: date-time
+        successfulOrProcessing:
+          type: boolean
+        transactableAppliedAmount:
+          type: number
+        transactableAmount:
+          type: number
+    com.monytyz.billing.customer.model.Account:
+      required:
+      - accountType
+      - customFields
+      - defaultCurrency
+      - status
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        customId:
+          type: string
+        isTestAccount:
+          type: boolean
+          description: A test account cannot use production payment processors and is excluded from reporting
+        locale:
+          type: string
+          description: the locale of the account, used for localization
+        accountName:
+          type: string
+          description: the name of the account associated with this account
+        defaultCurrency:
+          type: string
+          description: The currency of the account, cannot be changed once invoices are created
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          description: The type of the account
+          enum:
+          - CUSTOMER
+          - PARTNER
+        billGroups:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        paymentMethods:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.model.PaymentMethod'
+        defaultLegalEntity:
+          $ref: '#/components/schemas/com.monytyz.billing.configuration.model.LegalEntity'
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        taxEntityUseCode:
+          type: string
+        taxExemptionNumber:
+          type: string
+        defaultDunningProcess:
+          $ref: '#/components/schemas/com.monytyz.billing.dunning.model.DunningProcess'
+        ccEmails:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    com.monytyz.billing.customer.model.ContactSnapshot:
+      type: object
+      properties:
+        id:
+          type: string
+        snapshotTimestamp:
+          type: string
+          format: date-time
+        contactId:
+          type: string
+        accountId:
+          type: string
+        customId:
+          type: string
+        internal:
+          type: boolean
+        fullName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        title:
+          type: string
+        addressSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.ContactSnapshot.AddressSnapshot'
+    com.monytyz.billing.quote.model.QuoteApproval:
+      required:
+      - mandatory
+      - name
+      - ruleId
+      - skipped
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        ruleId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          description: Id of the user who should approve
+        teamId:
+          type: string
+          description: Id of the team whose member should approve
+        teamName:
+          type: string
+        approverOrDeclinerId:
+          type: string
+          description: Id of the user that approved or declined this approval
+        name:
+          maxLength: 255
+          minLength: 0
+          type: string
+        description:
+          type: string
+          description: Description of why approval is required. This will be provided by rules engine
+        rank:
+          type: integer
+          description: Integer field to indicate the rank of approval. Lower rank must be approved first
+          format: int32
+        status:
+          type: string
+          enum:
+          - NO_ACTION
+          - APPROVED
+          - DECLINED
+        declineReason:
+          type: string
+        approvalTimestamp:
+          type: string
+          format: date-time
+        skipped:
+          type: boolean
+        quote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        mandatory:
+          type: boolean
+        lifecycleBehavior:
+          type: string
+          enum:
+          - RESET_APPROVAL
+          - RETAIN_APPROVAL
+    com.monytyz.billing.customer.dto.address.AddressDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the address
+          example: addr_bkoY6dCoLRblllsJ
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street, Apartment 3D
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Billing address for the account
+    com.monytyz.billing.dealroom.model.DealRoomQuoteId:
+      required:
+      - dealRoomId
+      - quoteId
+      type: object
+      properties:
+        quoteId:
+          type: string
+        dealRoomId:
+          type: string
+    com.monytyz.billing.catalog.model.RateOptions:
+      required:
+      - priceDisplay
+      - productOptions
+      type: object
+      properties:
+        productOptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.ProductRateOptions'
+        priceDisplay:
+          type: string
+          enum:
+          - PRODUCT
+          - OFFERING
+    com.monytyz.billing.quote.model.QuoteESignContact:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteESignContactId'
+        contact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        quote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        role:
+          type: string
+          enum:
+          - PRIMARY_SIGNER
+          - SECONDARY_SIGNER
+          - CARBON_COPY
+    com.monytyz.billing.customer.dto.address.AddressType:
+      required:
+      - serialized
+      type: object
+      properties:
+        serialized:
+          type: string
+    com.monytyz.billing.catalog.model.OfferingProduct:
+      required:
+      - id
+      - isMandatory
+      - offering
+      - position
+      - product
+      - quantityDisplayType
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.OfferingProductId'
+        offering:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Offering'
+        product:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Product'
+        isMandatory:
+          type: boolean
+        position:
+          type: integer
+          format: int32
+        quantityDisplayType:
+          type: string
+          enum:
+          - INPUT
+          - DROPDOWN
+    com.monytyz.billing.dealroom.dto.DealRoomDocument:
+      required:
+      - document
+      - version
+      type: object
+      properties:
+        version:
+          type: string
+        document:
+          $ref: '#/components/schemas/com.monytyz.billing.dealroom.dto.Document'
+    com.monytyz.billing.catalog.model.Offering:
+      required:
+      - customFields
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        customId:
+          type: string
+        type:
+          type: string
+          enum:
+          - SUBSCRIPTION
+          - ONETIME
+          - MIN_COMMIT
+          - CUSTOM_PERCENT_OF_TOTAL
+        rates:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.jpa.Rate'
+        offeringProducts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.OfferingProduct'
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - PENDING
+          - EXPIRED
+          - ARCHIVED
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        locked:
+          type: boolean
+        financeId:
+          type: string
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        products:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Product'
+        minimumCommit:
+          type: boolean
+    com.monytyz.billing.credit.model.CreditNoteMetadata:
+      required:
+      - action
+      - source
+      - sourceId
+      - type
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/com.monytyz.billing.credit.model.CreditNoteSource'
+        action:
+          type: string
+          enum:
+          - DOWNGRADE
+          - CREDIT_REBILL
+          - CREDIT_NOTE
+        sourceId:
+          type: string
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.quote.dto.quote.renewal.RenewalTermLength:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.customer.dto.account.AccountDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the account
+          example: acct_m0CB9LflojZxytfC
+        customId:
+          type: string
+          description: A user provided identifier for the account
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        isTestAccount:
+          type: boolean
+          description: Boolean value indicating if the account is a test account
+        locale:
+          type: string
+          description: 'Locale of the account. Example: en_US'
+          example: en
+        accountName:
+          type: string
+          description: Name of the account.
+          example: Netflix
+        defaultCurrency:
+          type: string
+          description: Represents the currency of the account. It is the ISO 4217 assigned three-digit code. If no currency is specified, the tenant's default currency will be set for the account.
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        status:
+          type: string
+          description: Status of the account. An account can be ACTIVE, INACTIVE, CANCELED or SUSPENDED
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          description: Type of the account. An account can be CUSTOMER, PARTNER
+          enum:
+          - CUSTOMER
+          - PARTNER
+        primaryContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        noteCount:
+          type: integer
+          description: Number of notes that is associated with this account
+          format: int64
+          example: 100000
+        defaultLegalEntityId:
+          type: string
+          description: Legal entity ID for this account. Default legal entity will be used as default when no legal entity is specified
+          example: lgen_e33f05749111f
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the account
+          description: User configured custom fields for the account
+        taxEntityUseCode:
+          type: string
+          description: Tax entity use code for the account
+          example: M
+        taxExemptionNumber:
+          type: string
+          description: Tax exemption number for the account
+          example: F60730EE-4127-49C0-B490-CBDF29BFD235
+        defaultDunningProcessId:
+          type: string
+          description: Optional dunning process id for the account
+          example: dunpr_tDbC2FxuCwQoxcjm
+        ccEmails:
+          type: string
+          description: A list of account level email addresses to which the dunning mail will be copied
+          example: abc@gmail.com,def@gmail.com
+    com.monytyz.billing.invoice.model.InvoiceSource:
+      required:
+      - source
+      type: object
+      properties:
+        source:
+          type: string
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfiguration:
+      required:
+      - amountConfigurations
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Payment method type
+          example: US_BANK_TRANSFER
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        amountConfigurations:
+          type: array
+          description: Minimum and maximum amounts for payment type per currency
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.AmountConfiguration'
+      description: Configuration for minimum and maximum payments amounts
+      example: US_BANK_TRANSFER
+    com.monytyz.billing.dealroom.model.DealRoom:
+      required:
+      - contractDocuments
+      - document
+      - eSignContacts
+      - esignContacts
+      - expirationDate
+      - legalEntity
+      - quotes
+      - requiresEsign
+      - signingOrder
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        customId:
+          type: string
+        ownerId:
+          type: string
+        selectedQuoteId:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        sharedAt:
+          type: string
+          format: date-time
+        declinedAt:
+          type: string
+          format: date-time
+        signedAt:
+          type: string
+          format: date-time
+        cancelledAt:
+          type: string
+          format: date-time
+        purchaseOrderNumber:
+          type: string
+        status:
+          type: string
+          enum:
+          - DRAFT
+          - SHARED
+          - IN_REVIEW
+          - DECLINED
+          - SIGNED
+          - EXPIRED
+          - CANCELED
+        legalEntity:
+          $ref: '#/components/schemas/com.monytyz.billing.configuration.model.LegalEntity'
+        companyInfoSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.CompanyInfoSnapshot'
+        signingOrder:
+          type: string
+          enum:
+          - INTERNAL_FIRST
+          - EXTERNAL_FIRST
+          - EXTERNAL_ONLY
+          - INSTANTANEOUS
+        requiresEsign:
+          type: boolean
+        esignEnvelopeId:
+          type: string
+        shippingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        billingContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Contact'
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.Address'
+        eSignContacts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.dealroom.model.DealRoomESignContact'
+        quotes:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.dealroom.model.DealRoomQuote'
+        document:
+          $ref: '#/components/schemas/com.monytyz.billing.dealroom.dto.DealRoomDocument'
+        contractDocuments:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.dealroom.dto.DealRoomContractDocument'
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        esignContacts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.dealroom.model.DealRoomESignContact'
+    com.monytyz.billing.configuration.dto.legalEntity.CurrencyWiseInvoiceTerms:
+      required:
+      - active
+      - currencies
+      - terms
+      type: object
+      properties:
+        currencies:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - AUD
+            - BYN
+            - CAD
+            - CNY
+            - DKK
+            - EUR
+            - GBP
+            - INR
+            - ISK
+            - MYR
+            - NOK
+            - SEK
+            - SGD
+            - TWD
+            - USD
+        terms:
+          type: string
+        active:
+          type: boolean
+    com.monytyz.billing.dunning.model.DunningStep:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        stepName:
+          type: string
+        stepSequence:
+          type: integer
+          format: int32
+        customId:
+          type: string
+        daysSinceDueDate:
+          type: integer
+          format: int32
+        retryCollection:
+          type: boolean
+        sendEmail:
+          type: boolean
+        emailTemplateId:
+          type: string
+        emailBillGroupShippingContact:
+          type: boolean
+        emailBillGroupCCEmails:
+          type: boolean
+        internalCCEmails:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        dunningProcess:
+          $ref: '#/components/schemas/com.monytyz.billing.dunning.model.DunningProcess'
+        emailAccountCCEmails:
+          type: boolean
+    com.monytyz.billing.transactable.model.enums.SourceType:
+      type: object
+    com.monytyz.billing.customer.dto.account.AccountSaveDto:
+      required:
+      - accountName
+      - status
+      type: object
+      properties:
+        customId:
+          type: string
+          description: A user provided identifier for the account
+          example: Net6b48c3f6-852e-4cd7-b4f4-a35ad60ad483flix
+        defaultCurrency:
+          type: string
+          description: Represents the currency of the account. It is the ISO 4217 assigned three-digit code. If no currency is specified, the tenant's default currency will be set for the account.
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        isTestAccount:
+          type: boolean
+          description: Boolean value indicating if the account is a test account
+        locale:
+          type: string
+          description: 'Locale of the account. Example: en_US'
+          example: en
+        accountName:
+          type: string
+          description: Name of the account.
+          example: Netflix
+        status:
+          type: string
+          description: Status of the account. An account can be ACTIVE, INACTIVE, CANCELED or SUSPENDED
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          description: Type of the account. An account can be CUSTOMER, PARTNER
+          enum:
+          - CUSTOMER
+          - PARTNER
+        defaultLegalEntityId:
+          type: string
+          description: Legal entity ID for this account. Default legal entity will be used as default when no legal entity is specified
+          example: lgen_e33f05749111f
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        taxEntityUseCode:
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Tax entity use code for the account
+          example: M
+        taxExemptionNumber:
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Tax exemption number for the account
+          example: F60730EE-4127-49C0-B490-CBDF29BFD235
+        defaultDunningProcessId:
+          type: string
+          description: Optional dunning process id for the account
+          example: dunpr_tDbC2FxuCwQoxcjm
+        ccEmails:
+          type: string
+          description: A list of account level email addresses to which the dunning mail will be copied
+          example: abc@gmail.com, def@gmail.com
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressSaveDto'
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressSaveDto'
+    com.monytyz.billing.charge.model.Charge:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        product:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.Product'
+        billGroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.BillGroup'
+        rate:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.model.jpa.Rate'
+        status:
+          type: string
+          enum:
+          - INVOICED
+          - INVOICE_PENDING
+        purchaseDate:
+          type: string
+          format: date
+        quantity:
+          minimum: 0
+          type: number
+          format: double
+        description:
+          type: string
+        sku:
+          type: string
+        subscriptionItem:
+          $ref: '#/components/schemas/com.monytyz.billing.subscription.model.SubscriptionItem'
+        type:
+          type: string
+          enum:
+          - PREPAID
+          - PURCHASE
+    com.monytyz.billing.catalog.model.ProductRateOptions:
+      required:
+      - aggregationModel
+      - productId
+      type: object
+      properties:
+        productId:
+          type: string
+        aggregationModel:
+          type: string
+          enum:
+          - SUM
+          - AVERAGE
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.quote.model.internal.quoteitem.QuoteItemOptions:
+      required:
+      - displayedPriceIds
+      - fieldValueOverrides
+      - showPrices
+      type: object
+      properties:
+        showPrices:
+          type: boolean
+        displayUnitPriceFrequency:
+          type: integer
+          format: int32
+        priceDisplayMode:
+          type: string
+          description: Modes for displaying quote prices
+          enum:
+          - ALL_PRICES
+          - USED_PRICES
+          - CUSTOM_PRICES
+        displayedPriceIds:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.data.catalog.PriceId'
+        fieldValueOverrides:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.FieldValueOverride'
+    com.monytyz.billing.quote.model.QuoteESignContactSnapshotId:
+      type: object
+    com.monytyz.billing.quote.dto.quote.renewal.RenewalContractLength:
+      required:
+      - months
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - CONTRACT_LENGTH
+          - FIXED_MONTHS
+        months:
+          type: integer
+          format: int32
+    com.monytyz.billing.dealroom.dto.DealRoomContent:
+      required:
+      - contentType
+      - key
+      type: object
+      properties:
+        name:
+          type: string
+        key:
+          type: string
+        description:
+          type: string
+        contentType:
+          type: string
+          enum:
+          - TEXT
+          - RICH_TEXT
+          - URL
+          - LIST
+          - ATTACHMENT
+          - REFERENCE_RESOURCE
+      discriminator:
+        propertyName: contentType
+    com.monytyz.billing.data.catalog.PriceId:
+      required:
+      - value
+      type: object
+      properties:
+        value:
+          type: string
+    com.monytyz.billing.catalog.model.Discount:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        name:
+          type: string
+          description: The name of the discount
+        description:
+          type: string
+          description: The description of this discount
+        discountType:
+          type: string
+          description: The type of discount - fixed or %
+          enum:
+          - FLAT
+          - PERCENTAGE
+        status:
+          type: string
+          description: The status of the discount
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - PENDING
+          - EXPIRED
+        discountCode:
+          type: string
+          description: A code that is user friendly and can be referenced to add this discount
+        quoteId:
+          type: string
+          description: Quote ID if this discount was created as part of a Quote
+        discountAmount:
+          type: number
+          description: The fixed or percentage discount amount
+        currency:
+          type: string
+          description: The fixed discount currency
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        durationType:
+          type: string
+          description: The type of discount duration
+          enum:
+          - ONE_TIME
+          - UNLIMITED
+          - LIMITED
+        durationMonths:
+          type: integer
+          description: The number of months this discount should last if this discount type is Limited
+          format: int32
+        maxUses:
+          type: integer
+          description: The maximum number of times this discount can be applied
+          format: int32
+        remainingUses:
+          minimum: 0
+          type: integer
+          description: The remaining number of times this discount can be applied
+          format: int32
+        startDate:
+          type: string
+          description: The starting date for when this discount can be applied
+          format: date
+        endDate:
+          type: string
+          description: The ending date for when this discount can be applied
+          format: date
+        autoRemove:
+          type: boolean
+          description: If the discount should be removed from all accounts after the end date
+        accountId:
+          type: string
+          description: If this discount should only apply to a certain account
+        scopeProductId:
+          type: string
+          description: If this discount should only apply to a certain product
+        scopeOfferingId:
+          type: string
+          description: If this discount should only apply to a certain offering
+        locked:
+          type: boolean
+          description: This discount is locked from most changes because it has been used by another part of the application
+        lifecyclePolicies:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - EXCLUDE_FROM_RENEWAL
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfigurations:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          description: Configuration for minimum and maximum payments amounts
+          example: US_BANK_TRANSFER
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfiguration'
+      description: Configuration for minimum and maximum payments amounts
+    com.monytyz.billing.invoice.model.InvoiceItemDiscount:
+      type: object
+      properties:
+        id:
+          type: string
+        invoiceItem:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceItem'
+        discountId:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        discountType:
+          type: string
+          description: The type of discount - fixed or %
+          enum:
+          - FLAT
+          - PERCENTAGE
+    com.monytyz.billing.customer.dto.contact.ContactDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        customId:
+          type: string
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        accountId:
+          type: string
+          description: Account ID where the contact belongs
+          example: acct_m0CB9LflojZxytfC
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        status:
+          type: string
+          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+          - ARCHIVED
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type: string
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type: string
+          description: Title of the contact
+          example: CFO
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        primary:
+          type: boolean
+          description: Boolean value indicating if the contact is primary or not
+          example: true
+        defaultESigner:
+          type: boolean
+          description: Boolean value indicating if the contact is default eSigner
+          example: false
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the contact
+          description: User configured custom fields for the contact
+        esigner:
+          type: boolean
+      description: Primary contact information for this account
+    com.monytyz.billing.quote.model.QuoteESignContactSnapshot:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteESignContactSnapshotId'
+        contactSnapshot:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.model.ContactSnapshot'
+        quote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.Quote'
+        role:
+          type: string
+          enum:
+          - PRIMARY_SIGNER
+          - SECONDARY_SIGNER
+          - CARBON_COPY
+    com.monytyz.billing.quote.model.QuoteNote:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        quoteId:
+          type: string
+      description: Notes for this Quote

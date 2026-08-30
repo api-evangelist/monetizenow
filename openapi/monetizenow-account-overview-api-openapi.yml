@@ -1,0 +1,734 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI definition Account Overview API
+  version: v0
+  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+servers:
+- url: https://api.monetizeplatform.com
+tags:
+- name: Account Overview
+paths:
+  /api/accounts/{accountId}/overview:
+    get:
+      tags:
+      - Account Overview
+      summary: Get account overview by account
+      description: Account overview with billgroup and subscriptions
+      operationId: accountOverview
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: currency
+        in: query
+        required: false
+        schema:
+          type: string
+          example: USD
+        example: USD
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get Account Overview
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.overview.AccountOverview'
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/v2/accounts/{accountId}/subscriptions/overview:
+    get:
+      tags:
+      - Account Overview
+      operationId: getSubscriptionsOverviewByAccountV2
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get Account's Subscriptions Overview v2
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.overview.BillGroupListWithSubscriptionOverviews'
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+components:
+  schemas:
+    com.monytyz.billing.customer.dto.account.overview.BillGroupListWithSubscriptionOverviews:
+      required:
+      - subscriptionOverviewsByBillGroup
+      type: object
+      properties:
+        subscriptionOverviewsByBillGroup:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.overview.BillGroupWithSubscriptionOverviews'
+    com.monytyz.billing.payment.dto.paymentgateway.AmountConfiguration:
+      required:
+      - currency
+      type: object
+      properties:
+        currency:
+          type: string
+          description: Currency to which the amount configuration applies
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        minimum:
+          type: number
+          description: Minimum payment amount allowed for payment type and currency
+          example: 25
+        maximum:
+          type: number
+          description: Maximum payment amount allowed for payment type and currency
+          example: 500
+      description: Minimum and maximum amounts for payment type per currency
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the payment gateway
+          example: pmtgw_EMfbqn56S9h9CweL
+        type:
+          type: string
+          description: Payment gateway type like STRIPEV2, BRAINTREE, WORLDPAY etc
+          example: STRIPEV2
+          enum:
+          - STRIPEV2
+          - BRAINTREE
+          - WORLDPAY
+          - AUTHNET
+          - ADYEN
+          - VANTIV
+          - PAYPAL_PRO
+          - PAYMENT_TECH
+          - TEST_PASS
+          - TEST_FAIL
+        status:
+          type: string
+          description: Payment gateway status like ACTIVE, INACTIVE OR ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - ARCHIVED
+        testGateway:
+          type: boolean
+          description: A boolean field indicating that it is the test gateway or not
+          example: false
+        description:
+          type: string
+          description: Description of the payment gateway
+          example: Description for the payment gateway
+        publicKey:
+          type: string
+          description: Public key for the payment gateway. It's publishable key for Stripe
+          example: pk_test_51Hwfowe23LJ02M1f5WZ6c23
+        defaultGateway:
+          type: boolean
+          description: A boolean field indicating that it is the default gateway or not
+          example: true
+        locked:
+          type: boolean
+          description: A boolean field indicating that the gateway is locked or not
+          example: true
+        webhookId:
+          type: string
+          description: Unique identifier for the webhook
+          example: we_1MEaM8BVaXRvkQL7LqeaOCgy
+        allowedPaymentMethods:
+          uniqueItems: true
+          type: array
+          description: A list of allowed payment methods
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSupport'
+        paymentConfiguration:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfigurations'
+      description: Payment gateway details of the payment method
+    com.monytyz.billing.dunning.dto.dunningstep.DunningStepDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the dunning step
+          example: dunst_SFYBah2GCQXhh
+        stepName:
+          type: string
+          description: Name of the dunning step
+          example: Upcoming Payment Due
+        customId:
+          type: string
+          description: Unique id provided by the customer
+          example: 66548E95-42AE-483F-A4BC-57847B856346
+        stepSequence:
+          type: integer
+          description: Sequence of the step
+          format: int32
+          example: 1
+        daysSinceDueDate:
+          type: integer
+          description: Days since due date to activate the step
+          format: int32
+          example: 0
+        retryCollection:
+          type: boolean
+          description: Boolean field to indicate if payment collection should be retried
+          example: true
+        sendEmail:
+          type: boolean
+          description: Boolean field to indicate if email should be sent
+          example: true
+        emailTemplateId:
+          type: string
+          description: Email template that will be used to send email.
+          example: d-e7a983bd771343ada7429
+        emailBillGroupShippingContact:
+          type: boolean
+          description: Boolean field to indicate if email should be sent to the BillGroup's shipping contact
+          example: true
+        emailBillGroupCCEmails:
+          type: boolean
+          description: Boolean field to indicate if email should be sent to the BillGroup's CC contacts
+          example: true
+        internalCCEmails:
+          uniqueItems: true
+          type: array
+          description: CC emails to be used
+          example: '[''abc@gmail.com'', ''def@gmail.com'']'
+          items:
+            type: string
+            description: CC emails to be used
+            example: '[''abc@gmail.com'', ''def@gmail.com'']'
+        emailAccountCCEmails:
+          type: boolean
+          description: Boolean field to indicate if email should be sent to the Account's CC email addresses
+          example: true
+    com.monytyz.billing.customer.dto.account.overview.AccountOverview:
+      required:
+      - arr
+      - lifetimeValue
+      - mrr
+      - recentInvoiceAmount
+      type: object
+      properties:
+        recentInvoiceAmount:
+          type: number
+          description: The most recent invoice's amount by created date
+          example: 1048
+        mrr:
+          type: number
+          description: Monthly recurring revenue
+          example: 795.75
+        arr:
+          type: number
+          description: Annual recurring revenue
+          example: 9549
+        lifetimeValue:
+          type: number
+          description: Total paid invoices amount of an account
+          example: 3043
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfigurations:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          description: Configuration for minimum and maximum payments amounts
+          example: US_BANK_TRANSFER
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfiguration'
+      description: Configuration for minimum and maximum payments amounts
+    com.monytyz.billing.customer.dto.account.overview.BillGroupWithSubscriptionOverviews:
+      type: object
+      properties:
+        billgroup:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupSummary'
+        paymentMethod:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodDto'
+        dunningProcess:
+          $ref: '#/components/schemas/com.monytyz.billing.dunning.dto.dunningprocess.DunningProcessDetailDto'
+        subscriptionOverviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.overview.AccountSubscriptionOverviewDto'
+    com.monytyz.billing.customer.dto.billgroup.BillGroupSummary:
+      required:
+      - autoEmailInvoice
+      - currency
+      - id
+      - netTerms
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nextInvoiceDate:
+          type: string
+          format: date
+        previousInvoiceDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - SUSPENDED
+        invoicingFrequency:
+          type: string
+          enum:
+          - DAILY
+          - MONTHLY
+          - QUARTERLY
+          - SEMIANNUALLY
+          - ANNUALLY
+          - CUSTOM
+        autoEmailInvoice:
+          type: boolean
+        billDay:
+          type: integer
+          format: int32
+        netTerms:
+          type: string
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+    com.monytyz.billing.customer.dto.account.AccountSummary:
+      required:
+      - accountType
+      - id
+      - isTestAccount
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        customId:
+          type: string
+        isTestAccount:
+          type: boolean
+        locale:
+          type: string
+        accountName:
+          type: string
+        defaultCurrency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          enum:
+          - CUSTOMER
+          - PARTNER
+        defaultLegalEntityId:
+          type: string
+    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the payment method
+          example: pmmd_ljUBlyVLF10JQ
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountSummary'
+        paymentMethodName:
+          type: string
+          description: Name of the payment method
+          example: Test Payment
+        customId:
+          type: string
+          description: A user provided identifier for the payment method
+          example: '123456789'
+        defaultPaymentMethod:
+          type: boolean
+          description: A boolean field indicating that it is the default payment method or not
+          example: true
+        paymentGateway:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayDto'
+        creditCardType:
+          type: string
+          description: Payment method credit card type like VISA, MASTERCARD, DISCOVER, AMEX, DINERS, JCB or UNIONPAY
+          example: VISA
+          enum:
+          - VISA
+          - MASTERCARD
+          - DISCOVER
+          - AMEX
+          - DINERS
+          - JCB
+          - UNIONPAY
+        creditCardNumber:
+          type: string
+          description: Credit card number for the payment method
+          example: '461156147593489'
+        lastFour:
+          type: string
+          description: Last four digit of a credit card number
+          example: '3489'
+        expirationYear:
+          type: integer
+          description: Credit card expiration year
+          format: int32
+          example: 2024
+        expirationMonth:
+          type: integer
+          description: Credit card expiration month
+          format: int32
+          example: 9
+        cvcValidation:
+          type: boolean
+          description: A boolean field indicating that credit card CVC is validate or not
+          example: true
+        addressValidation:
+          type: boolean
+          description: A boolean field indicating that payment method address is validate or not
+          example: true
+        postalValidation:
+          type: boolean
+          description: A boolean field indicating that payment method post code is validate or not
+          example: false
+        paymentMethodType:
+          type: string
+          description: Payment method type like CREDIT_CARD, DIRECT_DEBIT, ACH_CREDIT etc
+          example: DIRECT_DEBIT
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        creditCardGateWayToken:
+          type: string
+          description: Credit card gateway token
+        gatewayCustomerId:
+          type: string
+          description: A provided id to reference this payment method uniquely
+          example: cus_NvH7QU3I0O50DG
+        description:
+          type: string
+          description: Payment method description
+          example: Payment description
+        status:
+          type: string
+          description: Payment method status like ACTIVE, INACTIVE, CANCELED OR EXPIRED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - EXPIRED
+        oneTime:
+          type: boolean
+          description: A boolean field indicating that if this payment method should be available for further use or not
+          example: false
+        testPaymentMethod:
+          type: boolean
+          description: A boolean field indicating that if the payment method for testing or not.True if this payment method is associated with a test/staging payment gateway
+          example: false
+        externalPaymentMethodId:
+          type: string
+          description: External payment method id
+          example: pm_1N9Qb2DOMlRAd5wBTXN469uO
+        accountType:
+          type: string
+          description: Account type of the payment method
+          example: checking
+        bankName:
+          type: string
+          description: Bank name of the payment method
+          example: Abc bank of USA
+        routingNumber:
+          type: string
+          description: Routing number of the payment method
+          example: '125000105'
+        swiftCode:
+          type: string
+          description: Swift of the payment method
+          example: USBKUS44IMT
+        accountNumber:
+          type: string
+          description: Account number of the payment method
+          example: '46113503456147593489'
+        billingDetails:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.BillingDetails'
+        cancellationDate:
+          type: string
+          format: date-time
+        cancellationReason:
+          type: string
+    com.monytyz.billing.customer.dto.account.overview.AccountSubscriptionOverviewDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        name:
+          type: string
+          example: Sales Account
+        totalProducts:
+          type: integer
+          format: int32
+          example: 100
+        renewalEstimate:
+          type: number
+          example: 10000
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfiguration:
+      required:
+      - amountConfigurations
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Payment method type
+          example: US_BANK_TRANSFER
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        amountConfigurations:
+          type: array
+          description: Minimum and maximum amounts for payment type per currency
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.AmountConfiguration'
+      description: Configuration for minimum and maximum payments amounts
+      example: US_BANK_TRANSFER
+    com.monytyz.billing.dunning.dto.dunningprocess.DunningProcessDetailDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: dunpr_H4b4ap97J2EqfuvX
+        name:
+          type: string
+          example: Quote Dunning Process
+        totalDunningStep:
+          type: integer
+          format: int32
+          example: 10
+        dunningProcessDays:
+          type: integer
+          format: int32
+          example: 10
+        dunningSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.dunning.dto.dunningstep.DunningStepDto'
+        defaultProcess:
+          type: boolean
+    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSupport:
+      required:
+      - enabled
+      - method
+      type: object
+      properties:
+        method:
+          type: string
+          description: Payment method type like CREDIT_CARD, DIRECT_DEBIT, ACH_CREDIT etc
+          example: DIRECT_DEBIT
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        enabled:
+          type: boolean
+          description: A boolean field indicating that the payment method type should be enabled or not
+          example: true
+      description: A list of allowed payment methods
+    com.monytyz.billing.payment.dto.paymentmethod.BillingDetails:
+      type: object
+      properties:
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type: string
+          description: Phone of the contact
+          example: +44 7700 900278
+        title:
+          type: string
+          description: Title of the contact
+          example: CFO
+        line1:
+          type: string
+          description: First line of the address
+          example: 8 Louise Court
+        line2:
+          type: string
+          description: Second line of the address
+          example: 12–13 Beaulieu Road
+        city:
+          type: string
+          description: City of the address
+          example: Southampton
+        state:
+          type: string
+          description: State of the address
+          example: London
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: PO2 0DN
+        country:
+          type: string
+          description: Country of the address
+          example: UK
+      description: Billing details of the payment method

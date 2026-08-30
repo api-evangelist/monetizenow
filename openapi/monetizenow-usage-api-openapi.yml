@@ -1,0 +1,600 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI definition Usage API
+  version: v0
+  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+servers:
+- url: https://api.monetizeplatform.com
+tags:
+- name: Usage
+  description: APIs to record, update and query usage events
+paths:
+  /usage/consumption:
+    get:
+      tags:
+      - Usage
+      summary: Get usage consumption
+      description: Returns usage consumption for a given subscription identifier, usage type, aggregation model  and time rangeFor reads  after updates, we support eventual consistency semantics. For usage events with timestamps less than 45 days old, the eventual consistency is more or less immediate. For events with timestamps greater than 45 days old, the eventual consistency could take upto 6 hours.
+      operationId: getUsageConsumption
+      parameters:
+      - name: subscriptionId
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Identifier for the Subscription
+          example: subs_60fPx2PNuVson
+      - name: usageTypeId
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Identifier for the usage type
+          example: ustyp_sAufs4nKWzpvyosc
+      - name: usageTypeIds
+        in: query
+        required: false
+        schema:
+          uniqueItems: true
+          type: array
+          description: Identifier(s) for the usage type
+          example:
+          - ustyp_sAufs4nKWzpvyosc
+          items:
+            type: string
+            description: Identifier(s) for the usage type
+            example: '["ustyp_sAufs4nKWzpvyosc"]'
+      - name: startTime
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Start date time of the period for which the usage consumption is being requested
+          format: date-time
+          example: '2021-07-01T00:00:00Z'
+      - name: endTime
+        in: query
+        required: false
+        schema:
+          type: string
+          description: End date time of the period for which the usage consumption is being requested
+          format: date-time
+          example: '2021-07-31T00:00:00Z'
+      - name: aggregationModel
+        in: query
+        required: false
+        schema:
+          type: string
+          example: SUM
+          default: SUM
+          enum:
+          - SUM
+          - AVERAGE
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: View aggregated usage for a subscription and usage type for a given time period
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageQueryResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+  /usage/consumption/perDay/v2:
+    get:
+      tags:
+      - Usage
+      summary: Get usage consumption per day
+      description: Returns usage consumption grouped by date for a given subscription identifier, usage type, aggregation model  and time rangeFor reads  after updates, we support eventual consistency semantics. For usage events with timestamps less than 45 days old, the eventual consistency is more or less immediate. For events with timestamps greater than 45 days old, the eventual consistency could take upto 6 hours.
+      operationId: getUsageConsumptionPerDay
+      parameters:
+      - name: subscriptionId
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Identifier for the Subscription
+          example: subs_60fPx2PNuVson
+      - name: usageTypeId
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Identifier for the usage type
+          example: ustyp_sAufs4nKWzpvyosc
+      - name: usageTypeIds
+        in: query
+        required: false
+        schema:
+          uniqueItems: true
+          type: array
+          description: Identifier(s) for the usage type
+          example:
+          - ustyp_sAufs4nKWzpvyosc
+          items:
+            type: string
+            description: Identifier(s) for the usage type
+            example: '["ustyp_sAufs4nKWzpvyosc"]'
+      - name: startTime
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Start date time of the period for which the usage consumption is being requested
+          format: date-time
+          example: '2021-07-01T00:00:00Z'
+      - name: endTime
+        in: query
+        required: true
+        schema:
+          type: string
+          description: End date time of the period for which the usage consumption is being requested
+          format: date-time
+          example: '2021-07-31T00:00:00Z'
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: View aggregated usage grouped by date for a subscription and usage type for a given number of days in the past from today
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageHistoryResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDto'
+  /usage/events:
+    get:
+      tags:
+      - Usage
+      summary: Get usage events
+      description: Returns usage events for a given subscription identifier, usage type and time rangeFor reads  after updates, we support eventual consistency semantics. For usage events with timestamps less than 45 days old, the eventual consistency is more or less immediate. For events with timestamps greater than 45 days old, the eventual consistency could take upto 6 hours.
+      operationId: getEvents
+      parameters:
+      - name: subscriptionId
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Identifier for the Subscription
+          example: subs_60fPx2PNuVson
+      - name: usageTypeId
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Identifier for the usage type
+          example: ustyp_sAufs4nKWzpvyosc
+      - name: usageTypeIds
+        in: query
+        required: false
+        schema:
+          uniqueItems: true
+          type: array
+          description: Identifier(s) for the usage type
+          example:
+          - ustyp_sAufs4nKWzpvyosc
+          items:
+            type: string
+            description: Identifier(s) for the usage type
+            example: '["ustyp_sAufs4nKWzpvyosc"]'
+      - name: startTime
+        in: query
+        required: true
+        schema:
+          type: string
+          description: Start date time of the period for which the usage consumption is being requested
+          format: date-time
+          example: '2021-07-01T00:00:00Z'
+      - name: endTime
+        in: query
+        required: true
+        schema:
+          type: string
+          description: End date time of the period for which the usage consumption is being requested
+          format: date-time
+          example: '2021-07-31T00:00:00Z'
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          maximum: 100
+          minimum: 5
+          type: integer
+          description: Page size. Default value is 100
+          format: int32
+          example: 100
+          default: 100
+      - name: nextPageToken
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Pagination key containing the information about to record to search after
+          example: eyJ0aW1lc3RhbXAiOjE2OTE0NTM4MT
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get usage events for a given subscription identifier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventListDto'
+    post:
+      tags:
+      - Usage
+      summary: Record usage events
+      description: This is a batch API that can ingest upto 100 events per request. The API will return success or partial success or failed in the response. For reads  after updates,we support eventual consistency semantics. For usage events with timestamps less than 45 days old, the eventual consistency is more or less immediate. For events with timestamps greater than 45 days old, the eventual consistency could take upto 6 hours.
+      operationId: recordEvents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/EventRequest'
+        required: true
+      responses:
+        '200':
+          description: Create usage records for subscriptions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '400':
+          description: Invalid payload.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+      parameters:
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+  /usage/events/{id}:
+    put:
+      tags:
+      - Usage
+      summary: Update units consumed and/or the rated price
+      description: Update units consumed and/or rated price for a given event identifier
+      operationId: editEventUnits
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Identifier for the usage event
+          example: evt_60fPx2PNuVson
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUsageRequest'
+        required: true
+      responses:
+        '200':
+          description: Update units consumed for a given event identifier
+          content:
+            application/json: {}
+        '404':
+          description: Usage record could not be found for the given event identifier
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+  /usage/events/{id}/void:
+    put:
+      tags:
+      - Usage
+      summary: Void a usage event
+      description: Voiding a usage event, essentially sets its unitsConsumed to 0 and the ratedPrice if it exists to 0.0
+      operationId: voidEvent
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Identifier for the event
+          example: a46e0ff2-fc31-11ed-be56
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Void a usage event
+          content:
+            application/json: {}
+        '404':
+          description: Usage record could not be found for the given event identifier
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Unit'
+components:
+  schemas:
+    ResponseDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        message:
+          type: string
+    EventListDto:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+    Pageable:
+      type: object
+      properties:
+        nextPageToken:
+          type: string
+        pageSize:
+          type: integer
+          format: int32
+    FailedEvent:
+      type: object
+      properties:
+        event:
+          $ref: '#/components/schemas/EventRequest'
+        reason:
+          type: string
+          description: Reason for failure
+      description: List of events that failed ingestion
+    Unit:
+      type: object
+    EventRequest:
+      type: object
+      properties:
+        id:
+          maxLength: 200
+          minLength: 1
+          type: string
+          description: User provided Unique identifier for the event
+        accountId:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: MonetizeNow Identifier for the account associated with the event
+          example: acct_oypCgzfyTCaWE
+        subscriptionId:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: MonetizeNow Identifier for the subscription associated with the event
+          example: subs_lRVTvOpnpXgmv
+        usageTypeId:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: MonetizeNow Identifier for the usage type associated with the product on which usage is being reported
+          example: usgt_aqtt2711mr1rz
+        unitsConsumed:
+          type: number
+          description: Units consumed
+          format: double
+          example: 100
+        timestamp:
+          type: string
+          description: Timestamp of the event
+          format: date-time
+          example: '2022-01-01T00:00:00Z'
+        ratedPrice:
+          type: number
+          description: Optional Rated Price for the event. The currency is determined by the Rate used in the subscription.
+          format: double
+          example: 1
+      description: Event that failed ingestion
+    UsageQueryResponse:
+      type: object
+      properties:
+        unitsConsumed:
+          type: number
+          description: Total Un-rated Units consumed for the requested period
+          format: double
+          example: 100
+        ratedUnitsConsumed:
+          type: number
+          description: Total Rated Units consumed for the requested period
+          format: double
+          example: 20
+        totalRatedPrice:
+          type: number
+          description: Total Rated Price for the requested period
+          format: double
+          example: 1
+    UpdateUsageRequest:
+      type: object
+      properties:
+        unitsConsumed:
+          type: number
+          description: Updated units consumed for the event
+          format: double
+          example: 100
+        ratedPrice:
+          type: number
+          description: Optionally update rated Price for the event
+          format: double
+          example: 1
+    UsageHistoryResponse:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Date corresponding to the aggregated unitsConsumed
+          format: date
+          example: '2022-01-01'
+        unitsConsumed:
+          type: number
+          description: Total unrated unitsConsumed for the given date
+          format: double
+          example: 100
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the event
+        accountId:
+          type: string
+          description: MonetizeNow Identifier for the account associated with the event
+          example: acct_oypCgzfyTCaWE
+        subscriptionId:
+          type: string
+          description: MonetizeNow Identifier for the subscription associated with the event
+          example: subs_lRVTvOpnpXgmv
+        usageTypeId:
+          type: string
+          description: MonetizeNow Identifier for the usage type associated with the product on which usage is being reported
+          example: usgt_aqtt2711mr1rz
+        unitsConsumed:
+          type: number
+          description: Units consumed
+          format: double
+          example: 100
+        ratedPrice:
+          type: number
+          description: Optional Rated Price for the event. The currency is determined by the Rate used in the subscription.
+          format: double
+          example: 1
+        timestamp:
+          type: string
+          description: Timestamp of the event
+          format: date-time
+          example: '2022-01-01T00:00:00Z'
+    EventResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the event ingestion
+          example: PARTIAL
+          enum:
+          - SUCCESS
+          - PARTIAL
+          - FAILED
+        failedEvents:
+          type: array
+          description: List of events that failed ingestion
+          items:
+            $ref: '#/components/schemas/FailedEvent'

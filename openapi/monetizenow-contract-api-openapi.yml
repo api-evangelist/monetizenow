@@ -1,0 +1,2661 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI definition Contract API
+  version: v0
+  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+servers:
+- url: https://api.monetizeplatform.com
+tags:
+- name: Contract
+paths:
+  /api/accounts/{accountId}/contracts:
+    get:
+      tags:
+      - Contract
+      operationId: getAllContractsByAccountId
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: totalValue
+        in: query
+        schema:
+          type: string
+          example: 100000
+      - name: currency
+        in: query
+        schema:
+          type: string
+          example: USD
+      - name: status
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+      - name: owner
+        in: query
+        schema:
+          type: string
+          example: usr_X0XZ05bvkrB1RpLS
+      - name: team
+        in: query
+        schema:
+          type: string
+          example: team_X0XZ05bvkrB1RpLS
+      - name: endAction
+        in: query
+        schema:
+          type: string
+          example: MANUAL_RENEW
+          enum:
+          - MANUAL_RENEW
+          - RENEW
+          - CANCEL
+      - name: createDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: modifyDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          example: '2022-04-07'
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          example: '2022-04-07'
+      - name: billGroupId
+        in: query
+        schema:
+          type: string
+          example: bilg_LSHGbqpydy83e
+      - name: previousContractId
+        in: query
+        schema:
+          type: string
+          example: ctrct_vZTyL6E56aQmgjkx
+      - name: renewed
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: autoRenewalNoticePeriod
+        in: query
+        schema:
+          type: integer
+          example: 10
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: owner
+      - name: currentPage
+        in: query
+        schema:
+          type: string
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: string
+          example: 10
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get all contracts by account id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractListDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.util.MNPageCom.monytyz.billing.contract.dto.ContractDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.util.MNPageCom.monytyz.billing.contract.dto.ContractDto'
+  /api/contracts:
+    get:
+      tags:
+      - Contract
+      operationId: getAllContracts
+      parameters:
+      - name: accountId
+        in: query
+        schema:
+          type: string
+          example: acct_m0CB9LflojZxytfC
+      - name: totalValue
+        in: query
+        schema:
+          type: string
+          example: 100000
+      - name: currency
+        in: query
+        schema:
+          type: string
+          example: USD
+      - name: status
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+      - name: owner
+        in: query
+        schema:
+          type: string
+          example: usr_X0XZ05bvkrB1RpLS
+      - name: team
+        in: query
+        schema:
+          type: string
+          example: team_X0XZ05bvkrB1RpLS
+      - name: endAction
+        in: query
+        schema:
+          type: string
+          example: MANUAL_RENEW
+          enum:
+          - MANUAL_RENEW
+          - RENEW
+          - CANCEL
+      - name: createDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: modifyDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          example: '2022-04-07'
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          example: '2022-04-07'
+      - name: billGroupId
+        in: query
+        schema:
+          type: string
+          example: bilg_LSHGbqpydy83e
+      - name: previousContractId
+        in: query
+        schema:
+          type: string
+          example: ctrct_vZTyL6E56aQmgjkx
+      - name: renewed
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: autoRenewalNoticePeriod
+        in: query
+        schema:
+          type: integer
+          example: 10
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: owner
+      - name: currentPage
+        in: query
+        schema:
+          type: string
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: string
+          example: 10
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get all contracts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractListDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.util.MNPageCom.monytyz.billing.contract.dto.ContractDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.util.MNPageCom.monytyz.billing.contract.dto.ContractDto'
+  /api/contracts/{contractId}:
+    get:
+      tags:
+      - Contract
+      operationId: getContractById
+      parameters:
+      - name: contractId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ctrct_QEPqCDqeaVte5WzM
+        example: ctrct_QEPqCDqeaVte5WzM
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get contract by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDetailDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                type: object
+    put:
+      tags:
+      - Contract
+      operationId: updateContract
+      parameters:
+      - name: contractId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractUpdateDto'
+        required: true
+      responses:
+        '200':
+          description: Update contract by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDto'
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDto'
+  /api/contracts/{contractId}/amend:
+    post:
+      tags:
+      - Contract
+      operationId: amendContract
+      parameters:
+      - name: contractId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: amendmentDate
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.contract.dto.AmendContractDto'
+      responses:
+        '200':
+          description: Amend contract by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.QuoteDetailDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/contracts/{contractId}/changeOwner/{userId}:
+    post:
+      tags:
+      - Contract
+      operationId: changeContractOwner
+      parameters:
+      - name: contractId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ctrct_QEPqCDqeaVte5WzM
+        example: ctrct_QEPqCDqeaVte5WzM
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: user_REGwM7fYVn3DkvFa
+        example: user_REGwM7fYVn3DkvFa
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Change contract owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDetailDto'
+        '403':
+          description: Not authorized to update contract
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDetailDto'
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDetailDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDetailDto'
+  /api/contracts/{contractId}/renew:
+    post:
+      tags:
+      - Contract
+      operationId: renewContract
+      parameters:
+      - name: contractId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ctrct_QEPqCDqeaVte5WzM
+        example: ctrct_QEPqCDqeaVte5WzM
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractRenewDto.AutoRenew'
+              - $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractRenewDto.ProvisionQuote'
+      responses:
+        '200':
+          description: Renew contract by id
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/com.monytyz.billing.contract.service.RenewContractResponse.NewContract'
+                - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.QuoteDetailDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Resource not found by Id
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error. Please contact the support team.
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    com.monytyz.billing.quote.dto.quoteoffering.QuoteOfferingOptionsDto:
+      required:
+      - priceDisplay
+      type: object
+      properties:
+        priceDisplay:
+          type: string
+          enum:
+          - PRODUCT
+          - OFFERING
+    com.monytyz.billing.customer.dto.contact.ContactSnapshotDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        accountId:
+          type:
+          - string
+          - 'null'
+          description: Account ID associated with the contact
+          example: acc_1234567890123
+        customId:
+          type:
+          - string
+          - 'null'
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        snapshotId:
+          type: string
+          description: The identifier of the snapshot
+          example: cntctsnp_4J3aiDdLtQPc13VO
+        address:
+          $ref: '#/components/schemas/ContactSnapshotDtoAddressSnapshotDto'
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type:
+          - string
+          - 'null'
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type:
+          - string
+          - 'null'
+          description: Title of the contact
+          example: CFO
+    com.monytyz.billing.contract.dto.ContractRenewDto.ProvisionQuote:
+      required:
+      - contractLength
+      - customFields
+      - customId
+      - description
+      - includeSubscriptionsAsOfRenewalDate
+      - newQuoteType
+      - opportunity
+      - renewalDate
+      - renewalMode
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractRenewDto'
+      - type: object
+        properties:
+          customId:
+            type: string
+          description:
+            type: string
+          customFields:
+            type: object
+            additionalProperties:
+              type: object
+          renewalMode:
+            $ref: '#/components/schemas/com.monytyz.billing.contract.dto.RenewalMode.ProvisionQuote'
+    com.monytyz.billing.contract.dto.ContractRenewDto.AutoRenew:
+      required:
+      - contractLength
+      - includeSubscriptionsAsOfRenewalDate
+      - newQuoteType
+      - opportunity
+      - renewalDate
+      - renewalMode
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractRenewDto'
+      - type: object
+        properties:
+          renewalMode:
+            $ref: '#/components/schemas/com.monytyz.billing.contract.dto.RenewalMode.AutoRenew'
+    com.monytyz.billing.data.cpq.BillingAnchorData:
+      required:
+      - day
+      - month
+      type: object
+      properties:
+        day:
+          type: integer
+          format: int32
+        month:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the company
+        address:
+          $ref: '#/components/schemas/CompanyInfoSnapshotDtoAddressDto'
+        legalEntityId:
+          type: string
+          description: Identifier for the legal entity
+        customId:
+          type: string
+          description: Custom id of the companyinfo snapshot
+        logoStorageId:
+          type: string
+          description: Storage id of the company logo
+        email:
+          type: string
+          description: Email address of the company
+        addressFormat:
+          type: string
+          description: Format of the legal entity's address
+          enum:
+          - US_FORMAT
+          - EUROPEAN_FORMAT
+      description: The entity who creates the invoice for billing purpose
+    com.monytyz.billing.contract.dto.ContractRenewDto:
+      required:
+      - contractLength
+      - includeSubscriptionsAsOfRenewalDate
+      - mode
+      - newQuoteType
+      - opportunity
+      - renewalDate
+      type: object
+      properties:
+        newQuoteType:
+          type: string
+          description: Types of new quotes
+          enum:
+          - NET_NEW
+          - MANUAL_RENEWAL
+          - EARLY_RENEWAL
+        opportunity:
+          $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractOpportunityDto'
+        contractLength:
+          type: integer
+          format: int32
+        includeSubscriptionsAsOfRenewalDate:
+          type: boolean
+        renewalDate:
+          type: string
+          format: date
+        mode:
+          type: string
+      discriminator:
+        propertyName: mode
+    com.monytyz.billing.quote.model.QuoteValidation:
+      required:
+      - errorLevel
+      - message
+      - ruleId
+      type: object
+      properties:
+        ruleId:
+          type: string
+          format: uuid
+        ruleDescription:
+          type: string
+        errorLevel:
+          type: string
+          enum:
+          - INFO
+          - WARN
+          - ERROR
+        message:
+          type: string
+    com.monytyz.billing.quote.dto.quoteoffering.QuoteOfferingDetailDto:
+      required:
+      - amount
+      - amountWithoutDiscount
+      - id
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: quoff_yaxpYI9w4AaI2blT
+        quoteId:
+          type: string
+          example: quote_cHCX0TFN79rDgDyg
+        offeringId:
+          type: string
+          example: offer_iJuVJLgQKIFc98RE
+        rateId:
+          type: string
+          description: Unique identifier for the rate
+          example: rate_fvCOerGF0bC8JuV2
+        priceUpliftConfigurationId:
+          type: string
+          example: pucfg_fvCOerGF0bC8JuV2
+        subscriptionId:
+          type: string
+          example: subsc_9TkhFbhZ5oY4q2fw
+        description:
+          type: string
+          example: Netflix Basic Monthly
+        offeringName:
+          type: string
+          example: Monthly Offer
+        offeringDescription:
+          type: string
+          example: Netflix Monthly Offer
+        rateName:
+          type: string
+          description: Name of the rate. This name of the rate will appear on quotes
+          example: Monthly Rate
+        rateDescription:
+          type: string
+          description: Description of the rate
+          example: Netflix Monthly Rate
+        billingFrequency:
+          type: string
+          description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are MONTHLY, QUARTERLY, ANNUALLY
+          example: Monthly
+          enum:
+          - DAILY
+          - MONTHLY
+          - QUARTERLY
+          - SEMIANNUALLY
+          - ANNUALLY
+          - ONETIME
+          - CUSTOM
+        billingFrequencyInMonths:
+          type: integer
+          description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are between 1 to 60 (months)
+          format: int32
+          example: 1
+        subscriptionTiming:
+          type: string
+          description: Defines if you want a subscription to be billed in advance or in arrears
+          example: ADVANCE
+          enum:
+          - ADVANCE
+          - ARREARS
+        debitProrationMultiplier:
+          type: number
+          example: 2
+        debit:
+          type: number
+          example: 10000
+        creditProrationMultiplier:
+          type: number
+          example: 1
+        credit:
+          type: number
+          example: 100000000
+        amountWithoutDiscount:
+          minimum: 0
+          type: number
+          example: 900
+        amount:
+          minimum: 0
+          type: number
+          example: 1000
+        discountAmount:
+          type: number
+          example: 100
+        discountPercent:
+          type: number
+          example: 10
+        previousId:
+          type: string
+          example: disc_m0CB9LflojZxytfC
+        previousRateId:
+          type: string
+          example: rate_fvCOerGF0bC8JuV2
+        previousAmount:
+          type: number
+          example: 100000
+        startDate:
+          type: string
+          format: date
+          example: '2022-01-31'
+        endDate:
+          type: string
+          format: date
+          example: '2022-01-31'
+        parentQuoteOfferingId:
+          type: string
+          example: quoff_iJuVJLgQKIFc98RE
+        items:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteitem.QuoteItemDetailDto'
+        discounts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.discount.DiscountDto'
+        revenueMetrics:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.revenuemetrics.RevenueDataDto'
+        locked:
+          type: boolean
+        accountSpecificRate:
+          type: boolean
+          description: A boolean field indicating if the Rate is specific to an account or not
+          example: true
+        options:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.QuoteOfferingOptionsDto'
+        role:
+          type: string
+          enum:
+          - STANDARD
+          - REFERENCE
+        position:
+          type: integer
+          format: int32
+        added:
+          type: boolean
+        removed:
+          type: boolean
+    com.monytyz.billing.opportunity.dto.OpportunityQuoteDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum:
+          - NEW
+          - AMENDMENT
+          - RENEWAL
+        status:
+          type: string
+          enum:
+          - DRAFT
+          - REVIEW
+          - APPROVED
+          - DENIED
+          - SENT
+          - ACCEPTED
+          - ACCEPTED_ADMIN_EDITABLE
+          - PROCESSED
+          - CANCELED
+          - EXPIRED
+          - ARCHIVED
+        total:
+          type: number
+        contractStartDate:
+          type: string
+          format: date
+        contractEndDate:
+          type: string
+          format: date
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        legalEntityId:
+          type: string
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigDto:
+      required:
+      - id
+      - locked
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+          - APPLY_TO_ALL_PRODUCTS
+          - PRODUCT_SPECIFIC
+        locked:
+          type: boolean
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.quote.dto.quote.renewal.RenewalTermLength:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.v2.http.response.PriceSummaryResponse:
+      required:
+      - amount
+      - amountAfterDiscount
+      - discountAmount
+      - zero
+      type: object
+      properties:
+        amount:
+          type: number
+        discountAmount:
+          type: number
+        zero:
+          type: boolean
+        amountAfterDiscount:
+          type: number
+    com.monytyz.billing.contract.dto.ContractUpdateDto:
+      type: object
+      properties:
+        endAction:
+          type: string
+          enum:
+          - MANUAL_RENEW
+          - RENEW
+          - CANCEL
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.quote.model.AmendmentVersion:
+      required:
+      - versionString
+      type: object
+      properties:
+        versionString:
+          type: string
+    com.monytyz.billing.contract.dto.ContractOpportunityDto:
+      required:
+      - customId
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          example: opp_tnBG9B0Dbwvh
+        customId:
+          type: string
+        name:
+          type: string
+    com.monytyz.billing.contract.dto.RenewalMode.AutoRenew:
+      required:
+      - serialized$monytyzBillingPlatform
+      type: object
+      properties:
+        serialized$monytyzBillingPlatform:
+          type: string
+    com.monytyz.billing.catalog.dto.discount.DiscountDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the discount
+          example: disc_TbFRB6xKDHScB
+        name:
+          type: string
+          description: Name of the discount
+          example: Early payment flat discount
+        description:
+          type: string
+          description: Description of the discount
+          example: Discount for early payment
+        discountType:
+          type: string
+          description: Type of discount. Valid values are PERCENTAGE, FLAT
+          example: FLAT
+          enum:
+          - FLAT
+          - PERCENTAGE
+        status:
+          type: string
+          description: Status of the discount. Valid values are ACTIVE, INACTIVE, PENDING, EXPIRED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - PENDING
+          - EXPIRED
+        discountCode:
+          type: string
+          description: Code for the discount
+          example: EARLY_PAYMENT
+        quoteId:
+          type: string
+          description: Associated Quote Id for the discount
+          example: quot_oKEMgylKzkIWR
+        discountAmount:
+          type: number
+          description: Amount of the discount
+          example: 100
+        currency:
+          type: string
+          description: Currency of the discount
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        durationType:
+          type: string
+          description: Duration type of the discount. Valid values are ONE_TIME, UNLIMITED, LIMITED
+          example: ONE_TIME
+          enum:
+          - ONE_TIME
+          - UNLIMITED
+          - LIMITED
+        durationMonths:
+          type: integer
+          description: Duration of the discount
+          format: int32
+          example: 12
+        maxUses:
+          type: integer
+          description: Maximum number of times the discount can be used
+          format: int32
+          example: 10
+        remainingUses:
+          type: integer
+          description: Remaining number of times the discount can be used
+          format: int32
+          example: 5
+        startDate:
+          type: string
+          description: Start date of the discount
+          format: date
+          example: '2021-01-01'
+        endDate:
+          type: string
+          description: End date of the discount
+          format: date
+          example: '2021-12-31'
+        autoRemove:
+          type: boolean
+          description: Boolean value indicating if the discount should be removed automatically
+          example: true
+        accountId:
+          type: string
+          description: Account Id for the discount
+          example: acct_jHhOQjAs87kNj
+        scopeProductId:
+          type: string
+          description: Product Id for the discount
+          example: prod_N7oFTpLCwMRCo
+        scopeOfferingId:
+          type: string
+          description: Offering Id for the discount
+          example: offr_xO00qdIFuMsQy
+        locked:
+          type: boolean
+          description: Boolean value indicating if the discount is locked
+          example: false
+        lifecyclePolicies:
+          uniqueItems: true
+          type: array
+          description: List of lifecycle policies for the discount
+          example:
+          - EXCLUDE_FROM_xRENEWAL
+          items:
+            type: string
+            description: List of lifecycle policies for the discount
+            example: '["EXCLUDE_FROM_xRENEWAL"]'
+            enum:
+            - EXCLUDE_FROM_RENEWAL
+      description: Discount details associated with the subscription
+    com.monytyz.billing.contract.dto.AmendContractDto:
+      required:
+      - customFields
+      - customId
+      - description
+      - opportunity
+      type: object
+      properties:
+        opportunity:
+          $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractOpportunityDto'
+        customId:
+          type: string
+        description:
+          type: string
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+    com.monytyz.billing.catalog.dto.customprice.CustomPriceDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: cstm_9TkhFbhZ5oY4q2fw
+        amount:
+          type: number
+          example: 100000
+      description: Custom price object associated with the subscription item
+    com.monytyz.billing.quote.dto.quote.renewal.ContractRenewalTermsDto:
+      type: object
+      properties:
+        contractEndAction:
+          type: string
+          description: Represents action to be taken after a contract end. Possible values `RENEW` and `CANCEL`
+          example: CANCEL
+          enum:
+          - MANUAL_RENEW
+          - RENEW
+          - CANCEL
+        renewalTermLength:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.renewal.RenewalTermLength'
+        autoRenewalNoticePeriod:
+          type: integer
+          description: Notice period in days for automatic contract renewal
+          format: int32
+          example: 10
+    com.monytyz.billing.quote.dto.revenuemetrics.QuoteRevenueDto:
+      type: object
+      properties:
+        arr:
+          type: number
+          example: 1200
+        mrr:
+          type: number
+          example: 100
+        incrementalMrr:
+          type: number
+          example: 100
+        percentage:
+          type: number
+          example: 10
+        incrementalArr:
+          type: number
+          example: 100
+        previousArr:
+          type: number
+          example: 0
+        previousMrr:
+          type: number
+          example: 0
+    com.monytyz.billing.v2.http.response.IncrementalSubscriptionItemBreakdownResponse:
+      required:
+      - amount
+      - amountAfterDiscount
+      - discountAmount
+      - priceSummary
+      - subscriptionItems
+      type: object
+      properties:
+        priceSummary:
+          $ref: '#/components/schemas/com.monytyz.billing.v2.http.response.PriceSummaryResponse'
+        subscriptionItems:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/com.monytyz.billing.v2.http.response.PriceSummaryResponse'
+        discountAmount:
+          type: number
+        amount:
+          type: number
+        amountAfterDiscount:
+          type: number
+    com.monytyz.billing.quote.dto.quote.QuoteBasicDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: quote_cHCX0TFN79rDgDyg
+        description:
+          type: string
+          example: Netflix Premium
+        type:
+          type: string
+          enum:
+          - NEW
+          - AMENDMENT
+          - RENEWAL
+        status:
+          type: string
+          enum:
+          - DRAFT
+          - REVIEW
+          - APPROVED
+          - DENIED
+          - SENT
+          - ACCEPTED
+          - ACCEPTED_ADMIN_EDITABLE
+          - PROCESSED
+          - CANCELED
+          - EXPIRED
+          - ARCHIVED
+        amount:
+          type: number
+          example: 1000000
+        acceptedAt:
+          type: string
+          format: date-time
+        contractId:
+          type: string
+        contractAmount:
+          type: number
+          example: 10000000000
+        contractLength:
+          type: integer
+          format: int32
+        contractStartDate:
+          type: string
+          format: date
+        contractEndDate:
+          type: string
+          format: date
+        accountId:
+          type: string
+        accountName:
+          type: string
+          example: Netflix
+        secondaryAccountId:
+          type: string
+        secondaryAccountName:
+          type: string
+          example: Netflix and Disney MovieAggregator
+        billingAccountId:
+          type: string
+        opportunity:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.opportunity.OpportunityBasicDto'
+        ownerId:
+          type: string
+          example: usr_qDfP1sOyHShW2oGZ
+        ownerName:
+          type: string
+          example: John Dew
+        billGroupId:
+          type: string
+        currency:
+          type: string
+          example: currency
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        migrated:
+          type: boolean
+        sentDate:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+    com.monytyz.billing.quote.dto.quoteitem.QuoteItemDiscountDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        discountId:
+          type: string
+          example: discc_9TkhFbhZ5oY4q2fw
+        discountName:
+          type: string
+          example: Flat Discount
+        discountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        discountAmountOrPercent:
+          type: number
+          example: 10
+        discountAmount:
+          type: number
+          example: 100
+    com.monytyz.billing.v2.http.response.QuoteHistoricalPriceResponse:
+      required:
+      - absolute
+      - bySubscriptionBreakdown
+      - incremental
+      - prior
+      type: object
+      properties:
+        absolute:
+          $ref: '#/components/schemas/com.monytyz.billing.v2.http.response.PriceSummaryResponse'
+        prior:
+          $ref: '#/components/schemas/com.monytyz.billing.v2.http.response.PriceSummaryResponse'
+        bySubscriptionBreakdown:
+          $ref: '#/components/schemas/com.monytyz.billing.v2.http.response.IncrementalSubscriptionBreakdownResponse'
+        incremental:
+          $ref: '#/components/schemas/com.monytyz.billing.v2.http.response.PriceSummaryResponse'
+    com.monytyz.billing.quote.dto.quoteitem.QuoteItemOptionsDto:
+      required:
+      - displayedPriceIds
+      - fieldValueOverrides
+      - showPrices
+      type: object
+      properties:
+        showPrices:
+          type: boolean
+        displayUnitPriceFrequency:
+          type: integer
+          format: int32
+        priceDisplayMode:
+          type: string
+          description: Modes for displaying quote prices
+          enum:
+          - ALL_PRICES
+          - USED_PRICES
+          - CUSTOM_PRICES
+        displayedPriceIds:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.data.catalog.PriceId'
+        fieldValueOverrides:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.model.FieldValueOverride'
+    com.monytyz.billing.contract.dto.ContractDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: cntct_8P9ijCslTprCI7Wu
+        accountId:
+          type: string
+          example: acct_m0CB9LflojZxytfC
+        billGroupId:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        latestQuoteId:
+          type: string
+          example: quote_cHCX0TFN79rDgDyg
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - PENDING
+          - FINISHED
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        endAction:
+          type: string
+          enum:
+          - MANUAL_RENEW
+          - RENEW
+          - CANCEL
+        totalValue:
+          type: number
+          example: 100000000
+        accountName:
+          type: string
+          example: Netflix
+        modifyDate:
+          type: string
+          format: date-time
+        owner:
+          type: string
+          example: usr_X0XZ05bvkrB1RpLS
+        ownerName:
+          type: string
+          example: John Dew
+        renewed:
+          type: boolean
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        previousContractId:
+          type: string
+        legalEntityId:
+          type: string
+    com.monytyz.billing.catalog.model.FieldValueOverride:
+      required:
+      - fieldName
+      - userGivenValue
+      type: object
+      properties:
+        fieldName:
+          type: string
+        userGivenValue:
+          type: string
+    com.monytyz.billing.data.catalog.PriceId:
+      required:
+      - value
+      type: object
+      properties:
+        value:
+          type: string
+    com.monytyz.billing.opportunity.dto.OpportunityResponseDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: opp_tnBG9B0Dbwvh
+        customId:
+          type: string
+          example: customId_tqQ0D
+        name:
+          type: string
+          example: NewOpportunity_UG62S
+        primaryQuoteId:
+          type: string
+          example: quote_kku7e3fCQqxLq5lo
+        url:
+          type: string
+          format: uri
+          example: https://na85.lightning.force.com/lightning/r/Opportunity/xxxxxxxxxxx/view
+        owner:
+          type: string
+          example: USW Sales
+        amount:
+          type: number
+        accountName:
+          type: string
+        status:
+          type: string
+          enum:
+          - WON
+          - CANCELED
+          - ACTIVE
+          - LOST
+        quotes:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.opportunity.dto.OpportunityQuoteDto'
+        accountId:
+          type: string
+          example: acct_pSiInc8itY9yVFY7
+        currency:
+          type: string
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        dealRoomId:
+          type: string
+    ContactSnapshotDtoAddressSnapshotDto:
+      type: object
+      properties:
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Address of the contact
+    com.monytyz.billing.contract.dto.RenewalMode.ProvisionQuote:
+      required:
+      - serialized$monytyzBillingPlatform
+      type: object
+      properties:
+        serialized$monytyzBillingPlatform:
+          type: string
+    CompanyInfoSnapshotDtoAddressDto:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+      description: Address of the company
+    com.monytyz.billing.v2.http.response.IncrementalSubscriptionBreakdownResponse:
+      required:
+      - subscriptions
+      type: object
+      properties:
+        subscriptions:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/com.monytyz.billing.v2.http.response.IncrementalSubscriptionItemBreakdownResponse'
+    com.monytyz.billing.quote.dto.quote.QuoteDetailDto:
+      required:
+      - description
+      - id
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: quote_cHCX0TFN79rDgDyg
+        fromCompany:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto'
+        customId:
+          type: string
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        type:
+          type: string
+          enum:
+          - NEW
+          - AMENDMENT
+          - RENEWAL
+        newQuoteType:
+          type: string
+          description: Types of new quotes
+          enum:
+          - NET_NEW
+          - MANUAL_RENEWAL
+          - EARLY_RENEWAL
+        migrated:
+          type: boolean
+        description:
+          type: string
+          example: Netflix Basic
+        opportunity:
+          $ref: '#/components/schemas/com.monytyz.billing.opportunity.dto.OpportunityResponseDto'
+        accountName:
+          type: string
+          example: Netflix
+        orderId:
+          type: string
+          example: order_qKthVa5dL2IKEZCP
+        accountId:
+          type: string
+          example: acct_m0CB9LflojZxytfC
+        secondaryAccountId:
+          type: string
+          example: acct_secondary123
+        secondaryAccountName:
+          type: string
+          example: Secondary Account
+        billingAccountId:
+          type: string
+          example: acct_billing123
+        contractId:
+          type: string
+          example: ctrct_QEPqCDqeaVte5WzM
+        previousContractId:
+          type: string
+          example: ctrct_QEPqCDqeaVte5WzM
+        originalQuoteId:
+          type: string
+          example: quote_4DI7o8yHMYcJQnu4
+        previousQuoteId:
+          type: string
+          example: quote_5UIto8yHMYcJQnhg
+        contacts:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.QuoteContactsReadDto'
+        billGroupId:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        expirationDate:
+          type: string
+          format: date
+        approvalSubmittedAt:
+          type: string
+          format: date-time
+        approvalGrantedAt:
+          type: string
+          format: date-time
+        credit:
+          type: number
+          example: 10000000
+        contractAmount:
+          type: number
+          example: 1000000000000
+        amount:
+          minimum: 0
+          type: number
+          example: 1000000000000
+        amountWithoutTax:
+          minimum: 0
+          type: number
+          example: 900000000000
+        discountAmount:
+          minimum: 0
+          type: number
+          example: 10000
+        discountPercent:
+          type: number
+          example: 10
+        amountWithoutDiscount:
+          minimum: 0
+          type: number
+          example: 800000000000
+        documentLocation:
+          type: string
+          example: stobj_cUzmPU70ppWVU9P5
+        documentUrl:
+          type: string
+          example: example.com/quote.pdf
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        netTerms:
+          type: string
+          example: NET_30
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        previousNetTerms:
+          type: string
+          example: NET_30
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        status:
+          type: string
+          enum:
+          - DRAFT
+          - REVIEW
+          - APPROVED
+          - DENIED
+          - SENT
+          - ACCEPTED
+          - ACCEPTED_ADMIN_EDITABLE
+          - PROCESSED
+          - CANCELED
+          - EXPIRED
+          - ARCHIVED
+        manualAcceptanceReason:
+          type: string
+        cancellationReason:
+          type: string
+          enum:
+          - EXPIRED
+          - CUSTOMER_DECLINED
+          - DUPLICATE
+          - BY_USER
+          - SUPERSEDED_BY_PROCESSED_QUOTE
+          - BY_MIGRATION
+        startDateSource:
+          type: string
+          enum:
+          - ORIGINAL_CONTRACT_START
+          - AT_TIME_OF_SIGNING
+          - MANUAL
+        contractStartDate:
+          type: string
+          format: date
+        contractAmendmentDate:
+          type: string
+          format: date
+        contractEndDate:
+          type: string
+          format: date
+        contractLength:
+          type: integer
+          format: int32
+          example: 12
+        previousContractLength:
+          type: integer
+          format: int32
+          example: 6
+        contractTerms:
+          type: string
+          example: Contract terms
+        approvals:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.dto.approval.QuoteApprovalDto'
+        validations:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.model.QuoteValidation'
+        quoteOfferings:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.QuoteOfferingDetailDto'
+        noteIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        owner:
+          type: string
+          example: usr_X0XZ05bvkrB1RpLS
+        ownerName:
+          type: string
+          example: John Dew
+        signedDocumentStorageId:
+          type: string
+          example: stobj_cUzmPU70ppWVU9P6
+        sowDocumentStorageId:
+          type: string
+          example: stobj_sdWsU70svBVU8812
+        revenueMetrics:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.revenuemetrics.QuoteRevenueDto'
+        declinedDate:
+          type: string
+          format: date-time
+        sentDate:
+          type: string
+          format: date-time
+        autoRenewContract:
+          type: boolean
+        customPrices:
+          type: boolean
+        requiresEsign:
+          type: boolean
+        acceptedAt:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+        collaborationAccess:
+          type: string
+          enum:
+          - NONE
+          - VIEW
+          - EDIT
+        purchaseOrderNumber:
+          type: string
+        signingOrder:
+          type: string
+          enum:
+          - INTERNAL_FIRST
+          - EXTERNAL_FIRST
+          - EXTERNAL_ONLY
+          - INSTANTANEOUS
+        accessLevel:
+          type: string
+          example: WRITE
+          enum:
+          - WRITE
+          - READ
+          - 'null'
+        coverDocumentStorageId:
+          type: string
+          example: stobj_yCxrWjGIxFy1Drv0
+        footerDocumentStorageId:
+          type: string
+          example: stobj_9jYr3Ci7J8Vmdomo
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        legalEntityId:
+          type: string
+          example: lgen_e33f05749111f
+        conditionalTerms:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.dto.conditionalTerm.QuoteConditionalTermsDto'
+        addressSource:
+          type: string
+          enum:
+          - ACCOUNT
+          - CONTACT
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        priceUpliftConfigurations:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigDto'
+        contractRenewalTerms:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.renewal.ContractRenewalTermsDto'
+        amendmentVersion:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.model.AmendmentVersion'
+        incrementalPrices:
+          $ref: '#/components/schemas/com.monytyz.billing.v2.http.response.QuoteHistoricalPriceResponse'
+        vatNumber:
+          type: string
+        billingAnchor:
+          $ref: '#/components/schemas/com.monytyz.billing.data.cpq.BillingAnchorData'
+        esignEnvelopeId:
+          type: string
+        autoRenewal:
+          type: boolean
+    com.monytyz.billing.contract.dto.ContractDetailDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ctrct_QEPqCDqeaVte5WzM
+        accountId:
+          type: string
+          example: acct_m0CB9LflojZxytfC
+        billGroupId:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        latestQuoteId:
+          type: string
+          example: quote_cHCX0TFN79rDgDyg
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - PENDING
+          - FINISHED
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        endAction:
+          type: string
+          enum:
+          - MANUAL_RENEW
+          - RENEW
+          - CANCEL
+        totalValue:
+          type: number
+          example: 10000000000
+        accountName:
+          type: string
+          example: Netflix
+        modifyDate:
+          type: string
+          format: date-time
+        quotes:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.QuoteBasicDto'
+        owner:
+          type: string
+          example: usr_X0XZ05bvkrB1RpLS
+        ownerName:
+          type: string
+          example: John Dew
+        renewed:
+          type: boolean
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        previousContractId:
+          type: string
+        legalEntityId:
+          type: string
+        contractRenewalTerms:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.renewal.ContractRenewalTermsDto'
+    com.monytyz.billing.contract.service.RenewContractResponse.NewContract:
+      required:
+      - canceledQuoteIds
+      - contract
+      - processedRenewalQuote
+      type: object
+      properties:
+        contract:
+          $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDto'
+        processedRenewalQuote:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quote.QuoteDetailDto'
+        canceledQuoteIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    com.monytyz.billing.quote.dto.conditionalTerm.QuoteConditionalTermsDto:
+      required:
+      - displayOrder
+      - editableOnQuote
+      - edited
+      - id
+      - quoteId
+      - ruleId
+      - ruleName
+      - status
+      - terms
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the quote conditional terms
+          example: qctrm_1PAqM59qN79z0
+        ruleId:
+          type: string
+          description: Rule id for the quote conditional terms
+          format: uuid
+          example: 0f89ace5-17a7-41d2-8edd-6abed74f0f99
+        quoteId:
+          type: string
+          description: Associated Quote Id for the quote conditional terms
+          example: quot_dPmTflW9NSGMe
+        terms:
+          type: string
+          description: Quote conditional terms content
+          example: Test quote conditional term
+        displayOrder:
+          type: integer
+          description: Display order for the quote conditional terms
+          format: int32
+          example: 1
+        editableOnQuote:
+          type: boolean
+          description: Boolean value to describe whether it's editable on the quote
+          example: false
+        ruleName:
+          type: string
+          description: Rule name of the quote conditional terms
+          example: Membership Beta
+        status:
+          type: string
+          description: Quote conditional term status. It can be ACTIVE or INACTIVE
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+        edited:
+          type: boolean
+          description: Boolean value to indicate whether the quote conditional term is edited
+          example: false
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+    com.monytyz.billing.quote.dto.quote.QuoteContactsReadDto:
+      type: object
+      properties:
+        primary:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
+        billing:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
+        esign:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
+        additionalSigners:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
+        additionalESignRecipients:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
+    com.monytyz.billing.quote.dto.revenuemetrics.RevenueDataDto:
+      required:
+      - arr
+      - effectiveArr
+      - effectiveIncrementalArr
+      - effectiveIncrementalMrr
+      - effectiveMrr
+      - incrementalArr
+      - incrementalMrr
+      - mrr
+      type: object
+      properties:
+        arr:
+          type: number
+        incrementalArr:
+          type: number
+        effectiveArr:
+          type: number
+        effectiveIncrementalArr:
+          type: number
+        mrr:
+          type: number
+        incrementalMrr:
+          type: number
+        effectiveMrr:
+          type: number
+        effectiveIncrementalMrr:
+          type: number
+    com.monytyz.billing.quote.dto.quoteitem.QuoteItemDetailDto:
+      required:
+      - amount
+      - amountWithoutDiscount
+      - contractAmount
+      - displayUnitPrice
+      - isAddon
+      - quantity
+      - unitPrice
+      - unitPriceAfterDiscount
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: quote_cHCX0TFN79rDgDyg
+        customId:
+          type: string
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        quoteOfferingId:
+          type: string
+          example: quoff_yaxpYI9w4AaI2blT
+        productId:
+          type: string
+          example: prod_nStU73ZJahgBSxnh
+        sku:
+          type: string
+          example: UGG-BB-PUR-06
+        productName:
+          type: string
+          example: Netflix Premium
+        productType:
+          type: string
+          example: Subscription
+          enum:
+          - ADVANCE
+          - ARREARS
+          - USAGE
+          - ONETIME
+          - ONETIME_PREPAID_CREDIT
+          - MIN_COMMIT
+        subscriptionItemId:
+          type: string
+          example: subitm_9TkhFbhZ5oY4q2fw
+        endDate:
+          type:
+          - string
+          - 'null'
+          format: date
+        description:
+          type: string
+          example: Netflix Premium Monthly Subscription
+        isAddon:
+          type: boolean
+        addonId:
+          type: string
+        debitProrationMultiplier:
+          type: number
+        debit:
+          type: number
+        creditProrationMultiplier:
+          type: number
+        credit:
+          type: number
+        amountWithoutDiscount:
+          minimum: 0
+          type: number
+          example: 900
+        contractAmount:
+          minimum: 0
+          type: number
+          example: 1000
+        amount:
+          minimum: 0
+          type: number
+          example: 1000
+        unitPriceAfterDiscount:
+          minimum: 0
+          type: number
+          example: 10
+        unitPrice:
+          minimum: 0
+          type: number
+          example: 100
+        quantity:
+          minimum: 0
+          type: number
+          format: double
+          example: 10
+        customDiscountId:
+          type: string
+          example: disc_nStU73ZJahgBSxnh
+        customDiscountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        customDiscountAmountOrPercent:
+          type: number
+          example: 10
+        customDiscountName:
+          type: string
+        customDiscountDescription:
+          type: string
+        discountAmount:
+          type: number
+          example: 100
+        discountPercent:
+          type: number
+          example: 10
+        previousDiscountAmount:
+          type: number
+          example: 100
+        previousDiscountPercent:
+          type: number
+          example: 10
+        amendmentStatus:
+          type: string
+          enum:
+          - ADDED
+          - NO_CHANGE
+          - REMOVED
+          - UPDATED
+        previousItemId:
+          type: string
+          example: item_DHlWk4mIICkQabl0
+        previousAmount:
+          type: number
+          example: 10
+        previousQuantity:
+          type: number
+          format: double
+          example: 10
+        previousCustomDiscountId:
+          type: string
+          example: disc_DHlWk4mIICkQabl0
+        previousCustomDiscountType:
+          type: string
+          enum:
+          - FLAT
+          - PERCENTAGE
+        previousCustomDiscountAmountOrPercent:
+          type: number
+          example: 10
+        discounts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteitem.QuoteItemDiscountDto'
+        customPriceId:
+          type: string
+        customPrice:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.customprice.CustomPriceDto'
+        revenueMetrics:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.revenuemetrics.RevenueDataDto'
+        options:
+          $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteitem.QuoteItemOptionsDto'
+        displayUnitPrice:
+          type: number
+          example: 100
+        position:
+          type: integer
+          format: int32
+          example: 1
+        notes:
+          type: string
+        customDiscountLifecyclePolicies:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - EXCLUDE_FROM_RENEWAL
+    com.monytyz.billing.contract.dto.ContractListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.customer.dto.address.AddressDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the address
+          example: addr_bkoY6dCoLRblllsJ
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street, Apartment 3D
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Billing address for the account
+    com.monytyz.billing.quote.dto.approval.QuoteApprovalDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: qtapr_miQeAK8wW4jwvBoY
+        ruleId:
+          type: string
+          format: uuid
+          example: fd055285-38d5-460e-8074-701211b467b6
+        userId:
+          type: string
+          example: usr_X0XZ05bvkrB1RpLS
+        username:
+          type: string
+          example: Bob Smith
+        teamId:
+          type: string
+          example: team_REGwM7fYVn3DkvFa
+        teamName:
+          type: string
+          example: USW Sales
+        approverId:
+          type: string
+          example: usr_X0XZ05bvkrB1RpLS
+        approverName:
+          type: string
+          example: Bob Smith
+        declinerId:
+          type: string
+          example: usr_X0XZ05bvkrB1RpLS
+        declinerName:
+          type: string
+          example: Bob Smith
+        name:
+          type: string
+          example: Rule 1
+        description:
+          type: string
+          example: US West Sales
+        rank:
+          type: integer
+          format: int32
+          example: 1
+        status:
+          type: string
+          enum:
+          - NO_ACTION
+          - APPROVED
+          - DECLINED
+        declineReason:
+          type: string
+          example: Insufficient Credit
+        approvalTimestamp:
+          type: string
+          format: date-time
+        declinedTimestamp:
+          type: string
+          format: date-time
+        skipped:
+          type: boolean
+        quoteId:
+          type: string
+          example: quote_cHCX0TFN79rDgDyg
+        mandatory:
+          type: boolean
+        currentUserApprover:
+          type: boolean
+        lifecycleBehavior:
+          type: string
+          enum:
+          - RESET_APPROVAL
+          - RETAIN_APPROVAL
+    com.monytyz.billing.util.MNPageCom.monytyz.billing.contract.dto.ContractDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.contract.dto.ContractDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.quote.dto.quote.opportunity.OpportunityBasicDto:
+      required:
+      - id
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - WON
+          - CANCELED
+          - ACTIVE
+          - LOST
+        dealRoomId:
+          type: string

@@ -1,0 +1,852 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI definition Contact API
+  version: v0
+  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+servers:
+- url: https://api.monetizeplatform.com
+tags:
+- name: Contact
+  description: Contacts represent individual, address, and company deatils for your customers.
+paths:
+  /api/accounts/{accountId}/billGroups/{billGroupId}/contacts:
+    post:
+      tags:
+      - Contact
+      summary: Create bill group contact
+      description: Create bill group contact
+      operationId: createBillGroupContact
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_m0CB9LflojZxytfC
+        example: acct_m0CB9LflojZxytfC
+      - name: billGroupId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        example: billg_tDbC2FxuCwQoxcjm
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSaveDto'
+        required: true
+      responses:
+        '201':
+          description: Create Object
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/billGroups/{billGroupId}/contacts/{contactId}:
+    put:
+      tags:
+      - Contact
+      summary: Update bill group contact
+      description: Update bill group contact details
+      operationId: updateBillGroupContact
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: billGroupId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: billg_tDbC2FxuCwQoxcjm
+        example: billg_tDbC2FxuCwQoxcjm
+      - name: contactId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: cntct_HcDS5ya4Fpsi5Wky
+        example: cntct_HcDS5ya4Fpsi5Wky
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Update object by id
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/contacts:
+    post:
+      tags:
+      - Contact
+      summary: Create contact for account
+      description: Create contact to associate with an account
+      operationId: createAccountContact
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSaveDto'
+        required: true
+      responses:
+        '201':
+          description: Create Object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '409':
+          description: Custom Id already exists
+        '500':
+          description: Internal server error. Please contact the support team.
+    get:
+      tags:
+      - Contact
+      summary: Get all contacts
+      description: Get all contacts by account Id
+      operationId: getAllContactsByAccountId
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_jgPH8G33rELY6LQa
+        example: acct_jgPH8G33rELY6LQa
+      - name: id
+        in: query
+        schema:
+          type: string
+          example: cont_CABapaOcqQbmo
+      - name: customId
+        in: query
+        schema:
+          type: string
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+      - name: fullName
+        in: query
+        schema:
+          type: string
+          example: Mr Twist
+      - name: email
+        in: query
+        schema:
+          type: string
+          example: test@mail.com
+      - name: phone
+        in: query
+        schema:
+          type: string
+          example: '+12099216581'
+      - name: addressId
+        in: query
+        schema:
+          type: string
+          example: addr_snXlpJfqys6nU
+      - name: city
+        in: query
+        schema:
+          type: string
+          example: New York
+      - name: state
+        in: query
+        schema:
+          type: string
+          example: New York
+      - name: country
+        in: query
+        schema:
+          type: string
+          example: US
+      - name: postalCode
+        in: query
+        schema:
+          type: string
+          example: 12345
+      - name: status
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+      - name: showInternal
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: esigner
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: defaultESigner
+        in: query
+        schema:
+          type: boolean
+          example: false
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: id
+      - name: currentPage
+        in: query
+        schema:
+          type: string
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: string
+          example: 20
+      - name: createDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: modifyDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'Object list retrieved '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactListDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/contacts/customId/{customId}:
+    get:
+      tags:
+      - Contact
+      summary: Get contact
+      description: Get contact by account Id and account custom Id
+      operationId: getContactByAccountIdAndCustomId
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: customId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/accounts/{accountId}/contacts/{contactId}:
+    get:
+      tags:
+      - Contact
+      summary: Get contact
+      description: Get contact by account Id and contact Id
+      operationId: getContactByAccountIdAndId
+      parameters:
+      - name: accountId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: acct_m0CB9LflojZxytfC
+        example: acct_m0CB9LflojZxytfC
+      - name: contactId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: cntct_QEPqCDqeaVte5WzM
+        example: cntct_QEPqCDqeaVte5WzM
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/contacts:
+    post:
+      tags:
+      - Contact
+      summary: Create contact
+      description: Create contact
+      operationId: createContact
+      parameters:
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSaveDto'
+        required: true
+      responses:
+        '201':
+          description: Create Object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        '400':
+          description: Bad Request
+        '409':
+          description: Custom Id already exists
+        '500':
+          description: Internal server error. Please contact the support team.
+    get:
+      tags:
+      - Contact
+      summary: Get all contacts
+      description: Get all contacts
+      operationId: getAllContacts
+      parameters:
+      - name: id
+        in: query
+        schema:
+          type: string
+          example: acct_m0CB9LflojZxytfC
+      - name: customId
+        in: query
+        schema:
+          type: string
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+      - name: fullName
+        in: query
+        schema:
+          type: string
+          example: Mr Twist
+      - name: email
+        in: query
+        schema:
+          type: string
+          example: test@mail.com
+      - name: phone
+        in: query
+        schema:
+          type: string
+          example: '+12099216581'
+      - name: showInternal
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: esigner
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: defaultESigner
+        in: query
+        schema:
+          type: boolean
+          example: false
+      - name: primary
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: accountId
+        in: query
+        schema:
+          type: string
+          example: acct_m0CB9LflojZxytfC
+      - name: status
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+      - name: addressId
+        in: query
+        schema:
+          type: string
+          example: addr_m0CB9LflojZxytfC
+      - name: city
+        in: query
+        schema:
+          type: string
+          example: New York
+      - name: state
+        in: query
+        schema:
+          type: string
+          example: New York
+      - name: country
+        in: query
+        schema:
+          type: string
+          example: US
+      - name: postalCode
+        in: query
+        schema:
+          type: string
+          example: 12345
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: id
+      - name: currentPage
+        in: query
+        schema:
+          type: string
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: string
+          example: 20
+      - name: createDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: modifyDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'Object list retrieved '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactListDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/contacts/search:
+    get:
+      tags:
+      - Contact
+      summary: Search contact by id, customId, and name
+      description: Get all contact's that meet the search criteria as a list
+      operationId: searchContacts
+      parameters:
+      - name: query
+        in: query
+        schema:
+          type: string
+          example: query string
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: id
+      - name: currentPage
+        in: query
+        schema:
+          type: string
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: string
+          example: 10
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'Object list retrieved '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactListDto'
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/contacts/{contactId}:
+    get:
+      tags:
+      - Contact
+      summary: Get contact
+      description: Get contact by contact Id
+      operationId: getContactByContactId
+      parameters:
+      - name: contactId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: cntct_QEPqCDqeaVte5WzM
+        example: cntct_QEPqCDqeaVte5WzM
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'Get contact by id '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+components:
+  schemas:
+    com.monytyz.billing.customer.dto.contact.ContactDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        customId:
+          type: string
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        accountId:
+          type: string
+          description: Account ID where the contact belongs
+          example: acct_m0CB9LflojZxytfC
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        status:
+          type: string
+          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+          - ARCHIVED
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type: string
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type: string
+          description: Title of the contact
+          example: CFO
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        primary:
+          type: boolean
+          description: Boolean value indicating if the contact is primary or not
+          example: true
+        defaultESigner:
+          type: boolean
+          description: Boolean value indicating if the contact is default eSigner
+          example: false
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the contact
+          description: User configured custom fields for the contact
+        esigner:
+          type: boolean
+      description: Primary contact information for this account
+    com.monytyz.billing.customer.dto.contact.ContactSaveDto:
+      required:
+      - fullName
+      - status
+      type: object
+      properties:
+        customId:
+          maxLength: 255
+          minLength: 0
+          type:
+          - string
+          - 'null'
+          description: A user provided identifier for the contact
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressSaveDto'
+        fullName:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          maxLength: 79
+          minLength: 0
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          maxLength: 50
+          minLength: 0
+          type:
+          - string
+          - 'null'
+          description: Phone of the contact
+          example: +1 800 444 4444
+        status:
+          type: string
+          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+          - ARCHIVED
+        title:
+          maxLength: 100
+          minLength: 0
+          type:
+          - string
+          - 'null'
+          description: Title of the contact
+          example: CFO
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        primary:
+          type: boolean
+          description: Boolean value indicating if the contact is primary or not
+          example: false
+        defaultESigner:
+          type: boolean
+          description: Boolean value indicating if the contact is default eSigner
+          example: false
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        esigner:
+          type: boolean
+    com.monytyz.billing.customer.dto.contact.ContactListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.dto.address.AddressDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the address
+          example: addr_bkoY6dCoLRblllsJ
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street, Apartment 3D
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Billing address for the account
+    com.monytyz.billing.customer.dto.address.AddressSaveDto:
+      required:
+      - city
+      - country
+      - description
+      - line1
+      - line2
+      - postalCode
+      - state
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        description:
+          type: string
+      description: Address of the contact

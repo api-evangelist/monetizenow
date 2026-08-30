@@ -1,0 +1,1654 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI definition Rate API
+  version: v0
+  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+servers:
+- url: https://api.monetizeplatform.com
+tags:
+- name: Rate
+  description: Rates allow you to add prices, pricing logic, currency details, and billing frequency to an offering
+paths:
+  /api/offerings/{offeringId}/rates:
+    post:
+      tags:
+      - Rate
+      summary: Create a rate for offering
+      description: Creates a new Rate that you can use to define pricing and billing frequency for products.
+      operationId: createRateForOffering
+      parameters:
+      - name: offeringId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: offer_FzQSTr9oPD1NXHcd
+        example: offer_FzQSTr9oPD1NXHcd
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/RateCreateDataAccount'
+              - $ref: '#/components/schemas/RateCreateDataCatalog'
+        required: true
+      responses:
+        '201':
+          description: Create Object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateDetailDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+    get:
+      tags:
+      - Rate
+      summary: Get all the rates for an offering
+      description: Get all the rate by providing offering Id
+      operationId: getAllRatesByOfferingId
+      parameters:
+      - name: offeringId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: offer_FzQSTr9oPD1NXHcd
+        example: offer_FzQSTr9oPD1NXHcd
+      - name: id
+        in: query
+        schema:
+          type: string
+          example: rate_1p4Z5Upb9Yh4Z
+      - name: name
+        in: query
+        schema:
+          type: string
+          example: Premium Rate
+      - name: customId
+        in: query
+        schema:
+          type: string
+          example: cix-aXtf-mnw
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          example: '2022-02-01'
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          example: '2022-02-01'
+      - name: productId
+        in: query
+        schema:
+          type: string
+          example: prod_hQqN4qlz6ZV4R221
+      - name: accountId
+        in: query
+        schema:
+          type: string
+        example: acct_hXmqN4FtgzMKjR22
+      - name: rateType
+        in: query
+        schema:
+          type: string
+          example: catalog
+      - name: parentRateId
+        in: query
+        schema:
+          type: string
+          example: rate_JLVVON0OzUDX2
+      - name: currency
+        in: query
+        schema:
+          type: string
+          example: USD
+      - name: billingFrequency
+        in: query
+        schema:
+          type: string
+          example: MONTHLY
+      - name: billingFrequencyInMonths
+        in: query
+        schema:
+          type: number
+          example: 12
+      - name: subscriptionTiming
+        in: query
+        schema:
+          type: string
+          example: ADVANCE
+      - name: usageBillingFrequency
+        in: query
+        schema:
+          type: string
+          example: MONTHLY
+      - name: locked
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: status
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: name
+      - name: currentPage
+        in: query
+        schema:
+          type: number
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: number
+          example: 20
+      - name: createDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: modifyDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: 'Object list retrieved '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateListDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/offerings/{offeringId}/rates/{rateId}:
+    delete:
+      tags:
+      - Rate
+      summary: Delete rate.
+      description: Delete rate by providing offering Id and rate Id. This cannot be done on locked rates.
+      operationId: deleteRateByOfferingIdAndRateId
+      parameters:
+      - name: offeringId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: offer_FzQSTr9oPD1NXHcd
+        example: offer_FzQSTr9oPD1NXHcd
+      - name: rateId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: rate_1p4Z5Upb9Yh4Z
+        example: rate_1p4Z5Upb9Yh4Z
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Rate has been successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.common.dto.ResponseDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+    get:
+      tags:
+      - Rate
+      summary: Get a rate object by providing offering and rate Id
+      description: Get a rate object by providing offering and rate Id
+      operationId: getRateByOfferingAndRateId
+      parameters:
+      - name: offeringId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: offer_FzQSTr9oPD1NXHcd
+        example: offer_FzQSTr9oPD1NXHcd
+      - name: rateId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: rate_1p4Z5Upb9Yh4Z
+        example: rate_1p4Z5Upb9Yh4Z
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+    put:
+      tags:
+      - Rate
+      summary: Update a rate for offering
+      description: Update a rate for offering, some fields will be locked once a rate is in use.
+      operationId: updateRateForOffering
+      parameters:
+      - name: offeringId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: offer_FzQSTr9oPD1NXHcd
+        example: offer_FzQSTr9oPD1NXHcd
+      - name: rateId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: rate_1p4Z5Upb9Yh4Z
+        example: rate_1p4Z5Upb9Yh4Z
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateUpdateData.Account'
+              - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateUpdateData.Catalog'
+        required: true
+      responses:
+        '200':
+          description: Update object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateDetailDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/offerings/{offeringId}/rates/{rateId}/activate:
+    put:
+      tags:
+      - Rate
+      summary: Activate rate
+      description: Activate rate by providing offering Id and rate Id
+      operationId: activateRateByOfferingIdAndId
+      parameters:
+      - name: offeringId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: offer_FzQSTr9oPD1NXHcd
+        example: offer_FzQSTr9oPD1NXHcd
+      - name: rateId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: rate_1p4Z5Upb9Yh4Z
+        example: rate_1p4Z5Upb9Yh4Z
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Activating object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/offerings/{offeringId}/rates/{rateId}/cancel:
+    put:
+      tags:
+      - Rate
+      summary: Cancel rate
+      description: Cancel rate by providing offering Id and rate Id
+      operationId: cancelRateByOfferingIdAndId
+      parameters:
+      - name: offeringId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: offer_FzQSTr9oPD1NXHcd
+        example: offer_FzQSTr9oPD1NXHcd
+      - name: rateId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: rate_1p4Z5Upb9Yh4Z
+        example: rate_1p4Z5Upb9Yh4Z
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Rate has been successfully canceled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.common.dto.ResponseDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/rates:
+    get:
+      tags:
+      - Rate
+      summary: Get all the rates
+      description: Get all the rate as list
+      operationId: getAllRates
+      parameters:
+      - name: id
+        in: query
+        schema:
+          type: string
+          example: rate_1p4Z5Upb9Yh4Z
+      - name: name
+        in: query
+        schema:
+          type: string
+          example: Premium Rate
+      - name: customId
+        in: query
+        schema:
+          type: string
+          example: cix-aXtf-mnw
+      - name: startDate
+        in: query
+        schema:
+          type: string
+          example: '2022-02-01'
+      - name: endDate
+        in: query
+        schema:
+          type: string
+          example: '2022-02-01'
+      - name: offeringId
+        in: query
+        schema:
+          type: string
+          example: offer_FzQSTr9oPD1NXHcd
+      - name: productId
+        in: query
+        schema:
+          type: string
+          example: prod_hQqN4qlz6ZV4R221
+      - name: accountId
+        in: query
+        schema:
+          type: string
+        example: acct_hXmqN4FtgzMKjR22
+      - name: accountSpecific
+        in: query
+        schema:
+          type: string
+          example: false
+      - name: parentRateId
+        in: query
+        schema:
+          type: string
+          example: rate_JLVVON0OzUDX2
+      - name: currency
+        in: query
+        schema:
+          type: string
+          example: USD
+      - name: billingFrequency
+        in: query
+        schema:
+          type: string
+          example: MONTHLY
+      - name: billingFrequencyInMonths
+        in: query
+        schema:
+          type: number
+          example: 12
+      - name: subscriptionTiming
+        in: query
+        schema:
+          type: string
+          example: ADVANCE
+      - name: usageBillingFrequency
+        in: query
+        schema:
+          type: string
+          example: MONTHLY
+      - name: locked
+        in: query
+        schema:
+          type: boolean
+          example: true
+      - name: status
+        in: query
+        schema:
+          type: string
+          example: ACTIVE
+      - name: sort
+        in: query
+        schema:
+          type: string
+          example: name
+      - name: currentPage
+        in: query
+        schema:
+          type: number
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: number
+          example: 20
+      - name: createDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: modifyDate
+        in: query
+        schema:
+          type: string
+          example: 2023-07-28T06:01:22.684+0000
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get object list with search/sort/pagination
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateListDto'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal server error. Please contact the support team.
+  /api/rates/{rateId}:
+    get:
+      tags:
+      - Rate
+      summary: Get rate
+      description: Get rate object by Id
+      operationId: getRateById
+      parameters:
+      - name: rateId
+        in: path
+        required: true
+        schema:
+          type: string
+          example: rate_1p4Z5Upb9Yh4Z
+        example: rate_1p4Z5Upb9Yh4Z
+      - name: x-api-key
+        in: header
+        description: x-api-key is an authentication or authorization token used in API requests to verify the identity and permissions of the client
+        required: true
+        schema:
+          type: string
+          example: TYQ1YzM3NWItZjQzMi00NDYwLTlmOWYtN2UwNzI5YzM2ZmV0
+      responses:
+        '200':
+          description: Get object by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateDetailDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Resource not found by Id
+        '500':
+          description: Internal server error. Please contact the support team.
+components:
+  schemas:
+    com.monytyz.billing.catalog.dto.price.RangeDto:
+      type: object
+      properties:
+        min:
+          type: integer
+          format: int64
+        max:
+          type: integer
+          format: int64
+    com.monytyz.billing.catalog.dto.rate.RateOptionsDto:
+      required:
+      - priceDisplay
+      - productOptions
+      type: object
+      properties:
+        productOptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.ProductRateOptionsDto'
+        priceDisplay:
+          type:
+          - string
+          - 'null'
+          enum:
+          - PRODUCT
+          - OFFERING
+      description: Rate Options give us the capability to configure per product configuration
+    com.monytyz.billing.catalog.dto.rate.RateCreateData:
+      required:
+      - prices
+      - rateType
+      type: object
+      properties:
+        prices:
+          maxItems: 2147483647
+          minItems: 1
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.price.PriceSaveDtoV2'
+        rateType:
+          type: string
+      example:
+        name: Monthly Premium
+        description: Premium plan for monthly customers
+        status: ACTIVE
+        currency: USD
+        billingFrequency: MONTHLY
+        usageBillingFrequency: null
+        rateType: CATALOG
+        quotable: true
+        prices:
+        - productId: prod_hQqN4qlz6ZV4R221
+          from: 0
+          to: 1000
+          amount: 10
+          priceModel: VOLUME
+          description: null
+        - productId: prod_hQqN4qlz6ZV4R221
+          from: 1001
+          to: null
+          amount: 8
+          priceModel: VOLUME
+          description: null
+        subscriptionTiming: ADVANCE
+        internalDescription: Premium plan for monthly customers
+      discriminator:
+        propertyName: rateType
+        mapping:
+          CATALOG: '#/components/schemas/RateCreateDataCatalog'
+          ACCOUNT: '#/components/schemas/RateCreateDataAccount'
+    com.monytyz.billing.catalog.dto.percentoftotal.PercentOfTotalConfigData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - ALL_ELIGIBLE
+          - SPECIFIED_PRODUCTS
+      description: If the rate is for a percent of total offering, then this configuration will contain configuration details for the percent of total offering
+      discriminator:
+        propertyName: type
+        mapping:
+          ALL_ELIGIBLE: '#/components/schemas/com.monytyz.billing.catalog.dto.percentoftotal.PercentOfTotalConfigData.AllEligible'
+          SPECIFIED_PRODUCTS: '#/components/schemas/com.monytyz.billing.catalog.dto.percentoftotal.PercentOfTotalConfigData.SpecifiedProducts'
+    com.monytyz.billing.catalog.dto.rate.RateUpdateData.Catalog:
+      required:
+      - billingFrequency
+      - currency
+      - name
+      - prices
+      - quotable
+      - revenueChannels
+      - status
+      - subscriptionTiming
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateUpdateData'
+      - type: object
+        properties:
+          customId:
+            maxLength: 255
+            minLength: 0
+            type: string
+          name:
+            maxLength: 255
+            minLength: 1
+            type: string
+          description:
+            maxLength: 255
+            minLength: 0
+            type: string
+          status:
+            type: string
+            enum:
+            - ACTIVE
+            - INACTIVE
+            - CANCELED
+          currency:
+            type: string
+            enum:
+            - AUD
+            - BYN
+            - CAD
+            - CNY
+            - DKK
+            - EUR
+            - GBP
+            - INR
+            - ISK
+            - MYR
+            - NOK
+            - SEK
+            - SGD
+            - TWD
+            - USD
+          billingFrequency:
+            type: string
+            enum:
+            - DAILY
+            - MONTHLY
+            - QUARTERLY
+            - SEMIANNUALLY
+            - ANNUALLY
+            - ONETIME
+            - CUSTOM
+          billingFrequencyInMonths:
+            maximum: 60
+            minimum: 0
+            type: integer
+            format: int32
+          subscriptionTiming:
+            type: string
+            example: ADVANCE
+            enum:
+            - ADVANCE
+            - ARREARS
+          usageBillingFrequency:
+            type: string
+            enum:
+            - MONTHLY
+            - QUARTERLY
+            - ANNUALLY
+            - SEMIANNUALLY
+          startDate:
+            type: string
+            format: date
+          endDate:
+            type: string
+            format: date
+          quotable:
+            type: boolean
+          internalDescription:
+            maxLength: 255
+            minLength: 0
+            type: string
+          options:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateOptionsDto'
+          minCommitConfig:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData'
+          percentOfTotalConfig:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.percentoftotal.PercentOfTotalConfigData'
+          revenueChannels:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+              enum:
+              - SELF_SERVICE
+              - SALES
+    com.monytyz.billing.catalog.dto.rate.RateDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the rate
+        customId:
+          type: string
+          description: A user provided identifier for the rate
+        name:
+          type: string
+          description: Name of the rate. This name of the rate will appear on quotes
+        description:
+          type: string
+          description: Description of the rate
+        status:
+          type: string
+          description: Status of the rate. A rate can be ACTIVE, INACTIVE or CANCELED
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+        currency:
+          type: string
+          description: Represents the currency of the rate. A subscription using this rate will be billed in this currency. Valid values are determined by what is configured in the tenant settings. Check yourtenat settings to see what currencies are available.
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        billingFrequency:
+          type: string
+          description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are MONTHLY, QUARTERLY, ANNUALLY
+          enum:
+          - DAILY
+          - MONTHLY
+          - QUARTERLY
+          - SEMIANNUALLY
+          - ANNUALLY
+          - ONETIME
+          - CUSTOM
+        billingFrequencyInMonths:
+          type: integer
+          description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are between 1 to 60 (months)
+          format: int32
+        subscriptionTiming:
+          type: string
+          description: Defines if you want a subscription to be billed in advance or in arrears
+          example: ADVANCE
+          enum:
+          - ADVANCE
+          - ARREARS
+        startDate:
+          type: string
+          description: A date that determines when the rate will be available for use. If this date is in the future, the rate will not be available for use until the date is reached.
+          format: date
+        endDate:
+          type: string
+          description: 'A date that determines when the rate will no longer be available for use. If this date is in the past, the rate will not be available for quoting or adding to a subscription. Note that this does not mean a subscription or quote with an end dated rate is canceled. It just means that the rate cannot be added newly to a quote or subscription '
+          format: date
+        accountId:
+          type: string
+          description: The identifier for the account that the rate is applicable to
+        usageBillingFrequency:
+          type: string
+          description: Represents the billing frequency for Usage procucts in the offering. Currently only MONTHLY frequency is supported
+          enum:
+          - MONTHLY
+          - QUARTERLY
+          - ANNUALLY
+          - SEMIANNUALLY
+        locked:
+          type: boolean
+          description: A boolean field indicating if the rate is locked or not. A rate is locked if it is currently in use by a subscription or quote
+        quotable:
+          type: boolean
+          description: A boolean field indicating if the rate is quotable or not. A rate is quotable if it can be added to a quote. The rate can still be used in self service flows. This flag applies to onlythe quote flow
+        internalDescription:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: Internal description for the rate. This will not be displayed on quotes or invoices
+        parentRateId:
+          type: string
+          description: If the rate is an account specific rate, this field identifies the parent rate which the account based rate is derived from
+        minCommitConfig:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData'
+        revenueChannel:
+          uniqueItems: true
+          type: array
+          description: Revenue channels that the rate is available to be used within
+          items:
+            type: string
+            description: Revenue channels that the rate is available to be used within
+            enum:
+            - SELF_SERVICE
+            - SALES
+        rateType:
+          type: string
+          description: Type of the rate. We support 2 types of rates - CATALOG and ACCOUNT. CATALOG is global whereas ACCOUNT is specific to an account
+      description: List of rates which are defined for a product, to select from, in a QuoteOffering
+      example:
+        createdBy: usr_FpHIDOgvHQGwyKjj
+        createDate: 2023-05-23T13:36:39.888+0000
+        lastModifiedBy: usr_FpHIDOgvHQGwyKjj
+        modifyDate: 2023-05-23T13:36:40.068+0000
+        id: rate_JfVD8GZwikrfJ
+        customId: null
+        name: Cheap
+        description: cheap
+        status: ACTIVE
+        currency: USD
+        billingFrequency: ONETIME
+        startDate: null
+        endDate: null
+        accountName: null
+        usageBillingFrequency: null
+        locked: true
+        quotable: true
+        internalDescription: null
+        parentRateId: null
+        minCommitConfig: null
+        rateType: CATALOG
+    com.monytyz.billing.catalog.dto.rate.RateListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.catalog.dto.rate.ProductRateOptionsDto:
+      required:
+      - aggregationModel
+      - productId
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Identifier for the Usage Product to which the rate option is associated
+        aggregationModel:
+          type: string
+          description: Aggregation model for the usage product
+          enum:
+          - SUM
+          - AVERAGE
+    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for a usage type
+        name:
+          type: string
+          description: Display name of a usage type
+        pluralName:
+          type: string
+          description: Name of a usage type in plural form
+        description:
+          type: string
+          description: Description of a usage type
+        unitName:
+          type: string
+          description: Unit for the usage. I.E. GB for bandwidth usage
+        decimalPlaces:
+          type: integer
+          description: Decimal places is used to count fractional precision for a usage unit
+          format: int32
+          example: 2
+        status:
+          type: string
+          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.catalog.dto.price.PriceDtoV2:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: price_REGwM7fYVn3DkvFa
+        from:
+          type: integer
+          format: int64
+          example: 100
+        to:
+          type: integer
+          format: int64
+          example: 10000
+        amount:
+          type: number
+          example: 1000
+        description:
+          maxLength: 255
+          minLength: 0
+          type: string
+          example: Monthly Price
+        priceModel:
+          type: string
+          enum:
+          - VOLUME
+          - TIERED
+          - FLAT
+          - CUSTOM
+          - PERCENT_OF_TOTAL
+        product:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.price.PriceProductDto'
+      description: A list of price tiers applicable to the rate
+    com.monytyz.billing.catalog.dto.offering.OfferingDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: offer_iJuVJLgQKIFc98RE
+        customId:
+          type: string
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        name:
+          type: string
+          example: Netflix
+        description:
+          type: string
+          example: Premium Subscription
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - PENDING
+          - EXPIRED
+          - ARCHIVED
+        type:
+          type: string
+          enum:
+          - SUBSCRIPTION
+          - ONETIME
+          - MIN_COMMIT
+          - CUSTOM_PERCENT_OF_TOTAL
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        locked:
+          type: boolean
+        financeId:
+          type: string
+      description: Offering details associated with the subscription
+    com.monytyz.billing.catalog.dto.price.PriceSaveDtoV2:
+      required:
+      - amount
+      - from
+      - priceModel
+      type: object
+      properties:
+        productId:
+          type: string
+          description: The product id that this price is associated with
+        from:
+          minimum: 0
+          type: integer
+          description: The starting value of a given price tier (inclusive)
+          format: int64
+        to:
+          minimum: 0
+          type: integer
+          description: The end value of a price tier (inclusive)
+          format: int64
+        amount:
+          minimum: 0
+          type: number
+          description: The price amount for a given price tier
+        description:
+          type: string
+          description: An optional description for the price
+        priceModel:
+          type: string
+          description: The pricing model applicable for the tier. Valid values are FLAT, TIERED, VOLUME. FLAT means that the price is a flat amount. VOLUMES means the the price is for a given unit. TIERED means the price is for a given range of units and the price for all tiers are then added.
+          enum:
+          - VOLUME
+          - TIERED
+          - FLAT
+          - CUSTOM
+          - PERCENT_OF_TOTAL
+    com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - USAGE_PRODUCTS
+          - SPECIFIC_USAGE_PRODUCTS
+      description: If the rate is for a min commit offering, then this configuration will containconfiguration details for the min commit offering
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.common.dto.ResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+    com.monytyz.billing.catalog.dto.price.PriceProductDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: prod_REGwM7fYVn3DkvFa
+        customId:
+          type: string
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        financeId:
+          type: string
+          example: GL-123
+        name:
+          type: string
+          example: prod_REGwM7fYVn3DkvFa
+        description:
+          type: string
+          example: Premium Price
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+        productType:
+          type: string
+          enum:
+          - ADVANCE
+          - ARREARS
+          - USAGE
+          - ONETIME
+          - ONETIME_PREPAID_CREDIT
+          - MIN_COMMIT
+        usageTypes:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.usage.UsageTypeDto'
+    RateCreateDataCatalog:
+      required:
+      - billingFrequency
+      - currency
+      - name
+      - prices
+      - quotable
+      - revenueChannels
+      - status
+      - subscriptionTiming
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateCreateData'
+      - type: object
+        properties:
+          customId:
+            maxLength: 255
+            minLength: 0
+            type:
+            - string
+            - 'null'
+            description: A user provided identifier for the rate
+          name:
+            maxLength: 255
+            minLength: 1
+            type: string
+            description: Name of the rate. This name of the rate will appear on quotes
+          description:
+            maxLength: 255
+            minLength: 1
+            type: string
+            description: Description of the rate
+          status:
+            type: string
+            description: Status of the rate. A rate can be ACTIVE, INACTIVE or CANCELED
+            enum:
+            - ACTIVE
+            - INACTIVE
+            - CANCELED
+          currency:
+            type: string
+            description: Represents the currency of the rate. A subscription using this rate will be billed in this currency. Valid values are determined by what is configured in the tenant settings. Check yourtenat settings to see what currencies are available.
+            enum:
+            - AUD
+            - BYN
+            - CAD
+            - CNY
+            - DKK
+            - EUR
+            - GBP
+            - INR
+            - ISK
+            - MYR
+            - NOK
+            - SEK
+            - SGD
+            - TWD
+            - USD
+          billingFrequency:
+            type: string
+            description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are MONTHLY, QUARTERLY, ANNUALLY
+            enum:
+            - DAILY
+            - MONTHLY
+            - QUARTERLY
+            - SEMIANNUALLY
+            - ANNUALLY
+            - ONETIME
+            - CUSTOM
+          billingFrequencyInMonths:
+            maximum: 60
+            minimum: 0
+            type: integer
+            description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are between 1 to 60 (months)
+            format: int32
+          subscriptionTiming:
+            type: string
+            description: Defines if you want a subscription to be billed in advance or in arrears
+            example: ADVANCE
+            enum:
+            - ADVANCE
+            - ARREARS
+          usageBillingFrequency:
+            type: string
+            description: Represents the billing frequency for Usage procucts in the offering. Currently only MONTHLY frequency is supported
+            enum:
+            - MONTHLY
+            - QUARTERLY
+            - ANNUALLY
+            - SEMIANNUALLY
+          startDate:
+            type: string
+            description: A date that determines when the rate will be available for use. If this date is in the future, the rate will not be available for use until the date is reached.
+            format: date
+          endDate:
+            type: string
+            description: 'A date that determines when the rate will no longer be available for use. If this date is in the past, the rate will not be available for quoting or adding to a subscription. Note that this does not mean a subscription or quote with an end dated rate is canceled. It just means that the rate cannot be added newly to a quote or subscription '
+            format: date
+          prices:
+            maxItems: 2147483647
+            minItems: 1
+            uniqueItems: true
+            type: array
+            description: A list of price tiers applicable to the rate
+            items:
+              $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.price.PriceSaveDtoV2'
+          quotable:
+            type: boolean
+            description: A boolean field indicating if the rate is quotable or not. A rate is quotable if it can be added to a quote. The rate can still be used in self service flows. This flag applies to onlythe quote flow
+          internalDescription:
+            maxLength: 255
+            minLength: 0
+            type: string
+            description: Internal description for the rate. This will not be displayed on quotes or invoices
+          options:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateOptionsDto'
+          minCommitConfig:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData'
+          percentOfTotalConfig:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.percentoftotal.PercentOfTotalConfigData'
+          revenueChannels:
+            uniqueItems: true
+            type: array
+            description: Revenue channels that the rate is available to be used within
+            items:
+              type: string
+              description: Revenue channels that the rate is available to be used within
+              enum:
+              - SELF_SERVICE
+              - SALES
+    com.monytyz.billing.catalog.dto.rate.RateDetailDto:
+      required:
+      - id
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the rate
+        customId:
+          type:
+          - string
+          - 'null'
+          description: A user provided identifier for the rate
+        name:
+          type: string
+          description: Name of the rate. This name of the rate will appear on quotes
+        description:
+          type: string
+          description: Description of the rate
+        status:
+          type: string
+          description: Status of the rate. A rate can be ACTIVE, INACTIVE or CANCELED
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+        currency:
+          type: string
+          description: Represents the currency of the rate. A subscription using this rate will be billed in this currency. Valid values are determined by what is configured in the tenant settings. Check yourtenat settings to see what currencies are available.
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        billingFrequency:
+          type: string
+          description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are MONTHLY, QUARTERLY, ANNUALLY
+          enum:
+          - DAILY
+          - MONTHLY
+          - QUARTERLY
+          - SEMIANNUALLY
+          - ANNUALLY
+          - ONETIME
+          - CUSTOM
+        billingFrequencyInMonths:
+          type: integer
+          description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are between 1 to 60 (months)
+          format: int32
+        subscriptionTiming:
+          type: string
+          description: Defines if you want a subscription to be billed in advance or in arrears
+          example: ADVANCE
+          enum:
+          - ADVANCE
+          - ARREARS
+        startDate:
+          type: string
+          description: A date that determines when the rate will be available for use. If this date is in the future, the rate will not be available for use until the date is reached.
+          format: date
+        endDate:
+          type: string
+          description: 'A date that determines when the rate will no longer be available for use. If this date is in the past, the rate will not be available for quoting or adding to a subscription. Note that this does not mean a subscription or quote with an end dated rate is canceled. It just means that the rate cannot be added newly to a quote or subscription '
+          format: date
+        accountId:
+          type: string
+          description: The identifier for the account that the rate is applicable to
+        usageBillingFrequency:
+          type: string
+          description: Represents the billing frequency for Usage procucts in the offering. Currently only MONTHLY frequency is supported
+          enum:
+          - MONTHLY
+          - QUARTERLY
+          - ANNUALLY
+          - SEMIANNUALLY
+        locked:
+          type: boolean
+          description: A boolean field indicating if the rate is locked or not. A rate is locked if it is currently in use by a subscription or quote
+        quotable:
+          type: boolean
+          description: A boolean field indicating if the rate is quotable or not. A rate is quotable if it can be added to a quote. The rate can still be used in self service flows. This flag applies to onlythe quote flow
+        internalDescription:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: Internal description for the rate. This will not be displayed on quotes or invoices
+        options:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateOptionsDto'
+        minCommitConfig:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData'
+        percentOfTotalConfig:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.percentoftotal.PercentOfTotalConfigData'
+        offering:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.offering.OfferingDto'
+        prices:
+          type: array
+          description: A list of price tiers applicable to the rate
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.price.PriceDtoV2'
+        productPriceRanges:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.price.RangeDto'
+        parentRateId:
+          type: string
+          description: If the rate is an account specific rate, this field identifies the parent rate which the account based rate is derived from
+        revenueChannels:
+          uniqueItems: true
+          type: array
+          description: Revenue channels that the rate is available to be used within
+          items:
+            type: string
+            description: Revenue channels that the rate is available to be used within
+            enum:
+            - SELF_SERVICE
+            - SALES
+        rateType:
+          type: string
+          description: Type of the rate. We support 2 types of rates - CATALOG and ACCOUNT. CATALOG is global whereas ACCOUNT is specific to an account
+      example:
+        createdBy: usr_9oKqG1KrGADCoPmg
+        createDate: 2023-05-24T17:52:10.977+0000
+        lastModifiedBy: usr_9oKqG1KrGADCoPmg
+        modifyDate: 2023-05-24T17:52:10.977+0000
+        id: rate_1p4Z5Upb9Yh4Z
+        customId: null
+        name: Monthly Premium
+        description: Premium plan for monthly customers
+        status: ACTIVE
+        currency: USD
+        billingFrequency: MONTHLY
+        subscriptionTiming: ADVANCE
+        startDate: null
+        endDate: null
+        usageBillingFrequency: null
+        locked: false
+        quotable: true
+        internalDescription: Premium plan for monthly customers
+        options: null
+        offering:
+          createdBy: usr_Qhu8GeIXXzEueVoW
+          createDate: 2023-02-24T16:01:53.077+0000
+          lastModifiedBy: usr_Qhu8GeIXXzEueVoW
+          modifyDate: 2023-02-24T16:02:50.137+0000
+          id: offer_FzQSTr9oPD1NXHcd
+          customId: null
+          name: Acme Cloud
+          description: null
+          status: ACTIVE
+          startDate: '2022-11-01'
+          endDate: null
+        prices:
+        - createdBy: usr_9oKqG1KrGADCoPmg
+          createDate: 2023-05-24T17:52:10.995+0000
+          lastModifiedBy: usr_9oKqG1KrGADCoPmg
+          modifyDate: 2023-05-24T17:52:10.995+0000
+          id: pric_GH1cSjlWdU3LF
+          from: 0
+          to: 1000
+          amount: 10
+          description: null
+          priceModel: VOLUME
+          product:
+            id: prod_hQqN4qlz6ZV4R221
+            customId: null
+            financeId: null
+            name: Users
+            description: Product Users
+            status: ACTIVE
+            productType: ADVANCE
+            usageType: null
+        - createdBy: usr_9oKqG1KrGADCoPmg
+          createDate: 2023-05-24T17:52:10.996+0000
+          lastModifiedBy: usr_9oKqG1KrGADCoPmg
+          modifyDate: 2023-05-24T17:52:10.996+0000
+          id: pric_hU2L6ZgJLJqKG
+          from: 1001
+          to: null
+          amount: 8
+          description: null
+          priceModel: VOLUME
+          product:
+            id: prod_hQqN4qlz6ZV4R221
+            customId: null
+            financeId: null
+            name: Users
+            description: Product Users
+            status: ACTIVE
+            productType: ADVANCE
+            usageType: null
+        productPriceRanges:
+          prod_hQqN4qlz6ZV4R221:
+            min: 0
+            max: null
+        parentRateId: null
+        rateType: CATALOG
+    RateCreateDataAccount:
+      required:
+      - accountId
+      - name
+      - parentRateId
+      - prices
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateCreateData'
+      - type: object
+        properties:
+          accountId:
+            type: string
+          parentRateId:
+            type: string
+            description: If the rate is an account specific rate, this field identifies the parent rate which the account based rate is derived from
+            example: rate_JLVVON0OzUDX2
+          name:
+            maxLength: 255
+            minLength: 1
+            type: string
+            description: Name of the rate. This name of the rate will appear on quotes
+            example: Annual
+          prices:
+            maxItems: 2147483647
+            minItems: 1
+            uniqueItems: true
+            type: array
+            description: A list of price tiers applicable to the rate
+            items:
+              $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.price.PriceSaveDtoV2'
+          billingFrequency:
+            type: string
+            description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are MONTHLY, QUARTERLY, ANNUALLY
+            enum:
+            - DAILY
+            - MONTHLY
+            - QUARTERLY
+            - SEMIANNUALLY
+            - ANNUALLY
+            - ONETIME
+            - CUSTOM
+          billingFrequencyInMonths:
+            type: integer
+            description: Represents the billing frequency of the rate. A subscription using this rate will be billed at this frequency. Valid values are between 1 to 60 (months)
+            format: int32
+    com.monytyz.billing.catalog.dto.rate.RateUpdateData.Account:
+      required:
+      - prices
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateUpdateData'
+    com.monytyz.billing.catalog.dto.rate.RateUpdateData:
+      required:
+      - prices
+      - rateType
+      type: object
+      properties:
+        prices:
+          maxItems: 2147483647
+          minItems: 1
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.price.PriceSaveDtoV2'
+        rateType:
+          type: string
+      example:
+        id: rate_1p4Z5Upb9Yh4Z
+        customId: null
+        name: Monthly Premium
+        description: Premium plan for monthly customers
+        status: ACTIVE
+        currency: USD
+        billingFrequency: MONTHLY
+        usageBillingFrequency: null
+        startDate: null
+        endDate: null
+        rateType: CATALOG
+        quotable: true
+        prices:
+        - productId: prod_hQqN4qlz6ZV4R221
+          from: 0
+          to: 1000
+          amount: 10
+          priceModel: VOLUME
+          description: null
+        - productId: prod_hQqN4qlz6ZV4R221
+          from: 1001
+          to: null
+          amount: 9
+          priceModel: VOLUME
+          description: null
+        subscriptionTiming: ADVANCE
+        internalDescription: Premium plan for monthly customers
+      discriminator:
+        propertyName: rateType
