@@ -549,6 +549,8 @@ apis:
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
   tags:
+  - Payment Method
+  tags_raw:
   - PaymentMethod
   properties:
   - type: OpenAPI
@@ -618,6 +620,8 @@ apis:
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
   tags:
+  - Product
+  tags_raw:
   - Products
   properties:
   - type: OpenAPI
@@ -652,6 +656,8 @@ apis:
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
   tags:
+  - Quotes
+  tags_raw:
   - Quote
   properties:
   - type: OpenAPI
