@@ -335,6 +335,8 @@ apis:
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
   tags:
+  - Invoices
+  tags_raw:
   - Invoice
   properties:
   - type: OpenAPI
@@ -439,6 +441,8 @@ apis:
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
   tags:
+  - Payments
+  tags_raw:
   - Payment
   properties:
   - type: OpenAPI
@@ -753,6 +757,8 @@ apis:
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
   tags:
+  - CreditNote
+  tags_raw:
   - Credit Note
   properties:
   - type: OpenAPI
