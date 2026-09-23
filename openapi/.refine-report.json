@@ -1,0 +1,71 @@
+{
+  "provider": "monetizenow",
+  "sources": [
+    "_original/monetizenow-openapi.json"
+  ],
+  "outputs": [
+    "monetizenow-account-api-openapi.yml",
+    "monetizenow-account-overview-api-openapi.yml",
+    "monetizenow-accountdocument-api-openapi.yml",
+    "monetizenow-billgroup-api-openapi.yml",
+    "monetizenow-contact-api-openapi.yml",
+    "monetizenow-contract-api-openapi.yml",
+    "monetizenow-credit-api-openapi.yml",
+    "monetizenow-creditnote-api-openapi.yml",
+    "monetizenow-invoice-api-openapi.yml",
+    "monetizenow-offering-api-openapi.yml",
+    "monetizenow-opportunity-api-openapi.yml",
+    "monetizenow-payment-api-openapi.yml",
+    "monetizenow-payment-gateway-api-openapi.yml",
+    "monetizenow-paymentmethod-api-openapi.yml",
+    "monetizenow-price-uplift-configuration-api-openapi.yml",
+    "monetizenow-products-api-openapi.yml",
+    "monetizenow-quote-api-openapi.yml",
+    "monetizenow-rate-api-openapi.yml",
+    "monetizenow-subscription-api-openapi.yml",
+    "monetizenow-trial-api-openapi.yml",
+    "monetizenow-usage-api-openapi.yml"
+  ],
+  "archived": [
+    "deleted 2 superseded output(s) from the previous generation"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "monetizenow-openapi.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "monetizenow-openapi.json: declared missing tag: Account Overview",
+    "monetizenow-openapi.json: declared missing tag: AccountDocument",
+    "monetizenow-openapi.json: declared missing tag: Contract",
+    "monetizenow-openapi.json: declared missing tag: CreditNote",
+    "monetizenow-openapi.json: declared missing tag: Opportunity",
+    "monetizenow-openapi.json: declared missing tag: Price Uplift Configuration",
+    "monetizenow-openapi.json: declared missing tag: Quote",
+    "monetizenow-openapi.json: declared missing tag: Trial",
+    "superseded outputs removed: monetizenow-credit-note-api-openapi.yml, monetizenow-payment-method-api-openapi.yml",
+    "apis.yml register: written (+2 apis, 21 total)"
+  ],
+  "skipped": [
+    "monetizenow-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-account-overview-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-accountdocument-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-billgroup-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-contact-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-contract-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-credit-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-credit-note-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-invoice-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-offering-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-opportunity-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-payment-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-payment-gateway-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-payment-method-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-price-uplift-configuration-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-products-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-quote-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-rate-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-subscription-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-trial-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "monetizenow-usage-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

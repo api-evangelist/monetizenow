@@ -2,7 +2,10 @@ openapi: 3.2.0
 info:
   title: OpenAPI definition Invoice API
   version: v0
-  description: "# About MonetizeNow\n\nMonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise. Our platform simplifies monetization for SMBs by uniting these functions in a single application.\n\n<img src=\"https://i.ibb.co/VDN53ZF/MNArch.png\">\n\n## Core Platform Features\n\nMonetizeNow provides:\n\n- Product catalog specifically built to handle enterprise-grade selling complexity of subscriptions, one-time, and usage.\n- A single system that supports all your sales channels natively: self-serve, CRM, Partners, In-Product, and Marketplaces.\n- Complex enterprise quoting, flexible rules and approval engine, E-sign, Clean order forms\n- Broad API support for integrating with existing and future systems.\n    \n\n# Getting Started with MonetizeNow APIs\n\nThe MonetizeNow APIs are RESTful libraries that enable developers to integrate with the MonetizeNow platform for the complete revenue life cycle.\n\n## Authentication\n\nThe preferred authentication method is a generated API key.\n\n### Getting an API Key\n\nYou can request your API Key from your MonetizeNow tenant:\n\n1. Navigate to the **Settings -> API Keys** page to generate an API key for your tenant.\n    \n\n<img src=\"https://i.ibb.co/QMvvLtL/MNAPIKey.png\">\n\n1. Click **New Api Key**.\n2. Enter a name for the key as an identifier.\n3. Click **Ok**.\n    \n\n<img src=\"https://i.ibb.co/7WQM27b/MNKey-Sample.png\">\n\n1. Copy and store your key in a safe place.  \n    For security reasons, this is the only time we display it.\n2. Click **Ok**.\n    \n\nYou can now use this API key to interact with all MonetizeNow APIs.\n\n## Pagination\n\nThe MonetizeNow API provides pagination attributes for methods that return multiple records.\n\n**pageSize**\\=n  \npageSize indicates the number of elements in the page.\n\n**currentPage**\\=n  \ncurrentPage indicates the page to start with.\n\nUse currentPage and pageSize to return a sublist from a list of sorted resources where the sort criteria is defaulted or set via API:\n\n`GET /api/accounts?currentPage=3&pageSize=20`\n\n## Error Handling\n\nThe MonetizeNow API follows standard RESTful error handling. It returns the following error types:\n\n| Title | Code | Description |\n| --- | --- | --- |\n| Bad request | 400 | The request submitted was not acceptable. Missing parameters or a malformed request body will produce this error |\n| Resource not found by ID | 404 | The request submitted an identifier that does not match a record for the target entity. |\n| Resource is not in the required state | 409 | The identified resource is not an eligible target. For example, attempting to restore an offering that has not been archived returns a 409. |\n| Internal server error | 500 | An unexpected error occurred. Contact MonetizeNow Support. |\n\n## Webhooks\n\nUse webhooks to integrate MonetizeNow with external services. The following events are supported.\n\n| Entity | Event | Occurs When |\n| --- | --- | --- |\n| Account | account.created | an account is created |\n|  | account.updated | an account is updated |\n| Contact | contact.created | a contact is created |\n|  | contact.updated | a contact is updated |\n| Quote | quote.created | a quote is created |\n|  | quote.updated | a quote is updated |\n|  | quote.accepted | a quote is accepted |\n|  | quote.processed | a quote is processed |\n|  | quote.cancelled | a quote is cancelled |\n|  | quote.offering.created | an offering is added to a quote |\n|  | quote.offering.updated | an offering on a quote is updated |\n|  | quote.offering.deleted | an offering is deleted from a quote |\n| Opportunity | opportunity.created | an opportunity is created |\n|  | opportunity.updated | an opportunity is updated |\n| Offering | offering.created | an offering is created |\n|  | offering.updated | an offering is updated |\n| Contract | contract.created | a contract is created |\n|  | contract.updated | a contract is updated |\n| Rate | rate.created | a rate is created |\n|  | rate.updated | a rate is updated |\n|  | rate.deleted | a rate is deleted |\n|  | price.deleted | a rate's price is deleted |\n| Bill Group | dunning.step.tiggered | a dunning step is triggered |\n\n# Concepts\n\n## Product Catalog\n\nThe core of the MonetizeNow platform is the product catalog.\n\nThe entities that make up the Product Catalog are:\n\n- Product\n- Usage Type\n- Price\n- Offering\n- Rate\n    \n\nThe **Product** is the starting point for any quote, the simplest line item. If that line item has a usage component, then a **Usage Type** is assigned. A single Product has a **Price**. However, a Product can be one of several included in an **Offering**, or bundle. Offerings are available at one \\*_Rate \\*_or more. A Rate is a different way to price products and model an offering. You can create multiple Rates of different currencies and billing frequencies.\n\nFor example, the Products in a product catalog might include software access, services, setup fees, and API calls. Your organization may allow a customer to order a single set of 200 API calls, or you may provide a package of support hours and API calls as an Offering. Prices might be directly related to set of API calls or calculated by means of an \"Get Started\" Offering and Rate for API access.\n\n## Accounts\n\nAccounts represent your existing and potential customers.\n\nThe entities related to account records include:\n\n- Contacts\n- Bill Groups\n- Subscriptions\n- Quotes\n- Contracts\n- Invoices\n- Credits\n- Payments\n    \n\nEach **Account** represents a current or potential customer. **Contacts** are people your organization has interacted with. **Bill Groups** represent departments, divisions, or other separate destinations for billing within that business. A **Subscription** represents a renewable request for an **Offering**. A **Quote** is a formal statement of what is being ordered and how much the items will cost. A **Contract** stores information on the Subscriptions that have been quoted and captures the result of Quote acceptance. An **Invoice** results from the agreement to make a purchase. It includes items and costs, as well as payment conditions. An Invoice might include **Credits** as adjustments to the Invoice, reducing the final amount due.\n\nFor example, you might have an Account with Acme, Inc. During the sales process, your team has interacted with John, Paul, and Janis, who are now Contacts. John and Paul are in the Construction Bill Group, while Janis is in the Demolition Bill Group, reflecting their organization's structure and different payment policies. Once Janis requests a Quote for Offering A, your team adds that Offering to her Subscription. A Contract is included to specify the parameters of customer support limitations for onboarding. When Janis agrees to the purchase, your team generates an Invoice, including Credits for participation in a webinar.\n\n### Bill Day and Invoices\n\nEach **Bill Group** has a **Bill Day** field. Bill Day specifies the day of the month on which **Invoices** will be generated. Bill Day defaults to the day on which the Bill Group was created unless you specify an alternate number in the Bill Day field.\n\n### Quotes and Future Start Dates\n\nYou might set the **Start Date** of a **Quote** to a future date, maybe to align with your customer's budgeting process. That date automatically applies to the associated **Contract**. In this case, both the Contract and the quoted **Subscriptions** remain in a Pending state until the Start Date.\n\n### Payment Methods\n\nThe **Payment Methods** available to a **Bill Group** represent the payment service providers you have integrated with your MonetizeNow tenant. Payments made through integrated gateways are reflected in **Payment** records credited to the Bill Group.\n\n# Sample Workflows\n\n## Sending Usage/Consumption Data\n\nSending Usage Events to the MonetizeNow Usage Service requires calls to both the CPQ/Billing API and the Usage API. Here's a basic workflow:\n\n| Task | Call |\n| --- | --- |\n| Get Subscriptions for Account | GET /api/accounts/{accountId}/subscriptions |\n| Determine which Usage Types apply to each Subscription |  |\n| Post usage Events by Subscription | POST /events |\n\n# Object Life Cycles\n\n## Quotes\n\nThe Quote life cycle depends on whether the request for a new quote is actually a renewal or amendment of an existing quote. Event for a customer who has ordered before, any difference in the underlying contract makes a the new quote route necessary. The following diagram outlines the differences in the life cycles of new quotes and renewals.\n\n<img src=\"https://i.ibb.co/YyFztCC/Quote-Life-Cycle.png\">\n\n<!-- stackedit_data:<br>eyJoaXN0b3J5IjpbLTE0ODQxMzYzMzksLTExMDMyOTg1MzEsMT<br>M2MTI2MDY3MywtMTUwMTM1NjU1NywzODU3MzI2OTAsMjA1NTI2<br>NDUzMywtMjE0Mjk1NDY3NCwtMzYzNzk4NzAyLC0xNTEyNzQ4OD<br>Q2XX0=<br> -->"
+  description: '# About MonetizeNow
+
+
+    MonetizeNow provides a Quoting, Billing, and Usage platform built for the B2B SaaS enterprise.'
 servers:
 - url: https://api.monetizeplatform.com
 tags:
@@ -332,7 +335,7 @@ paths:
     put:
       tags:
       - Invoice
-      summary: Update vat number, purchase order number, registration number, custom fields for invoice
+      summary: Update vat number, purchase order number, registration number, custom fields…
       description: Update vat number, purchase order number, registration number, custom fields for invoice
       operationId: updateInvoice
       parameters:
@@ -407,25 +410,220 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.invoice.dto.InvoiceListDto:
+    MNPageable:
       required:
-      - content
-      - totalElements
-      - totalPages
+      - pageNumber
+      - pageSize
       type: object
       properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.invoice.dto.InvoiceDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
+        pageNumber:
           type: integer
           format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.dto.address.AddressDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the address
+          example: addr_bkoY6dCoLRblllsJ
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street, Apartment 3D
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Billing address for the account
+    CompanyInfoSnapshotDtoAddressDto:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+      description: Address of the company
+    com.monytyz.billing.invoice.dto.InvoiceUpdateDto:
+      required:
+      - customFields
+      - invoiceMemo
+      - purchaseOrderNumber
+      - registrationNumber
+      - vatNumber
+      type: object
+      properties:
+        purchaseOrderNumber:
+          type: string
+          example: PO-123
+        vatNumber:
+          type: string
+          description: The corresponding vat number
+          example: '12345678901'
+        registrationNumber:
+          type: string
+          description: The corresponding registration number
+          example: 123-45-6789
+        invoiceMemo:
+          type: string
+          description: A memo on an Invoice related to a specific upsell to help the end customer understand the invoice to limit questions and decrease time to payment
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the invoice
+          description: User configured custom fields for the invoice
+    com.monytyz.billing.invoice.model.InvoiceMetadata:
+      required:
+      - invoiceDelay
+      - source
+      - sourceId
+      - type
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceSource'
+        invoiceDelay:
+          type: integer
+          format: int32
+        sourceId:
+          type: string
+        type:
+          type: string
+      description: Invoice metadata mainly about source of the invoice and other details
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.transactable.dto.TargetApplicationSummary:
+      required:
+      - amount
+      - applicationDate
+      - sourceId
+      - sourceType
+      - type
+      type: object
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.SourceId'
+        sourceType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.SourceType'
+        amount:
+          type: number
+        type:
+          type: string
+          enum:
+          - APPLICATION
+          - UNAPPLICATION
+        applicationDate:
+          type: string
+          format: date-time
+      description: All application transaction(s) for the invoice
+    com.monytyz.billing.invoice.dto.InvoiceItemDiscountDto:
+      type: object
+      properties:
+        discountId:
+          type: string
+          example: disc_9TkhFbhZ5oY4q2fw
+        description:
+          type: string
+          example: Flat Discount
+        amount:
+          type: number
+          example: 1000000
+        discountType:
+          type: string
+          example: FLAT
+          enum:
+          - FLAT
+          - PERCENTAGE
+    com.monytyz.billing.invoice.dto.InvoiceDto.InvoiceAccountSnapshotDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: acct_3oUtURRnJJ8Afdw0
+        customId:
+          type: string
+        accountName:
+          type: string
+          example: Contoso Ltd
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        isTestAccount:
+          type: boolean
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+      description: Associated account id for the invoice
     com.monytyz.billing.customer.dto.contact.ContactSnapshotDto:
       type: object
       properties:
@@ -475,26 +673,23 @@ components:
           - 'null'
           description: Title of the contact
           example: CFO
-    com.monytyz.billing.invoice.model.InvoiceMetadata:
+    com.monytyz.billing.invoice.dto.PaymentInstruction:
       required:
-      - invoiceDelay
-      - source
-      - sourceId
-      - type
+      - accountNumber
+      - bankName
+      - routingNumber
+      - swiftCode
       type: object
       properties:
-        source:
-          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceSource'
-        invoiceDelay:
-          type: integer
-          format: int32
-        sourceId:
+        accountNumber:
           type: string
-        type:
+        bankName:
           type: string
-      description: Invoice metadata mainly about source of the invoice and other details
-      discriminator:
-        propertyName: type
+        routingNumber:
+          type: string
+        swiftCode:
+          type: string
+      description: Stores the instruction for payment if any
     com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto:
       type: object
       properties:
@@ -522,13 +717,6 @@ components:
           - US_FORMAT
           - EUROPEAN_FORMAT
       description: The entity who creates the invoice for billing purpose
-    com.monytyz.billing.invoice.model.InvoiceSource:
-      required:
-      - source
-      type: object
-      properties:
-        source:
-          type: string
     com.monytyz.billing.invoice.dto.InvoiceCreditDto:
       required:
       - creditId
@@ -557,20 +745,25 @@ components:
         creditNoteId:
           type: string
       description: All of the credit information for the invoice
-    MNPageable:
+    com.monytyz.billing.invoice.dto.InvoiceListDto:
       required:
-      - pageNumber
-      - pageSize
+      - content
+      - totalElements
+      - totalPages
       type: object
       properties:
-        pageNumber:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.invoice.dto.InvoiceDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
           type: integer
           format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.transactable.model.enums.SourceType:
-      type: object
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
     com.monytyz.billing.transactable.SourceId:
       required:
       - value
@@ -578,41 +771,54 @@ components:
       properties:
         value:
           type: string
-    com.monytyz.billing.invoice.dto.PaymentInstruction:
-      required:
-      - accountNumber
-      - bankName
-      - routingNumber
-      - swiftCode
+    com.monytyz.billing.payment.dto.payment.InvoicePaymentDto:
       type: object
       properties:
-        accountNumber:
+        paymentId:
           type: string
-        bankName:
+          description: Unique identifier for the payment
+          example: pmt_m0CB9LflojZxytfC
+        createDate:
           type: string
-        routingNumber:
+          description: Timestamp of when the record was created
+          format: date-time
+        collectionDate:
           type: string
-        swiftCode:
+          description: Date when the payment is settled
+          format: date
+          example: '2022-04-25'
+          deprecated: true
+        settledDate:
           type: string
-      description: Stores the instruction for payment if any
-    com.monytyz.billing.invoice.dto.InvoiceItemDiscountDto:
-      type: object
-      properties:
-        discountId:
+          description: Date when the payment is settled
+          format: date-time
+        creditCardType:
           type: string
-          example: disc_9TkhFbhZ5oY4q2fw
-        description:
-          type: string
-          example: Flat Discount
-        amount:
-          type: number
-          example: 1000000
-        discountType:
-          type: string
-          example: FLAT
+          description: Payment method credit card type like VISA, MASTERCARD, DISCOVER, AMEX, DINERS, JCB or UNIONPAY
+          example: VISA
           enum:
-          - FLAT
-          - PERCENTAGE
+          - VISA
+          - MASTERCARD
+          - DISCOVER
+          - AMEX
+          - DINERS
+          - JCB
+          - UNIONPAY
+        paymentMethodName:
+          type: string
+          description: Name of the payment method
+          example: Bob's Visa
+        paymentDescription:
+          type: string
+          description: Description of the payment
+          example: Payment Description
+        paidAmount:
+          type: number
+          description: Amount of the payment
+          example: 10000
+      description: All of the previous payment information for the invoice
+    com.monytyz.billing.transactable.model.enums.SourceType:
+      type: object
     com.monytyz.billing.invoice.dto.InvoiceItemDto:
       type: object
       properties:
@@ -773,129 +979,6 @@ components:
           - PRODUCT
           - OFFERING
       description: Actual items/products for the invoice
-    com.monytyz.billing.invoice.dto.InvoiceUpdateDto:
-      required:
-      - customFields
-      - invoiceMemo
-      - purchaseOrderNumber
-      - registrationNumber
-      - vatNumber
-      type: object
-      properties:
-        purchaseOrderNumber:
-          type: string
-          example: PO-123
-        vatNumber:
-          type: string
-          description: The corresponding vat number
-          example: '12345678901'
-        registrationNumber:
-          type: string
-          description: The corresponding registration number
-          example: 123-45-6789
-        invoiceMemo:
-          type: string
-          description: A memo on an Invoice related to a specific upsell to help the end customer understand the invoice to limit questions and decrease time to payment
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the invoice
-          description: User configured custom fields for the invoice
-    ContactSnapshotDtoAddressSnapshotDto:
-      type: object
-      properties:
-        line1:
-          type: string
-          description: First line of the address
-          example: 344 Clinton Street
-        line2:
-          type: string
-          description: Second line of the address
-          example: Apartment 3D
-        city:
-          type: string
-          description: City of the address
-          example: New York
-        state:
-          type: string
-          description: State of the address
-          example: New York
-        country:
-          type: string
-          description: Country of the address
-          example: US
-        postalCode:
-          type: string
-          description: Postal code of the address
-          example: '12345'
-        description:
-          type: string
-          description: Description of the address
-          example: Permanent Address
-      description: Address of the contact
-    CompanyInfoSnapshotDtoAddressDto:
-      type: object
-      properties:
-        line1:
-          type: string
-        line2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
-      description: Address of the company
-    com.monytyz.billing.payment.dto.payment.InvoicePaymentDto:
-      type: object
-      properties:
-        paymentId:
-          type: string
-          description: Unique identifier for the payment
-          example: pmt_m0CB9LflojZxytfC
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        collectionDate:
-          type: string
-          description: Date when the payment is settled
-          format: date
-          example: '2022-04-25'
-          deprecated: true
-        settledDate:
-          type: string
-          description: Date when the payment is settled
-          format: date-time
-        creditCardType:
-          type: string
-          description: Payment method credit card type like VISA, MASTERCARD, DISCOVER, AMEX, DINERS, JCB or UNIONPAY
-          example: VISA
-          enum:
-          - VISA
-          - MASTERCARD
-          - DISCOVER
-          - AMEX
-          - DINERS
-          - JCB
-          - UNIONPAY
-        paymentMethodName:
-          type: string
-          description: Name of the payment method
-          example: Bob's Visa
-        paymentDescription:
-          type: string
-          description: Description of the payment
-          example: Payment Description
-        paidAmount:
-          type: number
-          description: Amount of the payment
-          example: 10000
-      description: All of the previous payment information for the invoice
     com.monytyz.billing.invoice.dto.InvoiceDto:
       type: object
       properties:
@@ -1192,33 +1275,20 @@ components:
           format: date
         finalized:
           type: boolean
-    com.monytyz.billing.customer.dto.address.AddressDto:
+    com.monytyz.billing.invoice.model.InvoiceSource:
+      required:
+      - source
       type: object
       properties:
-        createdBy:
+        source:
           type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for the address
-          example: addr_bkoY6dCoLRblllsJ
+    ContactSnapshotDtoAddressSnapshotDto:
+      type: object
+      properties:
         line1:
           type: string
           description: First line of the address
-          example: 344 Clinton Street, Apartment 3D
+          example: 344 Clinton Street
         line2:
           type: string
           description: Second line of the address
@@ -1243,71 +1313,4 @@ components:
           type: string
           description: Description of the address
           example: Permanent Address
-      description: Billing address for the account
-    com.monytyz.billing.transactable.dto.TargetApplicationSummary:
-      required:
-      - amount
-      - applicationDate
-      - sourceId
-      - sourceType
-      - type
-      type: object
-      properties:
-        sourceId:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.SourceId'
-        sourceType:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.SourceType'
-        amount:
-          type: number
-        type:
-          type: string
-          enum:
-          - APPLICATION
-          - UNAPPLICATION
-        applicationDate:
-          type: string
-          format: date-time
-      description: All application transaction(s) for the invoice
-    com.monytyz.billing.invoice.dto.InvoiceDto.InvoiceAccountSnapshotDto:
-      type: object
-      properties:
-        id:
-          type: string
-          example: acct_3oUtURRnJJ8Afdw0
-        customId:
-          type: string
-        accountName:
-          type: string
-          example: Contoso Ltd
-        currency:
-          type: string
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - CANCELED
-          - SUSPENDED
-          - INACTIVE
-        isTestAccount:
-          type: boolean
-        billingAddress:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-        shippingAddress:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-      description: Associated account id for the invoice
+      description: Address of the contact
