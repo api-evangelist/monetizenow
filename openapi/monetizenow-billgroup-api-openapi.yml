@@ -370,84 +370,32 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.customer.dto.contact.ContactDto:
+    com.monytyz.billing.customer.dto.address.SourcedAddressData:
+      required:
+      - addressSource
       type: object
       properties:
-        createdBy:
+        addressSource:
           type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
+          enum:
+          - ACCOUNT
+          - CONTACT
+      discriminator:
+        propertyName: addressSource
+    com.monytyz.billing.customer.dto.billgroup.BillGroupContactDto:
+      required:
+      - email
+      - fullName
+      - id
+      type: object
+      properties:
         id:
           type: string
-          description: A unique identifier for the contact
-          example: cntct_8P9ijCslTprCI7Wu
-        customId:
-          type: string
-          description: A user provided identifier for the contact
-          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
-        accountId:
-          type: string
-          description: Account ID where the contact belongs
-          example: acct_m0CB9LflojZxytfC
-        address:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-        status:
-          type: string
-          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - CANCELED
-          - ARCHIVED
         fullName:
           type: string
-          description: Full name of the contact
-          example: Bob Smith
         email:
           type: string
-          description: Email of the contact
-          example: contact@example.com
-        phone:
-          type: string
-          description: Phone of the contact
-          example: +1 800 444 4444
-        title:
-          type: string
-          description: Title of the contact
-          example: CFO
-        internal:
-          type: boolean
-          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
-          example: false
-        primary:
-          type: boolean
-          description: Boolean value indicating if the contact is primary or not
-          example: true
-        defaultESigner:
-          type: boolean
-          description: Boolean value indicating if the contact is default eSigner
-          example: false
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the contact
-          description: User configured custom fields for the contact
-        esigner:
-          type: boolean
-      description: Primary contact information for this account
+      description: Shipping contact details
     com.monytyz.billing.customer.dto.billgroup.BillGroupSaveDto:
       required:
       - billDay
@@ -630,6 +578,130 @@ components:
           description: Billing account ID for this bill group
           example: acct_billing456
       example: "\n            {\n                \"name\": \"Demo BillGroup\",\n                \"contactId\": \"cont_KmKel632AmnUp\",\n                \"defaultPaymentGatewayId\": \"pmgw_MkAi8Eno4mXta\",\n                \"paymentMethodId\": \"pmtmd_vFQZjKnb7mUpDYud\",\n                \"dunningProcessId\": \"dunpr_QEPqCDqeaVte5WzM,\n                \"billDay\": 1,\n                \"status\": \"ACTIVE\",\n                \"collectInvoiceBalanceAutomatically\": true,\n                \"customId\": \"6b48c3f6-852e-4cd7-b4f4-a35ad60ad483\",\n                \"netTerms\": \"NET_30\",\n                \"autoEmailInvoice\": true,\n                \"invoiceCreation\": \"AUTOMATIC\",\n                \"invoiceDelay\": 0\n            }\n            "
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayBasicDto:
+      required:
+      - defaultGateway
+      - description
+      - id
+      - locked
+      - status
+      - testGateway
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          example: pmtgw_EMfbqn56S9h9CweL
+        description:
+          type: string
+          example: Description about PGW
+        type:
+          type: string
+          example: STRIPEV2
+          enum:
+          - STRIPEV2
+          - BRAINTREE
+          - WORLDPAY
+          - AUTHNET
+          - ADYEN
+          - VANTIV
+          - PAYPAL_PRO
+          - PAYMENT_TECH
+          - TEST_PASS
+          - TEST_FAIL
+        status:
+          type: string
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - ARCHIVED
+        testGateway:
+          type: boolean
+          example: false
+        defaultGateway:
+          type: boolean
+          example: true
+        locked:
+          type: boolean
+          example: true
+    com.monytyz.billing.customer.dto.billgroup.BillGroupBillGroupListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.customer.dto.address.AddressDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the address
+          example: addr_bkoY6dCoLRblllsJ
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street, Apartment 3D
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Billing address for the account
+    com.monytyz.billing.customer.dto.address.SourcedAddressData.Contact:
+      required:
+      - addressSource
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData'
     com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto:
       type: object
       properties:
@@ -877,57 +949,6 @@ components:
         billingAccountId:
           type: string
           description: Unique identifier for the billgroup account
-    com.monytyz.billing.customer.dto.address.SourcedAddressData.Account:
-      required:
-      - addressSource
-      - billingAddressId
-      - shippingAddressId
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData'
-      - type: object
-        properties:
-          shippingAddressId:
-            type: string
-          billingAddressId:
-            type: string
-    com.monytyz.billing.customer.dto.billgroup.BillGroupBillGroupListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.customer.dto.address.SourcedAddressData.Contact:
-      required:
-      - addressSource
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData'
-    com.monytyz.billing.customer.dto.address.SourcedAddressData:
-      required:
-      - addressSource
-      type: object
-      properties:
-        addressSource:
-          type: string
-          enum:
-          - ACCOUNT
-          - CONTACT
-      discriminator:
-        propertyName: addressSource
     com.monytyz.billing.customer.dto.account.AccountDto:
       type: object
       properties:
@@ -1037,19 +1058,7 @@ components:
           type: string
           description: A list of account level email addresses to which the dunning mail will be copied
           example: abc@gmail.com,def@gmail.com
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.customer.dto.address.AddressDto:
+    com.monytyz.billing.customer.dto.contact.ContactDto:
       type: object
       properties:
         createdBy:
@@ -1070,95 +1079,86 @@ components:
           format: date-time
         id:
           type: string
-          description: Unique identifier for the address
-          example: addr_bkoY6dCoLRblllsJ
-        line1:
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        customId:
           type: string
-          description: First line of the address
-          example: 344 Clinton Street, Apartment 3D
-        line2:
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        accountId:
           type: string
-          description: Second line of the address
-          example: Apartment 3D
-        city:
-          type: string
-          description: City of the address
-          example: New York
-        state:
-          type: string
-          description: State of the address
-          example: New York
-        country:
-          type: string
-          description: Country of the address
-          example: US
-        postalCode:
-          type: string
-          description: Postal code of the address
-          example: '12345'
-        description:
-          type: string
-          description: Description of the address
-          example: Permanent Address
-      description: Billing address for the account
-    com.monytyz.billing.customer.dto.billgroup.BillGroupContactDto:
-      required:
-      - email
-      - fullName
-      - id
-      type: object
-      properties:
-        id:
-          type: string
-        fullName:
-          type: string
-        email:
-          type: string
-      description: Shipping contact details
-    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayBasicDto:
-      required:
-      - defaultGateway
-      - description
-      - id
-      - locked
-      - status
-      - testGateway
-      - type
-      type: object
-      properties:
-        id:
-          type: string
-          example: pmtgw_EMfbqn56S9h9CweL
-        description:
-          type: string
-          example: Description about PGW
-        type:
-          type: string
-          example: STRIPEV2
-          enum:
-          - STRIPEV2
-          - BRAINTREE
-          - WORLDPAY
-          - AUTHNET
-          - ADYEN
-          - VANTIV
-          - PAYPAL_PRO
-          - PAYMENT_TECH
-          - TEST_PASS
-          - TEST_FAIL
+          description: Account ID where the contact belongs
+          example: acct_m0CB9LflojZxytfC
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
         status:
           type: string
+          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
           example: ACTIVE
           enum:
           - ACTIVE
-          - INACTIVE
+          - CANCELED
           - ARCHIVED
-        testGateway:
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type: string
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type: string
+          description: Title of the contact
+          example: CFO
+        internal:
           type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
           example: false
-        defaultGateway:
+        primary:
           type: boolean
+          description: Boolean value indicating if the contact is primary or not
           example: true
-        locked:
+        defaultESigner:
           type: boolean
-          example: true
+          description: Boolean value indicating if the contact is default eSigner
+          example: false
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the contact
+          description: User configured custom fields for the contact
+        esigner:
+          type: boolean
+      description: Primary contact information for this account
+    com.monytyz.billing.customer.dto.address.SourcedAddressData.Account:
+      required:
+      - addressSource
+      - billingAddressId
+      - shippingAddressId
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData'
+      - type: object
+        properties:
+          shippingAddressId:
+            type: string
+          billingAddressId:
+            type: string
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32

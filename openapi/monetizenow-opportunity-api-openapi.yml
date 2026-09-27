@@ -235,21 +235,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    com.monytyz.billing.opportunity.dto.OpportunityQuoteLinkResponseDto:
-      type: object
-      properties:
-        opportunityId:
-          type: string
-          example: opp_VDafd3FooHfe
-        customOpportunityId:
-          type: string
-          example: customId_nmyNv
-        opportunityName:
-          type: string
-          example: NewOpportunity_qGOji
-        quoteId:
-          type: string
-          example: quote_IqgnB7H2HIZPpcz4
     com.monytyz.billing.opportunity.dto.OpportunityQuoteDto:
       type: object
       properties:
@@ -307,6 +292,14 @@ components:
           - TWD
           - USD
         legalEntityId:
+          type: string
+    com.monytyz.billing.common.dto.ResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
           type: string
     com.monytyz.billing.opportunity.dto.OpportunityResponseDto:
       type: object
@@ -385,6 +378,21 @@ components:
           - USD
         dealRoomId:
           type: string
+    com.monytyz.billing.opportunity.dto.OpportunityQuoteLinkResponseDto:
+      type: object
+      properties:
+        opportunityId:
+          type: string
+          example: opp_VDafd3FooHfe
+        customOpportunityId:
+          type: string
+          example: customId_nmyNv
+        opportunityName:
+          type: string
+          example: NewOpportunity_qGOji
+        quoteId:
+          type: string
+          example: quote_IqgnB7H2HIZPpcz4
     com.monytyz.billing.opportunity.dto.OpportunityCreateDto:
       required:
       - accountId
@@ -402,52 +410,6 @@ components:
         accountId:
           type: string
           example: acct_JsT0t6adwZvrhp1z
-    com.monytyz.billing.opportunity.dto.OpportunityPrimaryQuoteDto:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.opportunity.dto.OpportunityListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.opportunity.dto.OpportunitySummaryDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.common.dto.ResponseDto:
-      type: object
-      properties:
-        status:
-          type: integer
-          format: int32
-        message:
-          type: string
     com.monytyz.billing.opportunity.dto.OpportunitySummaryDto:
       type: object
       properties:
@@ -497,3 +459,41 @@ components:
           - USD
         dealRoomId:
           type: string
+    com.monytyz.billing.opportunity.dto.OpportunityPrimaryQuoteDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    com.monytyz.billing.opportunity.dto.OpportunityListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.opportunity.dto.OpportunitySummaryDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32

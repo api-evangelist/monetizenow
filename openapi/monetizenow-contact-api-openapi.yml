@@ -593,6 +593,103 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
+    com.monytyz.billing.customer.dto.contact.ContactListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.customer.dto.address.AddressDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the address
+          example: addr_bkoY6dCoLRblllsJ
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street, Apartment 3D
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Billing address for the account
+    com.monytyz.billing.customer.dto.address.AddressSaveDto:
+      required:
+      - city
+      - country
+      - description
+      - line1
+      - line2
+      - postalCode
+      - state
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        description:
+          type: string
+      description: Address of the contact
     com.monytyz.billing.customer.dto.contact.ContactDto:
       type: object
       properties:
@@ -671,63 +768,6 @@ components:
         esigner:
           type: boolean
       description: Primary contact information for this account
-    com.monytyz.billing.customer.dto.contact.ContactListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.customer.dto.address.AddressSaveDto:
-      required:
-      - city
-      - country
-      - description
-      - line1
-      - line2
-      - postalCode
-      - state
-      type: object
-      properties:
-        line1:
-          type: string
-        line2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
-        description:
-          type: string
-      description: Address of the contact
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
     com.monytyz.billing.customer.dto.contact.ContactSaveDto:
       required:
       - fullName
@@ -798,55 +838,15 @@ components:
             type: object
         esigner:
           type: boolean
-    com.monytyz.billing.customer.dto.address.AddressDto:
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
       type: object
       properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for the address
-          example: addr_bkoY6dCoLRblllsJ
-        line1:
-          type: string
-          description: First line of the address
-          example: 344 Clinton Street, Apartment 3D
-        line2:
-          type: string
-          description: Second line of the address
-          example: Apartment 3D
-        city:
-          type: string
-          description: City of the address
-          example: New York
-        state:
-          type: string
-          description: State of the address
-          example: New York
-        country:
-          type: string
-          description: Country of the address
-          example: US
-        postalCode:
-          type: string
-          description: Postal code of the address
-          example: '12345'
-        description:
-          type: string
-          description: Description of the address
-          example: Permanent Address
-      description: Billing address for the account
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32

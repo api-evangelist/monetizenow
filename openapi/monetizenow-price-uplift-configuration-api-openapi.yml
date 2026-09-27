@@ -132,6 +132,32 @@ components:
           type: boolean
       discriminator:
         propertyName: type
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - APPLY_TO_ALL_PRODUCTS
+          - PRODUCT_SPECIFIC
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ProductSpecific:
+      required:
+      - productConfigurations
+      - type
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData'
+      - type: object
+        properties:
+          productConfigurations:
+            uniqueItems: true
+            type: array
+            items:
+              $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.ProductConfiguration'
     com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ApplyToAllProducts:
       required:
       - amount
@@ -167,29 +193,3 @@ components:
           enum:
           - MAX
           - FIXED
-    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ProductSpecific:
-      required:
-      - productConfigurations
-      - type
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData'
-      - type: object
-        properties:
-          productConfigurations:
-            uniqueItems: true
-            type: array
-            items:
-              $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.ProductConfiguration'
-    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - APPLY_TO_ALL_PRODUCTS
-          - PRODUCT_SPECIFIC
-      discriminator:
-        propertyName: type

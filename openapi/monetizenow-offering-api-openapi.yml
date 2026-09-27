@@ -506,6 +506,121 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
+    com.monytyz.billing.customer.dto.account.AccountListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.common.dto.ResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+    com.monytyz.billing.catalog.dto.offering.OfferingProductDto:
+      required:
+      - isMandatory
+      - position
+      - product
+      - quantityDisplayType
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductBasicDto'
+        isMandatory:
+          type: boolean
+        position:
+          type: integer
+          format: int32
+        quantityDisplayType:
+          type: string
+          enum:
+          - INPUT
+          - DROPDOWN
+      description: An offering can have multiple mandatory or optional products.
+    com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - USAGE_PRODUCTS
+          - SPECIFIC_USAGE_PRODUCTS
+      description: If the rate is for a min commit offering, then this configuration will containconfiguration details for the min commit offering
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for a usage type
+        name:
+          type: string
+          description: Display name of a usage type
+        pluralName:
+          type: string
+          description: Name of a usage type in plural form
+        description:
+          type: string
+          description: Description of a usage type
+        unitName:
+          type: string
+          description: Unit for the usage. I.E. GB for bandwidth usage
+        decimalPlaces:
+          type: integer
+          description: Decimal places is used to count fractional precision for a usage unit
+          format: int32
+          example: 2
+        status:
+          type: string
+          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
     com.monytyz.billing.customer.dto.contact.ContactDto:
       type: object
       properties:
@@ -584,38 +699,6 @@ components:
         esigner:
           type: boolean
       description: Primary contact information for this account
-    com.monytyz.billing.customer.dto.account.AccountListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - USAGE_PRODUCTS
-          - SPECIFIC_USAGE_PRODUCTS
-      description: If the rate is for a min commit offering, then this configuration will containconfiguration details for the min commit offering
-      discriminator:
-        propertyName: type
     com.monytyz.billing.catalog.dto.offering.OfferingDetailDto:
       type: object
       properties:
@@ -712,6 +795,58 @@ components:
             type: object
             description: User configured custom fields for the offering
           description: User configured custom fields for the offering
+    com.monytyz.billing.customer.dto.address.AddressDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the address
+          example: addr_bkoY6dCoLRblllsJ
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street, Apartment 3D
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Billing address for the account
     com.monytyz.billing.catalog.dto.rate.RateDto:
       type: object
       properties:
@@ -862,282 +997,25 @@ components:
         parentRateId: null
         minCommitConfig: null
         rateType: CATALOG
-    com.monytyz.billing.catalog.dto.offering.OfferingProductDto:
+    com.monytyz.billing.catalog.dto.offering.OfferingListDto:
       required:
-      - isMandatory
-      - position
-      - product
-      - quantityDisplayType
+      - content
+      - totalElements
+      - totalPages
       type: object
       properties:
-        product:
-          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductBasicDto'
-        isMandatory:
-          type: boolean
-        position:
-          type: integer
-          format: int32
-        quantityDisplayType:
-          type: string
-          enum:
-          - INPUT
-          - DROPDOWN
-      description: An offering can have multiple mandatory or optional products.
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    com.monytyz.billing.catalog.dto.offering.OfferingSaveDto:
-      required:
-      - name
-      - status
-      - type
-      type: object
-      properties:
-        customId:
-          maxLength: 255
-          minLength: 0
-          type: string
-          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
-        name:
-          maxLength: 255
-          minLength: 1
-          type: string
-          example: Monthly Offering
-        description:
-          maxLength: 255
-          minLength: 1
-          type: string
-          example: Netflix Monthly Offering
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - INACTIVE
-          - CANCELED
-          - PENDING
-          - EXPIRED
-          - ARCHIVED
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-        type:
-          type: string
-          enum:
-          - SUBSCRIPTION
-          - ONETIME
-          - MIN_COMMIT
-          - CUSTOM_PERCENT_OF_TOTAL
-        productIds:
-          uniqueItems: true
+        content:
           type: array
-          example:
-          - prod_REGwM7fYVn3DkvFa
-          - prod_AEGwM7fYVnSDkvQS
           items:
-            type: string
-            example: '["prod_REGwM7fYVn3DkvFa","prod_AEGwM7fYVnSDkvQS"]'
-        financeId:
-          maxLength: 255
-          minLength: 0
-          type: string
-          description: This is income account id from the accounting system
-          example: '1234567890'
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the offering
-          description: User configured custom fields for the offering
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.offering.OfferingDetailDto'
+        totalElements:
           type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.customer.dto.account.AccountDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for the account
-          example: acct_m0CB9LflojZxytfC
-        customId:
-          type: string
-          description: A user provided identifier for the account
-          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
-        isTestAccount:
-          type: boolean
-          description: Boolean value indicating if the account is a test account
-        locale:
-          type: string
-          description: 'Locale of the account. Example: en_US'
-          example: en
-        accountName:
-          type: string
-          description: Name of the account.
-          example: Netflix
-        defaultCurrency:
-          type: string
-          description: Represents the currency of the account. It is the ISO 4217 assigned three-digit code. If no currency is specified, the tenant's default currency will be set for the account.
-          example: USD
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        status:
-          type: string
-          description: Status of the account. An account can be ACTIVE, INACTIVE, CANCELED or SUSPENDED
-          enum:
-          - ACTIVE
-          - CANCELED
-          - SUSPENDED
-          - INACTIVE
-        accountType:
-          type: string
-          description: Type of the account. An account can be CUSTOMER, PARTNER
-          enum:
-          - CUSTOMER
-          - PARTNER
-        primaryContact:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
-        noteCount:
-          type: integer
-          description: Number of notes that is associated with this account
           format: int64
-          example: 100000
-        defaultLegalEntityId:
-          type: string
-          description: Legal entity ID for this account. Default legal entity will be used as default when no legal entity is specified
-          example: lgen_e33f05749111f
-        shippingAddress:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-        billingAddress:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the account
-          description: User configured custom fields for the account
-        taxEntityUseCode:
-          type: string
-          description: Tax entity use code for the account
-          example: M
-        taxExemptionNumber:
-          type: string
-          description: Tax exemption number for the account
-          example: F60730EE-4127-49C0-B490-CBDF29BFD235
-        defaultDunningProcessId:
-          type: string
-          description: Optional dunning process id for the account
-          example: dunpr_tDbC2FxuCwQoxcjm
-        ccEmails:
-          type: string
-          description: A list of account level email addresses to which the dunning mail will be copied
-          example: abc@gmail.com,def@gmail.com
-    com.monytyz.billing.common.dto.ResponseDto:
-      type: object
-      properties:
-        status:
+        totalPages:
           type: integer
           format: int32
-        message:
-          type: string
-    com.monytyz.billing.customer.dto.address.AddressDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for the address
-          example: addr_bkoY6dCoLRblllsJ
-        line1:
-          type: string
-          description: First line of the address
-          example: 344 Clinton Street, Apartment 3D
-        line2:
-          type: string
-          description: Second line of the address
-          example: Apartment 3D
-        city:
-          type: string
-          description: City of the address
-          example: New York
-        state:
-          type: string
-          description: State of the address
-          example: New York
-        country:
-          type: string
-          description: Country of the address
-          example: US
-        postalCode:
-          type: string
-          description: Postal code of the address
-          example: '12345'
-        description:
-          type: string
-          description: Description of the address
-          example: Permanent Address
-      description: Billing address for the account
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
     com.monytyz.billing.catalog.dto.discount.DiscountDto:
       type: object
       properties:
@@ -1283,25 +1161,180 @@ components:
             enum:
             - EXCLUDE_FROM_RENEWAL
       description: Discount details associated with the subscription
-    com.monytyz.billing.catalog.dto.offering.OfferingListDto:
+    com.monytyz.billing.catalog.dto.offering.OfferingSaveDto:
       required:
-      - content
-      - totalElements
-      - totalPages
+      - name
+      - status
+      - type
       type: object
       properties:
-        content:
+        customId:
+          maxLength: 255
+          minLength: 0
+          type: string
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        name:
+          maxLength: 255
+          minLength: 1
+          type: string
+          example: Monthly Offering
+        description:
+          maxLength: 255
+          minLength: 1
+          type: string
+          example: Netflix Monthly Offering
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - PENDING
+          - EXPIRED
+          - ARCHIVED
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        type:
+          type: string
+          enum:
+          - SUBSCRIPTION
+          - ONETIME
+          - MIN_COMMIT
+          - CUSTOM_PERCENT_OF_TOTAL
+        productIds:
+          uniqueItems: true
           type: array
+          example:
+          - prod_REGwM7fYVn3DkvFa
+          - prod_AEGwM7fYVnSDkvQS
           items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.offering.OfferingDetailDto'
-        totalElements:
+            type: string
+            example: '["prod_REGwM7fYVn3DkvFa","prod_AEGwM7fYVnSDkvQS"]'
+        financeId:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: This is income account id from the accounting system
+          example: '1234567890'
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the offering
+          description: User configured custom fields for the offering
+    com.monytyz.billing.customer.dto.account.AccountDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the account
+          example: acct_m0CB9LflojZxytfC
+        customId:
+          type: string
+          description: A user provided identifier for the account
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        isTestAccount:
+          type: boolean
+          description: Boolean value indicating if the account is a test account
+        locale:
+          type: string
+          description: 'Locale of the account. Example: en_US'
+          example: en
+        accountName:
+          type: string
+          description: Name of the account.
+          example: Netflix
+        defaultCurrency:
+          type: string
+          description: Represents the currency of the account. It is the ISO 4217 assigned three-digit code. If no currency is specified, the tenant's default currency will be set for the account.
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        status:
+          type: string
+          description: Status of the account. An account can be ACTIVE, INACTIVE, CANCELED or SUSPENDED
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          description: Type of the account. An account can be CUSTOMER, PARTNER
+          enum:
+          - CUSTOMER
+          - PARTNER
+        primaryContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        noteCount:
           type: integer
+          description: Number of notes that is associated with this account
           format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
+          example: 100000
+        defaultLegalEntityId:
+          type: string
+          description: Legal entity ID for this account. Default legal entity will be used as default when no legal entity is specified
+          example: lgen_e33f05749111f
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the account
+          description: User configured custom fields for the account
+        taxEntityUseCode:
+          type: string
+          description: Tax entity use code for the account
+          example: M
+        taxExemptionNumber:
+          type: string
+          description: Tax exemption number for the account
+          example: F60730EE-4127-49C0-B490-CBDF29BFD235
+        defaultDunningProcessId:
+          type: string
+          description: Optional dunning process id for the account
+          example: dunpr_tDbC2FxuCwQoxcjm
+        ccEmails:
+          type: string
+          description: A list of account level email addresses to which the dunning mail will be copied
+          example: abc@gmail.com,def@gmail.com
     com.monytyz.billing.catalog.dto.product.ProductBasicDto:
       required:
       - id
@@ -1369,48 +1402,15 @@ components:
           type: string
           description: Timestamp of when the record was last modified
           format: date-time
-    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
       type: object
       properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for a usage type
-        name:
-          type: string
-          description: Display name of a usage type
-        pluralName:
-          type: string
-          description: Name of a usage type in plural form
-        description:
-          type: string
-          description: Description of a usage type
-        unitName:
-          type: string
-          description: Unit for the usage. I.E. GB for bandwidth usage
-        decimalPlaces:
+        pageNumber:
           type: integer
-          description: Decimal places is used to count fractional precision for a usage unit
           format: int32
-          example: 2
-        status:
-          type: string
-          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
-          enum:
-          - ACTIVE
-          - INACTIVE
+        pageSize:
+          type: integer
+          format: int32

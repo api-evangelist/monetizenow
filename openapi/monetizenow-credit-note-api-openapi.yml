@@ -420,18 +420,75 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    MNPageable:
+    com.monytyz.billing.transactable.dto.SourceApplicationSummary:
       required:
-      - pageNumber
-      - pageSize
+      - amount
+      - applicationDate
+      - targetId
+      - targetType
+      - type
       type: object
       properties:
-        pageNumber:
+        targetId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
+        targetType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
+        amount:
+          type: number
+        type:
+          type: string
+          enum:
+          - APPLICATION
+          - UNAPPLICATION
+        applicationDate:
+          type: string
+          format: date-time
+      description: All application(s) of the credit note
+    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for a usage type
+        name:
+          type: string
+          description: Display name of a usage type
+        pluralName:
+          type: string
+          description: Name of a usage type in plural form
+        description:
+          type: string
+          description: Description of a usage type
+        unitName:
+          type: string
+          description: Unit for the usage. I.E. GB for bandwidth usage
+        decimalPlaces:
           type: integer
+          description: Decimal places is used to count fractional precision for a usage unit
           format: int32
-        pageSize:
-          type: integer
-          format: int32
+          example: 2
+        status:
+          type: string
+          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
     com.monytyz.billing.customer.dto.address.AddressDto:
       type: object
       properties:
@@ -514,29 +571,6 @@ components:
           type: object
           additionalProperties:
             type: object
-    CompanyInfoSnapshotDtoAddressDto:
-      type: object
-      properties:
-        line1:
-          type: string
-        line2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
-      description: Address of the company
-    com.monytyz.billing.transactable.TargetId:
-      required:
-      - value
-      type: object
-      properties:
-        value:
-          type: string
     com.monytyz.billing.customer.dto.account.AccountSummary:
       required:
       - accountType
@@ -587,30 +621,69 @@ components:
           - PARTNER
         defaultLegalEntityId:
           type: string
-    com.monytyz.billing.catalog.dto.product.ProductBasicDto:
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
       required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.credit.dto.creditnoteitem.CreditNoteInvoiceItem:
+      required:
+      - amount
+      - amountWithoutDiscount
+      - discount
       - id
-      - locked
-      - status
+      - offeringId
+      - offeringName
+      - offeringType
+      - productId
+      - productName
+      - productType
+      - quantity
+      - unitPrice
       type: object
       properties:
         id:
           type: string
-        customId:
+          description: Unique identifier for an invoice item
+        subscriptionId:
           type: string
-        financeId:
+          description: Associated subscription id for the invoice item
+        offeringId:
           type: string
-        name:
+          description: Associated offering id for the invoice item
+        offeringName:
           type: string
-        description:
+          description: Display name of the offering
+        offeringDescription:
           type: string
-        status:
+          description: Description of the offering
+        offeringType:
           type: string
+          description: Type of the offering. Can be SUBSCRIPTION, ONETIME or MIN_COMMIT
           enum:
-          - ACTIVE
-          - INACTIVE
+          - SUBSCRIPTION
+          - ONETIME
+          - MIN_COMMIT
+          - CUSTOM_PERCENT_OF_TOTAL
+        productId:
+          type: string
+          description: Associated product id for the invoice item
+        productName:
+          type: string
+          description: Name of the product
+        rateId:
+          type: string
+          description: Associated rate id for the invoice item
+        rateName:
+          type: string
+          description: Name of the rate. This name of the rate will appear on quotes
         productType:
           type: string
+          description: Indicates the type of the product, which can be USAGE, ONETIME MIN_COMMIT, ADVANCE, ARREARS, ONETIME_PREPAID_CREDIT etc.
           enum:
           - ADVANCE
           - ARREARS
@@ -618,42 +691,47 @@ components:
           - ONETIME
           - ONETIME_PREPAID_CREDIT
           - MIN_COMMIT
-        usageTypes:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.usage.UsageTypeDto'
-        oneTimePrepaidCreditConfig:
-          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
-        sku:
+        description:
           type: string
-        recognitionMethod:
+          description: Description for the invoice item
+        quantity:
+          type: number
+          description: Quantity for the invoice item
+          format: double
+        amount:
+          type: number
+          description: Amount for the invoice item
+        unitPrice:
+          type: number
+          description: Unit price for the invoice item
+        amountCredited:
+          type: number
+          description: Amount credited for the invoice item
+        amountWithoutDiscount:
+          type: number
+          description: Amount without discount for the invoice item
+        discount:
+          type: number
+          description: Discount for the invoice item
+        periodStartDate:
           type: string
-          enum:
-          - IMMEDIATE
-          - EVENLY_MONTHLY_IN_ADVANCE
-        locked:
-          type: boolean
-        taxItemCode:
+          description: Period start date for the service linked to the invoice item
+          format: date
+        periodEndDate:
           type: string
-        taxExempt:
-          type: boolean
-        createdBy:
+          description: Period end date for the service linked to the invoice item
+          format: date
+        lineNumber:
+          type: integer
+          description: Line number of the corresponding invoice item
+          format: int32
+    com.monytyz.billing.credit.dto.credit.CreditVoidRequest:
+      required:
+      - reason
+      type: object
+      properties:
+        reason:
           type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
     com.monytyz.billing.credit.dto.credit.CreditSummary:
       required:
       - amount
@@ -724,60 +802,203 @@ components:
           description: Application(s) of this credit on invoice(s)
           items:
             $ref: '#/components/schemas/com.monytyz.billing.credit.dto.creditnote.CreditApplicationDto'
-    com.monytyz.billing.transactable.dto.AggregatedSourceApplicationSummary:
+    com.monytyz.billing.catalog.dto.product.ProductBasicDto:
       required:
-      - amount
-      - targetId
-      - targetType
+      - id
+      - locked
+      - status
       type: object
       properties:
-        targetId:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
-        targetType:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
-        amount:
-          type: number
-      description: Aggregated application(s) of the credit note
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
-      required:
-      - type
-      type: object
-      properties:
-        type:
+        id:
           type: string
-      discriminator:
-        propertyName: type
-    com.monytyz.billing.credit.dto.credit.CreditVoidRequest:
-      required:
-      - reason
-      type: object
-      properties:
-        reason:
+        customId:
           type: string
-    com.monytyz.billing.transactable.dto.SourceApplicationSummary:
-      required:
-      - amount
-      - applicationDate
-      - targetId
-      - targetType
-      - type
-      type: object
-      properties:
-        targetId:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
-        targetType:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
-        amount:
-          type: number
-        type:
+        financeId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
           type: string
           enum:
-          - APPLICATION
-          - UNAPPLICATION
-        applicationDate:
+          - ACTIVE
+          - INACTIVE
+        productType:
           type: string
+          enum:
+          - ADVANCE
+          - ARREARS
+          - USAGE
+          - ONETIME
+          - ONETIME_PREPAID_CREDIT
+          - MIN_COMMIT
+        usageTypes:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.usage.UsageTypeDto'
+        oneTimePrepaidCreditConfig:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
+        sku:
+          type: string
+        recognitionMethod:
+          type: string
+          enum:
+          - IMMEDIATE
+          - EVENLY_MONTHLY_IN_ADVANCE
+        locked:
+          type: boolean
+        taxItemCode:
+          type: string
+        taxExempt:
+          type: boolean
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
           format: date-time
-      description: All application(s) of the credit note
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.invoice.dto.InvoiceSummary:
+      required:
+      - accountId
+      - amount
+      - amountDue
+      - currency
+      - dueDate
+      - fromCompany
+      - id
+      - invoicingDate
+      - migrated
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for an invoice
+        accountId:
+          type: string
+          description: Associated account id for the invoice
+        fromCompany:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto'
+        invoicingDate:
+          type: string
+          description: Invoice generation date
+          format: date
+        currency:
+          type: string
+          description: Currency for the invoice amount
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        startDate:
+          type: string
+          description: Start date of the period for which a customer is billed
+          format: date
+        endDate:
+          type: string
+          description: End date of the period for which a customer is billed
+          format: date
+        usageStartDate:
+          type: string
+          description: Start date applicable for usage product
+          format: date
+        usageEndDate:
+          type: string
+          description: End date applicable for usage products
+          format: date
+        contractId:
+          type: string
+          description: Associated contract id for the invoice
+        status:
+          type: string
+          description: Describes the state of the invoice. Can be CANCELED,UNPAID,PENDING,PAID,REVERSED
+          enum:
+          - DRAFT
+          - CANCELED
+          - UNPAID
+          - PENDING
+          - PAID
+          - REVERSED
+        amount:
+          type: number
+          description: Total amount for the invoice
+        amountDue:
+          type: number
+          description: Due amount for the invoice
+        dueDate:
+          type: string
+          description: The date when invoice will be due. Needs to be paid before that date
+          format: date
+        invoiceNumber:
+          type: string
+          description: Sequential invoice number
+        migrated:
+          type: boolean
+          description: Indicates if the invoice is migrated
+    com.monytyz.billing.common.dto.ResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+    com.monytyz.billing.credit.dto.creditnote.CreditApplicationDto:
+      required:
+      - amountApplied
+      - creditId
+      - invoiceId
+      type: object
+      properties:
+        invoiceId:
+          type: string
+          description: Unique identifier for the invoice to which credit was fully or partially applied
+          example: invce_q0xESEWovN7JvfAe
+        creditId:
+          type: string
+          description: Unique identifier for the applied credit
+          example: crdt_CMxSdjFUrzCLqFil
+        amountApplied:
+          type: number
+          description: Amount of the credit applied to the invoice
+          example: 100
+      description: Application(s) of this credit on invoice(s)
     com.monytyz.billing.credit.dto.creditnote.CreditNoteDetailDto:
       type: object
       properties:
@@ -910,222 +1131,6 @@ components:
           description: Reason this credit note was voided.
         creditNoteMetadata:
           $ref: '#/components/schemas/com.monytyz.billing.credit.model.CreditNoteMetadata'
-    com.monytyz.billing.credit.model.CreditNoteSource:
-      required:
-      - source
-      type: object
-      properties:
-        source:
-          type: string
-    com.monytyz.billing.invoice.dto.InvoiceSummary:
-      required:
-      - accountId
-      - amount
-      - amountDue
-      - currency
-      - dueDate
-      - fromCompany
-      - id
-      - invoicingDate
-      - migrated
-      - status
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for an invoice
-        accountId:
-          type: string
-          description: Associated account id for the invoice
-        fromCompany:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto'
-        invoicingDate:
-          type: string
-          description: Invoice generation date
-          format: date
-        currency:
-          type: string
-          description: Currency for the invoice amount
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        startDate:
-          type: string
-          description: Start date of the period for which a customer is billed
-          format: date
-        endDate:
-          type: string
-          description: End date of the period for which a customer is billed
-          format: date
-        usageStartDate:
-          type: string
-          description: Start date applicable for usage product
-          format: date
-        usageEndDate:
-          type: string
-          description: End date applicable for usage products
-          format: date
-        contractId:
-          type: string
-          description: Associated contract id for the invoice
-        status:
-          type: string
-          description: Describes the state of the invoice. Can be CANCELED,UNPAID,PENDING,PAID,REVERSED
-          enum:
-          - DRAFT
-          - CANCELED
-          - UNPAID
-          - PENDING
-          - PAID
-          - REVERSED
-        amount:
-          type: number
-          description: Total amount for the invoice
-        amountDue:
-          type: number
-          description: Due amount for the invoice
-        dueDate:
-          type: string
-          description: The date when invoice will be due. Needs to be paid before that date
-          format: date
-        invoiceNumber:
-          type: string
-          description: Sequential invoice number
-        migrated:
-          type: boolean
-          description: Indicates if the invoice is migrated
-    com.monytyz.billing.transactable.model.enums.TargetType:
-      type: object
-    com.monytyz.billing.credit.model.CreditNoteMetadata:
-      required:
-      - action
-      - source
-      - sourceId
-      - type
-      type: object
-      properties:
-        source:
-          $ref: '#/components/schemas/com.monytyz.billing.credit.model.CreditNoteSource'
-        action:
-          type: string
-          enum:
-          - DOWNGRADE
-          - CREDIT_REBILL
-          - CREDIT_NOTE
-        sourceId:
-          type: string
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    com.monytyz.billing.credit.dto.creditnoteitem.CreditNoteInvoiceItem:
-      required:
-      - amount
-      - amountWithoutDiscount
-      - discount
-      - id
-      - offeringId
-      - offeringName
-      - offeringType
-      - productId
-      - productName
-      - productType
-      - quantity
-      - unitPrice
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for an invoice item
-        subscriptionId:
-          type: string
-          description: Associated subscription id for the invoice item
-        offeringId:
-          type: string
-          description: Associated offering id for the invoice item
-        offeringName:
-          type: string
-          description: Display name of the offering
-        offeringDescription:
-          type: string
-          description: Description of the offering
-        offeringType:
-          type: string
-          description: Type of the offering. Can be SUBSCRIPTION, ONETIME or MIN_COMMIT
-          enum:
-          - SUBSCRIPTION
-          - ONETIME
-          - MIN_COMMIT
-          - CUSTOM_PERCENT_OF_TOTAL
-        productId:
-          type: string
-          description: Associated product id for the invoice item
-        productName:
-          type: string
-          description: Name of the product
-        rateId:
-          type: string
-          description: Associated rate id for the invoice item
-        rateName:
-          type: string
-          description: Name of the rate. This name of the rate will appear on quotes
-        productType:
-          type: string
-          description: Indicates the type of the product, which can be USAGE, ONETIME MIN_COMMIT, ADVANCE, ARREARS, ONETIME_PREPAID_CREDIT etc.
-          enum:
-          - ADVANCE
-          - ARREARS
-          - USAGE
-          - ONETIME
-          - ONETIME_PREPAID_CREDIT
-          - MIN_COMMIT
-        description:
-          type: string
-          description: Description for the invoice item
-        quantity:
-          type: number
-          description: Quantity for the invoice item
-          format: double
-        amount:
-          type: number
-          description: Amount for the invoice item
-        unitPrice:
-          type: number
-          description: Unit price for the invoice item
-        amountCredited:
-          type: number
-          description: Amount credited for the invoice item
-        amountWithoutDiscount:
-          type: number
-          description: Amount without discount for the invoice item
-        discount:
-          type: number
-          description: Discount for the invoice item
-        periodStartDate:
-          type: string
-          description: Period start date for the service linked to the invoice item
-          format: date
-        periodEndDate:
-          type: string
-          description: Period end date for the service linked to the invoice item
-          format: date
-        lineNumber:
-          type: integer
-          description: Line number of the corresponding invoice item
-          format: int32
     com.monytyz.billing.customer.dto.contact.ContactSnapshotDto:
       type: object
       properties:
@@ -1175,80 +1180,76 @@ components:
           - 'null'
           description: Title of the contact
           example: CFO
-    com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto:
+    com.monytyz.billing.transactable.TargetId:
+      required:
+      - value
       type: object
       properties:
-        name:
+        value:
           type: string
-          description: Name of the company
-        address:
-          $ref: '#/components/schemas/CompanyInfoSnapshotDtoAddressDto'
-        legalEntityId:
+    com.monytyz.billing.transactable.model.enums.TargetType:
+      type: object
+    com.monytyz.billing.credit.model.CreditNoteSource:
+      required:
+      - source
+      type: object
+      properties:
+        source:
           type: string
-          description: Identifier for the legal entity
-        customId:
+    ContactSnapshotDtoAddressSnapshotDto:
+      type: object
+      properties:
+        line1:
           type: string
-          description: Custom id of the companyinfo snapshot
-        logoStorageId:
+          description: First line of the address
+          example: 344 Clinton Street
+        line2:
           type: string
-          description: Storage id of the company logo
-        email:
+          description: Second line of the address
+          example: Apartment 3D
+        city:
           type: string
-          description: Email address of the company
-        addressFormat:
+          description: City of the address
+          example: New York
+        state:
           type: string
-          description: Format of the legal entity's address
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Address of the contact
+    com.monytyz.billing.credit.model.CreditNoteMetadata:
+      required:
+      - action
+      - source
+      - sourceId
+      - type
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/com.monytyz.billing.credit.model.CreditNoteSource'
+        action:
+          type: string
           enum:
-          - US_FORMAT
-          - EUROPEAN_FORMAT
-      description: The entity who creates the invoice for billing purpose
-    com.monytyz.billing.credit.dto.creditnote.CreditApplicationDto:
-      required:
-      - amountApplied
-      - creditId
-      - invoiceId
-      type: object
-      properties:
-        invoiceId:
+          - DOWNGRADE
+          - CREDIT_REBILL
+          - CREDIT_NOTE
+        sourceId:
           type: string
-          description: Unique identifier for the invoice to which credit was fully or partially applied
-          example: invce_q0xESEWovN7JvfAe
-        creditId:
+        type:
           type: string
-          description: Unique identifier for the applied credit
-          example: crdt_CMxSdjFUrzCLqFil
-        amountApplied:
-          type: number
-          description: Amount of the credit applied to the invoice
-          example: 100
-      description: Application(s) of this credit on invoice(s)
-    com.monytyz.billing.credit.dto.creditnote.CreditNoteListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.credit.dto.creditnote.CreditNoteDetailDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.common.dto.ResponseDto:
-      type: object
-      properties:
-        status:
-          type: integer
-          format: int32
-        message:
-          type: string
+      discriminator:
+        propertyName: type
     com.monytyz.billing.credit.dto.creditnoteitem.CreditNoteItemDetailDto:
       type: object
       properties:
@@ -1283,80 +1284,79 @@ components:
           type: number
         tax:
           type: number
-    ContactSnapshotDtoAddressSnapshotDto:
+    com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the company
+        address:
+          $ref: '#/components/schemas/CompanyInfoSnapshotDtoAddressDto'
+        legalEntityId:
+          type: string
+          description: Identifier for the legal entity
+        customId:
+          type: string
+          description: Custom id of the companyinfo snapshot
+        logoStorageId:
+          type: string
+          description: Storage id of the company logo
+        email:
+          type: string
+          description: Email address of the company
+        addressFormat:
+          type: string
+          description: Format of the legal entity's address
+          enum:
+          - US_FORMAT
+          - EUROPEAN_FORMAT
+      description: The entity who creates the invoice for billing purpose
+    CompanyInfoSnapshotDtoAddressDto:
       type: object
       properties:
         line1:
           type: string
-          description: First line of the address
-          example: 344 Clinton Street
         line2:
           type: string
-          description: Second line of the address
-          example: Apartment 3D
         city:
           type: string
-          description: City of the address
-          example: New York
         state:
           type: string
-          description: State of the address
-          example: New York
         country:
           type: string
-          description: Country of the address
-          example: US
         postalCode:
           type: string
-          description: Postal code of the address
-          example: '12345'
-        description:
-          type: string
-          description: Description of the address
-          example: Permanent Address
-      description: Address of the contact
-    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
+      description: Address of the company
+    com.monytyz.billing.credit.dto.creditnote.CreditNoteListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
       type: object
       properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for a usage type
-        name:
-          type: string
-          description: Display name of a usage type
-        pluralName:
-          type: string
-          description: Name of a usage type in plural form
-        description:
-          type: string
-          description: Description of a usage type
-        unitName:
-          type: string
-          description: Unit for the usage. I.E. GB for bandwidth usage
-        decimalPlaces:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.credit.dto.creditnote.CreditNoteDetailDto'
+        totalElements:
           type: integer
-          description: Decimal places is used to count fractional precision for a usage unit
+          format: int64
+        totalPages:
+          type: integer
           format: int32
-          example: 2
-        status:
-          type: string
-          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
-          enum:
-          - ACTIVE
-          - INACTIVE
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.transactable.dto.AggregatedSourceApplicationSummary:
+      required:
+      - amount
+      - targetId
+      - targetType
+      type: object
+      properties:
+        targetId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
+        targetType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
+        amount:
+          type: number
+      description: Aggregated application(s) of the credit note

@@ -356,131 +356,6 @@ paths:
                 $ref: '#/components/schemas/Unit'
 components:
   schemas:
-    Pageable:
-      type: object
-      properties:
-        nextPageToken:
-          type: string
-        pageSize:
-          type: integer
-          format: int32
-    FailedEvent:
-      type: object
-      properties:
-        event:
-          $ref: '#/components/schemas/EventRequest'
-        reason:
-          type: string
-          description: Reason for failure
-      description: List of events that failed ingestion
-    Event:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the event
-        accountId:
-          type: string
-          description: MonetizeNow Identifier for the account associated with the event
-          example: acct_oypCgzfyTCaWE
-        subscriptionId:
-          type: string
-          description: MonetizeNow Identifier for the subscription associated with the event
-          example: subs_lRVTvOpnpXgmv
-        usageTypeId:
-          type: string
-          description: MonetizeNow Identifier for the usage type associated with the product on which usage is being reported
-          example: usgt_aqtt2711mr1rz
-        unitsConsumed:
-          type: number
-          description: Units consumed
-          format: double
-          example: 100
-        ratedPrice:
-          type: number
-          description: Optional Rated Price for the event. The currency is determined by the Rate used in the subscription.
-          format: double
-          example: 1
-        timestamp:
-          type: string
-          description: Timestamp of the event
-          format: date-time
-          example: '2022-01-01T00:00:00Z'
-    Unit:
-      type: object
-    UsageHistoryResponse:
-      type: object
-      properties:
-        date:
-          type: string
-          description: Date corresponding to the aggregated unitsConsumed
-          format: date
-          example: '2022-01-01'
-        unitsConsumed:
-          type: number
-          description: Total unrated unitsConsumed for the given date
-          format: double
-          example: 100
-    UsageQueryResponse:
-      type: object
-      properties:
-        unitsConsumed:
-          type: number
-          description: Total Un-rated Units consumed for the requested period
-          format: double
-          example: 100
-        ratedUnitsConsumed:
-          type: number
-          description: Total Rated Units consumed for the requested period
-          format: double
-          example: 20
-        totalRatedPrice:
-          type: number
-          description: Total Rated Price for the requested period
-          format: double
-          example: 1
-    EventRequest:
-      type: object
-      properties:
-        id:
-          maxLength: 200
-          minLength: 1
-          type: string
-          description: User provided Unique identifier for the event
-        accountId:
-          maxLength: 50
-          minLength: 1
-          type: string
-          description: MonetizeNow Identifier for the account associated with the event
-          example: acct_oypCgzfyTCaWE
-        subscriptionId:
-          maxLength: 50
-          minLength: 1
-          type: string
-          description: MonetizeNow Identifier for the subscription associated with the event
-          example: subs_lRVTvOpnpXgmv
-        usageTypeId:
-          maxLength: 50
-          minLength: 1
-          type: string
-          description: MonetizeNow Identifier for the usage type associated with the product on which usage is being reported
-          example: usgt_aqtt2711mr1rz
-        unitsConsumed:
-          type: number
-          description: Units consumed
-          format: double
-          example: 100
-        timestamp:
-          type: string
-          description: Timestamp of the event
-          format: date-time
-          example: '2022-01-01T00:00:00Z'
-        ratedPrice:
-          type: number
-          description: Optional Rated Price for the event. The currency is determined by the Rate used in the subscription.
-          format: double
-          example: 1
-      description: Event that failed ingestion
     UpdateUsageRequest:
       type: object
       properties:
@@ -570,6 +445,90 @@ components:
           - 511 NETWORK_AUTHENTICATION_REQUIRED
         message:
           type: string
+    FailedEvent:
+      type: object
+      properties:
+        event:
+          $ref: '#/components/schemas/EventRequest'
+        reason:
+          type: string
+          description: Reason for failure
+      description: List of events that failed ingestion
+    UsageQueryResponse:
+      type: object
+      properties:
+        unitsConsumed:
+          type: number
+          description: Total Un-rated Units consumed for the requested period
+          format: double
+          example: 100
+        ratedUnitsConsumed:
+          type: number
+          description: Total Rated Units consumed for the requested period
+          format: double
+          example: 20
+        totalRatedPrice:
+          type: number
+          description: Total Rated Price for the requested period
+          format: double
+          example: 1
+    EventRequest:
+      type: object
+      properties:
+        id:
+          maxLength: 200
+          minLength: 1
+          type: string
+          description: User provided Unique identifier for the event
+        accountId:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: MonetizeNow Identifier for the account associated with the event
+          example: acct_oypCgzfyTCaWE
+        subscriptionId:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: MonetizeNow Identifier for the subscription associated with the event
+          example: subs_lRVTvOpnpXgmv
+        usageTypeId:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: MonetizeNow Identifier for the usage type associated with the product on which usage is being reported
+          example: usgt_aqtt2711mr1rz
+        unitsConsumed:
+          type: number
+          description: Units consumed
+          format: double
+          example: 100
+        timestamp:
+          type: string
+          description: Timestamp of the event
+          format: date-time
+          example: '2022-01-01T00:00:00Z'
+        ratedPrice:
+          type: number
+          description: Optional Rated Price for the event. The currency is determined by the Rate used in the subscription.
+          format: double
+          example: 1
+      description: Event that failed ingestion
+    UsageHistoryResponse:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Date corresponding to the aggregated unitsConsumed
+          format: date
+          example: '2022-01-01'
+        unitsConsumed:
+          type: number
+          description: Total unrated unitsConsumed for the given date
+          format: double
+          example: 100
+    Unit:
+      type: object
     EventListDto:
       type: object
       properties:
@@ -585,6 +544,47 @@ components:
           format: int64
         pageable:
           $ref: '#/components/schemas/Pageable'
+    Pageable:
+      type: object
+      properties:
+        nextPageToken:
+          type: string
+        pageSize:
+          type: integer
+          format: int32
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the event
+        accountId:
+          type: string
+          description: MonetizeNow Identifier for the account associated with the event
+          example: acct_oypCgzfyTCaWE
+        subscriptionId:
+          type: string
+          description: MonetizeNow Identifier for the subscription associated with the event
+          example: subs_lRVTvOpnpXgmv
+        usageTypeId:
+          type: string
+          description: MonetizeNow Identifier for the usage type associated with the product on which usage is being reported
+          example: usgt_aqtt2711mr1rz
+        unitsConsumed:
+          type: number
+          description: Units consumed
+          format: double
+          example: 100
+        ratedPrice:
+          type: number
+          description: Optional Rated Price for the event. The currency is determined by the Rate used in the subscription.
+          format: double
+          example: 1
+        timestamp:
+          type: string
+          description: Timestamp of the event
+          format: date-time
+          example: '2022-01-01T00:00:00Z'
     EventResponse:
       type: object
       properties:

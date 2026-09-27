@@ -401,6 +401,32 @@ paths:
       deprecated: true
 components:
   schemas:
+    com.monytyz.billing.transactable.dto.SourceApplicationSummary:
+      required:
+      - amount
+      - applicationDate
+      - targetId
+      - targetType
+      - type
+      type: object
+      properties:
+        targetId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
+        targetType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
+        amount:
+          type: number
+        type:
+          type: string
+          enum:
+          - APPLICATION
+          - UNAPPLICATION
+        applicationDate:
+          type: string
+          format: date-time
+      description: All application(s) of the credit note
+    com.monytyz.billing.transactable.model.enums.TargetType:
+      type: object
     com.monytyz.billing.customer.dto.account.AccountSummary:
       required:
       - accountType
@@ -451,30 +477,19 @@ components:
           - PARTNER
         defaultLegalEntityId:
           type: string
-    com.monytyz.billing.transactable.dto.SourceApplicationSummary:
+    com.monytyz.billing.payment.dto.payment.ApplyPaymentToInvoiceDto:
       required:
       - amount
-      - applicationDate
-      - targetId
-      - targetType
-      - type
       type: object
       properties:
-        targetId:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
-        targetType:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
+        paymentMethodId:
+          type: string
+          description: Unique identifier for the payment method
+          example: pmtm_m0CB9LflojZxytfC
         amount:
           type: number
-        type:
-          type: string
-          enum:
-          - APPLICATION
-          - UNAPPLICATION
-        applicationDate:
-          type: string
-          format: date-time
-      description: All application(s) of the credit note
+          description: Amount of the payment
+          example: 5000
     com.monytyz.billing.payment.dto.payment.PaymentListDto:
       required:
       - content
@@ -494,19 +509,70 @@ components:
           format: int32
         pageable:
           $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.payment.dto.payment.ApplyPaymentToInvoiceDto:
-      required:
-      - amount
+    com.monytyz.billing.payment.dto.payment.UpdateManualPaymentDto:
       type: object
       properties:
-        paymentMethodId:
+        referenceNo:
           type: string
-          description: Unique identifier for the payment method
-          example: pmtm_m0CB9LflojZxytfC
+          description: Customer reference number for the payment
+          example: '12345'
+        description:
+          type: string
+          description: Description of the payment
+          example: USW's Manual Payment
+        paymentDate:
+          type: string
+          description: Date of the payment
+          format: date
+          example: '2022-04-25'
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.payment.dto.refund.RefundInitiateDto:
+      required:
+      - amount
+      - reason
+      type: object
+      properties:
         amount:
           type: number
-          description: Amount of the payment
-          example: 5000
+          description: Amount to refund
+          example: 100
+          exclusiveMinimum: 0
+        reason:
+          type: string
+          description: Reason for the refund. Value can be BILLING_ERROR, SERVICE_ISSUE, CANCELLATION, ADJUSTMENT or OTHER
+          example: OTHER
+          deprecated: true
+          enum:
+          - BILLING_ERROR
+          - SERVICE_ISSUE
+          - CANCELLATION
+          - ADJUSTMENT
+          - OTHER
+        otherReason:
+          type:
+          - string
+          - 'null'
+          description: Description for the other reason. Only applicable when reason is OTHER
+          example: Voiding Invoice
+    com.monytyz.billing.common.dto.ResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
     com.monytyz.billing.payment.dto.refund.RefundDto:
       required:
       - amount
@@ -606,6 +672,30 @@ components:
           - SGD
           - TWD
           - USD
+    com.monytyz.billing.payment.dto.payment.ManualPaymentSaveDto:
+      required:
+      - amount
+      - paymentDate
+      type: object
+      properties:
+        amount:
+          minimum: 0
+          type: number
+          description: Amount of the payment
+          example: 1000
+        paymentDate:
+          type: string
+          description: Date of the payment
+          format: date
+          example: '2022-04-25'
+        referenceNo:
+          type: string
+          description: Customer reference number for the payment
+          example: '12345'
+        description:
+          type: string
+          description: Description of the payment
+          example: USW's Manual Payment
     com.monytyz.billing.payment.dto.payment.PaymentDetailDto:
       required:
       - account
@@ -752,6 +842,13 @@ components:
           description: All application(s) of the payment
           items:
             $ref: '#/components/schemas/com.monytyz.billing.transactable.dto.SourceApplicationSummary'
+    com.monytyz.billing.transactable.TargetId:
+      required:
+      - value
+      type: object
+      properties:
+        value:
+          type: string
     com.monytyz.billing.payment.dto.payment.PaymentDto:
       required:
       - currency
@@ -892,100 +989,3 @@ components:
           example: '12345'
         successfulOrProcessing:
           type: boolean
-    com.monytyz.billing.payment.dto.payment.UpdateManualPaymentDto:
-      type: object
-      properties:
-        referenceNo:
-          type: string
-          description: Customer reference number for the payment
-          example: '12345'
-        description:
-          type: string
-          description: Description of the payment
-          example: USW's Manual Payment
-        paymentDate:
-          type: string
-          description: Date of the payment
-          format: date
-          example: '2022-04-25'
-    com.monytyz.billing.payment.dto.refund.RefundInitiateDto:
-      required:
-      - amount
-      - reason
-      type: object
-      properties:
-        amount:
-          type: number
-          description: Amount to refund
-          example: 100
-          exclusiveMinimum: 0
-        reason:
-          type: string
-          description: Reason for the refund. Value can be BILLING_ERROR, SERVICE_ISSUE, CANCELLATION, ADJUSTMENT or OTHER
-          example: OTHER
-          deprecated: true
-          enum:
-          - BILLING_ERROR
-          - SERVICE_ISSUE
-          - CANCELLATION
-          - ADJUSTMENT
-          - OTHER
-        otherReason:
-          type:
-          - string
-          - 'null'
-          description: Description for the other reason. Only applicable when reason is OTHER
-          example: Voiding Invoice
-    com.monytyz.billing.transactable.model.enums.TargetType:
-      type: object
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.common.dto.ResponseDto:
-      type: object
-      properties:
-        status:
-          type: integer
-          format: int32
-        message:
-          type: string
-    com.monytyz.billing.payment.dto.payment.ManualPaymentSaveDto:
-      required:
-      - amount
-      - paymentDate
-      type: object
-      properties:
-        amount:
-          minimum: 0
-          type: number
-          description: Amount of the payment
-          example: 1000
-        paymentDate:
-          type: string
-          description: Date of the payment
-          format: date
-          example: '2022-04-25'
-        referenceNo:
-          type: string
-          description: Customer reference number for the payment
-          example: '12345'
-        description:
-          type: string
-          description: Description of the payment
-          example: USW's Manual Payment
-    com.monytyz.billing.transactable.TargetId:
-      required:
-      - value
-      type: object
-      properties:
-        value:
-          type: string

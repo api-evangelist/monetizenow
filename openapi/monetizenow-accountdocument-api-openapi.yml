@@ -528,6 +528,69 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    com.monytyz.billing.esign.dto.ESignRecipient:
+      required:
+      - declinedDateTime
+      - deliveredDateTime
+      - email
+      - id
+      - name
+      - order
+      - sentDateTime
+      - signedDateTime
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        order:
+          type: string
+        status:
+          type: string
+        declinedDateTime:
+          type: string
+        deliveredDateTime:
+          type: string
+        sentDateTime:
+          type: string
+        signedDateTime:
+          type: string
+    ContactSnapshotDtoAddressSnapshotDto:
+      type: object
+      properties:
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Address of the contact
     com.monytyz.billing.storage.dto.StorageObjectDto:
       type: object
       properties:
@@ -578,6 +641,45 @@ components:
           type: string
           description: Reference file name of the storage object
           example: sample.pdf
+    com.monytyz.billing.esign.dto.ESignRecipientResponse:
+      required:
+      - ccContacts
+      - currentRoutingOrder
+      - recipientCount
+      - signers
+      type: object
+      properties:
+        recipientCount:
+          type: string
+        currentRoutingOrder:
+          type: string
+        signers:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.esign.dto.ESignRecipient'
+        ccContacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.esign.dto.ESignRecipient'
+    com.monytyz.billing.util.MNPage:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
     com.monytyz.billing.customer.v2.dto.AccountDocumentDetailResponse:
       required:
       - accountId
@@ -651,149 +753,6 @@ components:
           type: string
           description: Timestamp of when the record was last modified
           format: date-time
-    com.monytyz.billing.esign.dto.ESignRecipient:
-      required:
-      - declinedDateTime
-      - deliveredDateTime
-      - email
-      - id
-      - name
-      - order
-      - sentDateTime
-      - signedDateTime
-      - status
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        order:
-          type: string
-        status:
-          type: string
-        declinedDateTime:
-          type: string
-        deliveredDateTime:
-          type: string
-        sentDateTime:
-          type: string
-        signedDateTime:
-          type: string
-    com.monytyz.billing.customer.v2.dto.AccountDocumentCreateRequest:
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-    com.monytyz.billing.customer.v2.dto.AccountDocumentContactUpdateRequest:
-      required:
-      - esignCcIds
-      - esignPrimaryIds
-      - esignSecondaryIds
-      type: object
-      properties:
-        esignPrimaryIds:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-        esignSecondaryIds:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-        esignCcIds:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-    com.monytyz.billing.esign.dto.ESignRecipientResponse:
-      required:
-      - ccContacts
-      - currentRoutingOrder
-      - recipientCount
-      - signers
-      type: object
-      properties:
-        recipientCount:
-          type: string
-        currentRoutingOrder:
-          type: string
-        signers:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.esign.dto.ESignRecipient'
-        ccContacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.esign.dto.ESignRecipient'
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.customer.v2.dto.AccountDocumentUpdateRequest:
-      required:
-      - name
-      - signingOrder
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        signingOrder:
-          type: string
-          enum:
-          - INTERNAL_FIRST
-          - EXTERNAL_FIRST
-          - EXTERNAL_ONLY
-          - INSTANTANEOUS
-    ContactSnapshotDtoAddressSnapshotDto:
-      type: object
-      properties:
-        line1:
-          type: string
-          description: First line of the address
-          example: 344 Clinton Street
-        line2:
-          type: string
-          description: Second line of the address
-          example: Apartment 3D
-        city:
-          type: string
-          description: City of the address
-          example: New York
-        state:
-          type: string
-          description: State of the address
-          example: New York
-        country:
-          type: string
-          description: Country of the address
-          example: US
-        postalCode:
-          type: string
-          description: Postal code of the address
-          example: '12345'
-        description:
-          type: string
-          description: Description of the address
-          example: Permanent Address
-      description: Address of the contact
     com.monytyz.billing.customer.dto.contact.ContactSnapshotDto:
       type: object
       properties:
@@ -843,6 +802,66 @@ components:
           - 'null'
           description: Title of the contact
           example: CFO
+    com.monytyz.billing.customer.v2.dto.AccountDocumentContactUpdateRequest:
+      required:
+      - esignCcIds
+      - esignPrimaryIds
+      - esignSecondaryIds
+      type: object
+      properties:
+        esignPrimaryIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        esignSecondaryIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        esignCcIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    com.monytyz.billing.customer.v2.dto.AccountDocumentCreateRequest:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.v2.dto.AccountDocumentUpdateRequest:
+      required:
+      - name
+      - signingOrder
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        signingOrder:
+          type: string
+          enum:
+          - INTERNAL_FIRST
+          - EXTERNAL_FIRST
+          - EXTERNAL_ONLY
+          - INSTANTANEOUS
     com.monytyz.billing.customer.v2.dto.AccountDocumentContactResponse:
       required:
       - additionalESignRecipients
@@ -865,22 +884,3 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
-    com.monytyz.billing.util.MNPage:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            type: object
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
