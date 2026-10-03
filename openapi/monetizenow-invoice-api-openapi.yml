@@ -453,24 +453,8 @@ components:
         shippingAddress:
           $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
       description: Associated account id for the invoice
-    com.monytyz.billing.invoice.dto.InvoiceItemDiscountDto:
+    com.monytyz.billing.transactable.model.enums.SourceType:
       type: object
-      properties:
-        discountId:
-          type: string
-          example: disc_9TkhFbhZ5oY4q2fw
-        description:
-          type: string
-          example: Flat Discount
-        amount:
-          type: number
-          example: 1000000
-        discountType:
-          type: string
-          example: FLAT
-          enum:
-          - FLAT
-          - PERCENTAGE
     com.monytyz.billing.customer.dto.address.AddressDto:
       type: object
       properties:
@@ -523,35 +507,200 @@ components:
           description: Description of the address
           example: Permanent Address
       description: Billing address for the account
-    com.monytyz.billing.invoice.dto.InvoiceUpdateDto:
-      required:
-      - customFields
-      - invoiceMemo
-      - purchaseOrderNumber
-      - registrationNumber
-      - vatNumber
+    com.monytyz.billing.customer.dto.contact.ContactSnapshotDto:
       type: object
       properties:
-        purchaseOrderNumber:
+        id:
           type: string
-          example: PO-123
-        vatNumber:
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        accountId:
+          type:
+          - string
+          - 'null'
+          description: Account ID associated with the contact
+          example: acc_1234567890123
+        customId:
+          type:
+          - string
+          - 'null'
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        snapshotId:
           type: string
-          description: The corresponding vat number
-          example: '12345678901'
-        registrationNumber:
+          description: The identifier of the snapshot
+          example: cntctsnp_4J3aiDdLtQPc13VO
+        address:
+          $ref: '#/components/schemas/ContactSnapshotDtoAddressSnapshotDto'
+        fullName:
           type: string
-          description: The corresponding registration number
-          example: 123-45-6789
-        invoiceMemo:
+          description: Full name of the contact
+          example: Bob Smith
+        email:
           type: string
-          description: A memo on an Invoice related to a specific upsell to help the end customer understand the invoice to limit questions and decrease time to payment
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the invoice
-          description: User configured custom fields for the invoice
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type:
+          - string
+          - 'null'
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type:
+          - string
+          - 'null'
+          description: Title of the contact
+          example: CFO
+    com.monytyz.billing.payment.dto.payment.InvoicePaymentDto:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          description: Unique identifier for the payment
+          example: pmt_m0CB9LflojZxytfC
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        collectionDate:
+          type: string
+          description: Date when the payment is settled
+          format: date
+          example: '2022-04-25'
+          deprecated: true
+        settledDate:
+          type: string
+          description: Date when the payment is settled
+          format: date-time
+        creditCardType:
+          type: string
+          description: Payment method credit card type like VISA, MASTERCARD, DISCOVER, AMEX, DINERS, JCB or UNIONPAY
+          example: VISA
+          enum:
+          - VISA
+          - MASTERCARD
+          - DISCOVER
+          - AMEX
+          - DINERS
+          - JCB
+          - UNIONPAY
+        paymentMethodName:
+          type: string
+          description: Name of the payment method
+          example: Bob's Visa
+        paymentDescription:
+          type: string
+          description: Description of the payment
+          example: Payment Description
+        paidAmount:
+          type: number
+          description: Amount of the payment
+          example: 10000
+      description: All of the previous payment information for the invoice
+    com.monytyz.billing.invoice.model.InvoiceSource:
+      required:
+      - source
+      type: object
+      properties:
+        source:
+          type: string
+    com.monytyz.billing.invoice.dto.InvoiceCreditDto:
+      required:
+      - creditId
+      - invoiceId
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 1000000
+        appliedDate:
+          type: string
+          format: date-time
+        reason:
+          type: string
+          example: Invoice created from Monthly subscription
+        type:
+          type: string
+          enum:
+          - CREDIT_NOTE
+          - SERVICE
+          - PREPAID
+        invoiceId:
+          type: string
+        creditId:
+          type: string
+        creditNoteId:
+          type: string
+      description: All of the credit information for the invoice
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.transactable.SourceId:
+      required:
+      - value
+      type: object
+      properties:
+        value:
+          type: string
+    com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the company
+        address:
+          $ref: '#/components/schemas/CompanyInfoSnapshotDtoAddressDto'
+        legalEntityId:
+          type: string
+          description: Identifier for the legal entity
+        customId:
+          type: string
+          description: Custom id of the companyinfo snapshot
+        logoStorageId:
+          type: string
+          description: Storage id of the company logo
+        email:
+          type: string
+          description: Email address of the company
+        addressFormat:
+          type: string
+          description: Format of the legal entity's address
+          enum:
+          - US_FORMAT
+          - EUROPEAN_FORMAT
+      description: The entity who creates the invoice for billing purpose
+    com.monytyz.billing.invoice.dto.InvoiceItemDiscountDto:
+      type: object
+      properties:
+        discountId:
+          type: string
+          example: disc_9TkhFbhZ5oY4q2fw
+        description:
+          type: string
+          example: Flat Discount
+        amount:
+          type: number
+          example: 1000000
+        discountType:
+          type: string
+          example: FLAT
+          enum:
+          - FLAT
+          - PERCENTAGE
     com.monytyz.billing.invoice.dto.InvoiceDto:
       type: object
       properties:
@@ -848,154 +997,6 @@ components:
           format: date
         finalized:
           type: boolean
-    com.monytyz.billing.invoice.dto.InvoiceListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.invoice.dto.InvoiceDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.transactable.dto.TargetApplicationSummary:
-      required:
-      - amount
-      - applicationDate
-      - sourceId
-      - sourceType
-      - type
-      type: object
-      properties:
-        sourceId:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.SourceId'
-        sourceType:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.SourceType'
-        amount:
-          type: number
-        type:
-          type: string
-          enum:
-          - APPLICATION
-          - UNAPPLICATION
-        applicationDate:
-          type: string
-          format: date-time
-      description: All application transaction(s) for the invoice
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.invoice.model.InvoiceSource:
-      required:
-      - source
-      type: object
-      properties:
-        source:
-          type: string
-    com.monytyz.billing.invoice.model.InvoiceMetadata:
-      required:
-      - invoiceDelay
-      - source
-      - sourceId
-      - type
-      type: object
-      properties:
-        source:
-          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceSource'
-        invoiceDelay:
-          type: integer
-          format: int32
-        sourceId:
-          type: string
-        type:
-          type: string
-      description: Invoice metadata mainly about source of the invoice and other details
-      discriminator:
-        propertyName: type
-    com.monytyz.billing.customer.dto.contact.ContactSnapshotDto:
-      type: object
-      properties:
-        id:
-          type: string
-          description: A unique identifier for the contact
-          example: cntct_8P9ijCslTprCI7Wu
-        accountId:
-          type:
-          - string
-          - 'null'
-          description: Account ID associated with the contact
-          example: acc_1234567890123
-        customId:
-          type:
-          - string
-          - 'null'
-          description: A user provided identifier for the contact
-          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
-        internal:
-          type: boolean
-          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
-          example: false
-        snapshotId:
-          type: string
-          description: The identifier of the snapshot
-          example: cntctsnp_4J3aiDdLtQPc13VO
-        address:
-          $ref: '#/components/schemas/ContactSnapshotDtoAddressSnapshotDto'
-        fullName:
-          type: string
-          description: Full name of the contact
-          example: Bob Smith
-        email:
-          type: string
-          description: Email of the contact
-          example: contact@example.com
-        phone:
-          type:
-          - string
-          - 'null'
-          description: Phone of the contact
-          example: +1 800 444 4444
-        title:
-          type:
-          - string
-          - 'null'
-          description: Title of the contact
-          example: CFO
-    com.monytyz.billing.invoice.dto.PaymentInstruction:
-      required:
-      - accountNumber
-      - bankName
-      - routingNumber
-      - swiftCode
-      type: object
-      properties:
-        accountNumber:
-          type: string
-        bankName:
-          type: string
-        routingNumber:
-          type: string
-        swiftCode:
-          type: string
-      description: Stores the instruction for payment if any
     ContactSnapshotDtoAddressSnapshotDto:
       type: object
       properties:
@@ -1028,130 +1029,45 @@ components:
           description: Description of the address
           example: Permanent Address
       description: Address of the contact
-    com.monytyz.billing.payment.dto.payment.InvoicePaymentDto:
-      type: object
-      properties:
-        paymentId:
-          type: string
-          description: Unique identifier for the payment
-          example: pmt_m0CB9LflojZxytfC
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        collectionDate:
-          type: string
-          description: Date when the payment is settled
-          format: date
-          example: '2022-04-25'
-          deprecated: true
-        settledDate:
-          type: string
-          description: Date when the payment is settled
-          format: date-time
-        creditCardType:
-          type: string
-          description: Payment method credit card type like VISA, MASTERCARD, DISCOVER, AMEX, DINERS, JCB or UNIONPAY
-          example: VISA
-          enum:
-          - VISA
-          - MASTERCARD
-          - DISCOVER
-          - AMEX
-          - DINERS
-          - JCB
-          - UNIONPAY
-        paymentMethodName:
-          type: string
-          description: Name of the payment method
-          example: Bob's Visa
-        paymentDescription:
-          type: string
-          description: Description of the payment
-          example: Payment Description
-        paidAmount:
-          type: number
-          description: Amount of the payment
-          example: 10000
-      description: All of the previous payment information for the invoice
-    com.monytyz.billing.invoice.dto.InvoiceCreditDto:
+    com.monytyz.billing.invoice.dto.InvoiceListDto:
       required:
-      - creditId
-      - invoiceId
+      - content
+      - totalElements
+      - totalPages
       type: object
       properties:
-        amount:
-          type: number
-          example: 1000000
-        appliedDate:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.invoice.dto.InvoiceDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.invoice.model.InvoiceMetadata:
+      required:
+      - invoiceDelay
+      - source
+      - sourceId
+      - type
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/com.monytyz.billing.invoice.model.InvoiceSource'
+        invoiceDelay:
+          type: integer
+          format: int32
+        sourceId:
           type: string
-          format: date-time
-        reason:
-          type: string
-          example: Invoice created from Monthly subscription
         type:
           type: string
-          enum:
-          - CREDIT_NOTE
-          - SERVICE
-          - PREPAID
-        invoiceId:
-          type: string
-        creditId:
-          type: string
-        creditNoteId:
-          type: string
-      description: All of the credit information for the invoice
-    com.monytyz.billing.customer.dto.CompanyInfoSnapshotDto:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the company
-        address:
-          $ref: '#/components/schemas/CompanyInfoSnapshotDtoAddressDto'
-        legalEntityId:
-          type: string
-          description: Identifier for the legal entity
-        customId:
-          type: string
-          description: Custom id of the companyinfo snapshot
-        logoStorageId:
-          type: string
-          description: Storage id of the company logo
-        email:
-          type: string
-          description: Email address of the company
-        addressFormat:
-          type: string
-          description: Format of the legal entity's address
-          enum:
-          - US_FORMAT
-          - EUROPEAN_FORMAT
-      description: The entity who creates the invoice for billing purpose
-    CompanyInfoSnapshotDtoAddressDto:
-      type: object
-      properties:
-        line1:
-          type: string
-        line2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
-      description: Address of the company
-    com.monytyz.billing.transactable.SourceId:
-      required:
-      - value
-      type: object
-      properties:
-        value:
-          type: string
+      description: Invoice metadata mainly about source of the invoice and other details
+      discriminator:
+        propertyName: type
     com.monytyz.billing.invoice.dto.InvoiceItemDto:
       type: object
       properties:
@@ -1312,5 +1228,89 @@ components:
           - PRODUCT
           - OFFERING
       description: Actual items/products for the invoice
-    com.monytyz.billing.transactable.model.enums.SourceType:
+    com.monytyz.billing.invoice.dto.InvoiceUpdateDto:
+      required:
+      - customFields
+      - invoiceMemo
+      - purchaseOrderNumber
+      - registrationNumber
+      - vatNumber
       type: object
+      properties:
+        purchaseOrderNumber:
+          type: string
+          example: PO-123
+        vatNumber:
+          type: string
+          description: The corresponding vat number
+          example: '12345678901'
+        registrationNumber:
+          type: string
+          description: The corresponding registration number
+          example: 123-45-6789
+        invoiceMemo:
+          type: string
+          description: A memo on an Invoice related to a specific upsell to help the end customer understand the invoice to limit questions and decrease time to payment
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the invoice
+          description: User configured custom fields for the invoice
+    com.monytyz.billing.transactable.dto.TargetApplicationSummary:
+      required:
+      - amount
+      - applicationDate
+      - sourceId
+      - sourceType
+      - type
+      type: object
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.SourceId'
+        sourceType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.SourceType'
+        amount:
+          type: number
+        type:
+          type: string
+          enum:
+          - APPLICATION
+          - UNAPPLICATION
+        applicationDate:
+          type: string
+          format: date-time
+      description: All application transaction(s) for the invoice
+    CompanyInfoSnapshotDtoAddressDto:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+      description: Address of the company
+    com.monytyz.billing.invoice.dto.PaymentInstruction:
+      required:
+      - accountNumber
+      - bankName
+      - routingNumber
+      - swiftCode
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        bankName:
+          type: string
+        routingNumber:
+          type: string
+        swiftCode:
+          type: string
+      description: Stores the instruction for payment if any

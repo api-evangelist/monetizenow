@@ -593,25 +593,32 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.customer.dto.contact.ContactListDto:
+    com.monytyz.billing.customer.dto.address.AddressSaveDto:
       required:
-      - content
-      - totalElements
-      - totalPages
+      - city
+      - country
+      - description
+      - line1
+      - line2
+      - postalCode
+      - state
       type: object
       properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        description:
+          type: string
+      description: Address of the contact
     com.monytyz.billing.customer.dto.address.AddressDto:
       type: object
       properties:
@@ -664,32 +671,88 @@ components:
           description: Description of the address
           example: Permanent Address
       description: Billing address for the account
-    com.monytyz.billing.customer.dto.address.AddressSaveDto:
+    MNPageable:
       required:
-      - city
-      - country
-      - description
-      - line1
-      - line2
-      - postalCode
-      - state
+      - pageNumber
+      - pageSize
       type: object
       properties:
-        line1:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.dto.contact.ContactSaveDto:
+      required:
+      - fullName
+      - status
+      type: object
+      properties:
+        customId:
+          maxLength: 255
+          minLength: 0
+          type:
+          - string
+          - 'null'
+          description: A user provided identifier for the contact
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressSaveDto'
+        fullName:
+          maxLength: 255
+          minLength: 0
           type: string
-        line2:
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          maxLength: 79
+          minLength: 0
           type: string
-        city:
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          maxLength: 50
+          minLength: 0
+          type:
+          - string
+          - 'null'
+          description: Phone of the contact
+          example: +1 800 444 4444
+        status:
           type: string
-        state:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
-        description:
-          type: string
-      description: Address of the contact
+          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+          - ARCHIVED
+        title:
+          maxLength: 100
+          minLength: 0
+          type:
+          - string
+          - 'null'
+          description: Title of the contact
+          example: CFO
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        primary:
+          type: boolean
+          description: Boolean value indicating if the contact is primary or not
+          example: false
+        defaultESigner:
+          type: boolean
+          description: Boolean value indicating if the contact is default eSigner
+          example: false
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        esigner:
+          type: boolean
     com.monytyz.billing.customer.dto.contact.ContactDto:
       type: object
       properties:
@@ -768,85 +831,22 @@ components:
         esigner:
           type: boolean
       description: Primary contact information for this account
-    com.monytyz.billing.customer.dto.contact.ContactSaveDto:
+    com.monytyz.billing.customer.dto.contact.ContactListDto:
       required:
-      - fullName
-      - status
+      - content
+      - totalElements
+      - totalPages
       type: object
       properties:
-        customId:
-          maxLength: 255
-          minLength: 0
-          type:
-          - string
-          - 'null'
-          description: A user provided identifier for the contact
-          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
-        address:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressSaveDto'
-        fullName:
-          maxLength: 255
-          minLength: 0
-          type: string
-          description: Full name of the contact
-          example: Bob Smith
-        email:
-          maxLength: 79
-          minLength: 0
-          type: string
-          description: Email of the contact
-          example: contact@example.com
-        phone:
-          maxLength: 50
-          minLength: 0
-          type:
-          - string
-          - 'null'
-          description: Phone of the contact
-          example: +1 800 444 4444
-        status:
-          type: string
-          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - CANCELED
-          - ARCHIVED
-        title:
-          maxLength: 100
-          minLength: 0
-          type:
-          - string
-          - 'null'
-          description: Title of the contact
-          example: CFO
-        internal:
-          type: boolean
-          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
-          example: false
-        primary:
-          type: boolean
-          description: Boolean value indicating if the contact is primary or not
-          example: false
-        defaultESigner:
-          type: boolean
-          description: Boolean value indicating if the contact is default eSigner
-          example: false
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-        esigner:
-          type: boolean
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
           type: integer
           format: int32
-        pageSize:
-          type: integer
-          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'

@@ -292,6 +292,35 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
+    com.monytyz.billing.common.dto.ResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+    com.monytyz.billing.credit.dto.credit.CreditVoidRequest:
+      required:
+      - reason
+      type: object
+      properties:
+        reason:
+          type: string
+    com.monytyz.billing.transactable.dto.AggregatedSourceApplicationSummary:
+      required:
+      - amount
+      - targetId
+      - targetType
+      type: object
+      properties:
+        targetId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
+        targetType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
+        amount:
+          type: number
+      description: Aggregated application(s) of the credit note
     com.monytyz.billing.credit.dto.credit.CreditSaveDto:
       type: object
       properties:
@@ -364,117 +393,6 @@ components:
             type: object
             description: User configured custom fields for the credit
           description: User configured custom fields for the credit
-    com.monytyz.billing.transactable.model.enums.TargetType:
-      type: object
-    com.monytyz.billing.transactable.dto.SourceApplicationSummary:
-      required:
-      - amount
-      - applicationDate
-      - targetId
-      - targetType
-      - type
-      type: object
-      properties:
-        targetId:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
-        targetType:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
-        amount:
-          type: number
-        type:
-          type: string
-          enum:
-          - APPLICATION
-          - UNAPPLICATION
-        applicationDate:
-          type: string
-          format: date-time
-      description: All application(s) of the credit note
-    com.monytyz.billing.customer.dto.account.AccountSummary:
-      required:
-      - accountType
-      - id
-      - isTestAccount
-      - status
-      type: object
-      properties:
-        id:
-          type: string
-        customId:
-          type: string
-        isTestAccount:
-          type: boolean
-        locale:
-          type: string
-        accountName:
-          type: string
-        defaultCurrency:
-          type: string
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - CANCELED
-          - SUSPENDED
-          - INACTIVE
-        accountType:
-          type: string
-          enum:
-          - CUSTOMER
-          - PARTNER
-        defaultLegalEntityId:
-          type: string
-    com.monytyz.billing.common.dto.ResponseDto:
-      type: object
-      properties:
-        status:
-          type: integer
-          format: int32
-        message:
-          type: string
-    com.monytyz.billing.credit.dto.creditnote.CreditApplicationDto:
-      required:
-      - amountApplied
-      - creditId
-      - invoiceId
-      type: object
-      properties:
-        invoiceId:
-          type: string
-          description: Unique identifier for the invoice to which credit was fully or partially applied
-          example: invce_q0xESEWovN7JvfAe
-        creditId:
-          type: string
-          description: Unique identifier for the applied credit
-          example: crdt_CMxSdjFUrzCLqFil
-        amountApplied:
-          type: number
-          description: Amount of the credit applied to the invoice
-          example: 100
-      description: Application(s) of this credit on invoice(s)
-    com.monytyz.billing.credit.dto.credit.CreditVoidRequest:
-      required:
-      - reason
-      type: object
-      properties:
-        reason:
-          type: string
     com.monytyz.billing.credit.dto.credit.CreditDetailDto:
       type: object
       properties:
@@ -602,11 +520,92 @@ components:
         voidReason:
           type: string
           description: Reason why this credit was voided.
-    com.monytyz.billing.transactable.dto.AggregatedSourceApplicationSummary:
+    com.monytyz.billing.transactable.model.enums.TargetType:
+      type: object
+    com.monytyz.billing.transactable.TargetId:
+      required:
+      - value
+      type: object
+      properties:
+        value:
+          type: string
+    com.monytyz.billing.credit.dto.creditnote.CreditApplicationDto:
+      required:
+      - amountApplied
+      - creditId
+      - invoiceId
+      type: object
+      properties:
+        invoiceId:
+          type: string
+          description: Unique identifier for the invoice to which credit was fully or partially applied
+          example: invce_q0xESEWovN7JvfAe
+        creditId:
+          type: string
+          description: Unique identifier for the applied credit
+          example: crdt_CMxSdjFUrzCLqFil
+        amountApplied:
+          type: number
+          description: Amount of the credit applied to the invoice
+          example: 100
+      description: Application(s) of this credit on invoice(s)
+    com.monytyz.billing.customer.dto.account.AccountSummary:
+      required:
+      - accountType
+      - id
+      - isTestAccount
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        customId:
+          type: string
+        isTestAccount:
+          type: boolean
+        locale:
+          type: string
+        accountName:
+          type: string
+        defaultCurrency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          enum:
+          - CUSTOMER
+          - PARTNER
+        defaultLegalEntityId:
+          type: string
+    com.monytyz.billing.transactable.dto.SourceApplicationSummary:
       required:
       - amount
+      - applicationDate
       - targetId
       - targetType
+      - type
       type: object
       properties:
         targetId:
@@ -615,11 +614,12 @@ components:
           $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
         amount:
           type: number
-      description: Aggregated application(s) of the credit note
-    com.monytyz.billing.transactable.TargetId:
-      required:
-      - value
-      type: object
-      properties:
-        value:
+        type:
           type: string
+          enum:
+          - APPLICATION
+          - UNAPPLICATION
+        applicationDate:
+          type: string
+          format: date-time
+      description: All application(s) of the credit note

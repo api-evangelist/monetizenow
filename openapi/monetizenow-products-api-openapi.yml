@@ -304,14 +304,34 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.UsageProducts:
+    com.monytyz.billing.catalog.dto.product.ProductListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
       type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.AllProducts:
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
+      required:
+      - type
       type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
     com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
       type: object
       properties:
@@ -357,15 +377,100 @@ components:
           enum:
           - ACTIVE
           - INACTIVE
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
+    com.monytyz.billing.catalog.dto.product.ProductSaveDto:
       required:
-      - type
+      - name
+      - productType
+      - status
       type: object
       properties:
-        type:
+        customId:
+          maxLength: 255
+          minLength: 0
           type: string
-      discriminator:
-        propertyName: type
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        financeId:
+          maxLength: 255
+          minLength: 0
+          type: string
+          example: GL-123
+        name:
+          maxLength: 255
+          minLength: 1
+          type: string
+          description: Name for the product
+          example: Netflix Premium
+        description:
+          maxLength: 255
+          minLength: 1
+          type: string
+          description: Product description
+          example: Netflix Monthly Premium
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+        productType:
+          type: string
+          enum:
+          - ADVANCE
+          - ARREARS
+          - USAGE
+          - ONETIME
+          - ONETIME_PREPAID_CREDIT
+          - MIN_COMMIT
+        usageTypeIds:
+          uniqueItems: true
+          type: array
+          example:
+          - ustyp_3oUtURRnJJ8Afdw0
+          items:
+            type: string
+            example: '["ustyp_3oUtURRnJJ8Afdw0"]'
+        oneTimePrepaidCreditConfig:
+          oneOf:
+          - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.AllProducts'
+          - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.UsageProducts'
+        sku:
+          maxLength: 255
+          minLength: 0
+          type: string
+          example: UGG-BB-PUR-06
+        recognitionMethod:
+          type: string
+          example: EVENLY_MONTHLY_IN_ADVANCE
+          enum:
+          - IMMEDIATE
+          - EVENLY_MONTHLY_IN_ADVANCE
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        taxItemCode:
+          maxLength: 100
+          minLength: 0
+          type: string
+          example: B13E4D91-B3C9-4847-BB9E-58B925ECF033
+        taxExempt:
+          type: boolean
+          example: false
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.UsageProducts:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
     com.monytyz.billing.catalog.dto.product.ProductDto:
       required:
       - id
@@ -459,112 +564,7 @@ components:
           description: Boolean field to identify if the product is tax-exempt
           example: false
       description: Product details associated with the subscription item
-    com.monytyz.billing.catalog.dto.product.ProductListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.AllProducts:
       type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.catalog.dto.product.ProductSaveDto:
-      required:
-      - name
-      - productType
-      - status
-      type: object
-      properties:
-        customId:
-          maxLength: 255
-          minLength: 0
-          type: string
-          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
-        financeId:
-          maxLength: 255
-          minLength: 0
-          type: string
-          example: GL-123
-        name:
-          maxLength: 255
-          minLength: 1
-          type: string
-          description: Name for the product
-          example: Netflix Premium
-        description:
-          maxLength: 255
-          minLength: 1
-          type: string
-          description: Product description
-          example: Netflix Monthly Premium
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - INACTIVE
-        productType:
-          type: string
-          enum:
-          - ADVANCE
-          - ARREARS
-          - USAGE
-          - ONETIME
-          - ONETIME_PREPAID_CREDIT
-          - MIN_COMMIT
-        usageTypeIds:
-          uniqueItems: true
-          type: array
-          example:
-          - ustyp_3oUtURRnJJ8Afdw0
-          items:
-            type: string
-            example: '["ustyp_3oUtURRnJJ8Afdw0"]'
-        oneTimePrepaidCreditConfig:
-          oneOf:
-          - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.AllProducts'
-          - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.UsageProducts'
-        sku:
-          maxLength: 255
-          minLength: 0
-          type: string
-          example: UGG-BB-PUR-06
-        recognitionMethod:
-          type: string
-          example: EVENLY_MONTHLY_IN_ADVANCE
-          enum:
-          - IMMEDIATE
-          - EVENLY_MONTHLY_IN_ADVANCE
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-        taxItemCode:
-          maxLength: 100
-          minLength: 0
-          type: string
-          example: B13E4D91-B3C9-4847-BB9E-58B925ECF033
-        taxExempt:
-          type: boolean
-          example: false
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
