@@ -757,6 +757,8 @@ apis:
   humanURL: https://docs.monetizenow.io/reference/getting-started-with-your-api
   baseURL: https://api.monetizeplatform.com
   tags:
+  - CreditNote
+  tags_raw:
   - Credit Note
   properties:
   - type: OpenAPI
@@ -822,6 +824,9 @@ apis:
   - type: Conformance
     url: conformance/monetizenow-conformance.yml
 common:
+- type: CapabilityMap
+  url: capabilities/monetizenow-capability-edges.yml
+  name: MonetizeNow Business Capability Map
 - type: Website
   url: https://www.monetizenow.ai/
 - type: DeveloperPortal
