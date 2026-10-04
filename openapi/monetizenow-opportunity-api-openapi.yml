@@ -235,6 +235,93 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    com.monytyz.billing.opportunity.dto.OpportunityCreateDto:
+      required:
+      - accountId
+      type: object
+      properties:
+        primaryQuoteId:
+          type: string
+          example: quote_cHCX0TFN79rDgDyg
+        customId:
+          type: string
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        name:
+          type: string
+          example: Google
+        accountId:
+          type: string
+          example: acct_JsT0t6adwZvrhp1z
+    com.monytyz.billing.opportunity.dto.OpportunityQuoteDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        modifyDate:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum:
+          - NEW
+          - AMENDMENT
+          - RENEWAL
+        status:
+          type: string
+          enum:
+          - DRAFT
+          - REVIEW
+          - APPROVED
+          - DENIED
+          - SENT
+          - ACCEPTED
+          - ACCEPTED_ADMIN_EDITABLE
+          - PROCESSED
+          - CANCELED
+          - EXPIRED
+          - ARCHIVED
+        total:
+          type: number
+        contractStartDate:
+          type: string
+          format: date
+        contractEndDate:
+          type: string
+          format: date
+        currency:
+          type: string
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        legalEntityId:
+          type: string
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
     com.monytyz.billing.opportunity.dto.OpportunityPrimaryQuoteDto:
       type: object
       properties:
@@ -319,23 +406,6 @@ components:
           - USD
         dealRoomId:
           type: string
-    com.monytyz.billing.opportunity.dto.OpportunityCreateDto:
-      required:
-      - accountId
-      type: object
-      properties:
-        primaryQuoteId:
-          type: string
-          example: quote_cHCX0TFN79rDgDyg
-        customId:
-          type: string
-          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
-        name:
-          type: string
-          example: Google
-        accountId:
-          type: string
-          example: acct_JsT0t6adwZvrhp1z
     com.monytyz.billing.common.dto.ResponseDto:
       type: object
       properties:
@@ -344,52 +414,6 @@ components:
           format: int32
         message:
           type: string
-    com.monytyz.billing.opportunity.dto.OpportunityListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.opportunity.dto.OpportunitySummaryDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.opportunity.dto.OpportunityQuoteLinkResponseDto:
-      type: object
-      properties:
-        opportunityId:
-          type: string
-          example: opp_VDafd3FooHfe
-        customOpportunityId:
-          type: string
-          example: customId_nmyNv
-        opportunityName:
-          type: string
-          example: NewOpportunity_qGOji
-        quoteId:
-          type: string
-          example: quote_IqgnB7H2HIZPpcz4
     com.monytyz.billing.opportunity.dto.OpportunitySummaryDto:
       type: object
       properties:
@@ -439,61 +463,37 @@ components:
           - USD
         dealRoomId:
           type: string
-    com.monytyz.billing.opportunity.dto.OpportunityQuoteDto:
+    com.monytyz.billing.opportunity.dto.OpportunityQuoteLinkResponseDto:
       type: object
       properties:
-        id:
+        opportunityId:
           type: string
-        name:
+          example: opp_VDafd3FooHfe
+        customOpportunityId:
           type: string
-        modifyDate:
+          example: customId_nmyNv
+        opportunityName:
           type: string
-          format: date-time
-        type:
+          example: NewOpportunity_qGOji
+        quoteId:
           type: string
-          enum:
-          - NEW
-          - AMENDMENT
-          - RENEWAL
-        status:
-          type: string
-          enum:
-          - DRAFT
-          - REVIEW
-          - APPROVED
-          - DENIED
-          - SENT
-          - ACCEPTED
-          - ACCEPTED_ADMIN_EDITABLE
-          - PROCESSED
-          - CANCELED
-          - EXPIRED
-          - ARCHIVED
-        total:
-          type: number
-        contractStartDate:
-          type: string
-          format: date
-        contractEndDate:
-          type: string
-          format: date
-        currency:
-          type: string
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        legalEntityId:
-          type: string
+          example: quote_IqgnB7H2HIZPpcz4
+    com.monytyz.billing.opportunity.dto.OpportunityListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.opportunity.dto.OpportunitySummaryDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'

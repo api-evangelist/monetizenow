@@ -114,48 +114,22 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ApplyToAllProducts:
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigDto:
       required:
-      - amount
-      - percentageType
-      - type
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData'
-      - type: object
-        properties:
-          percentageType:
-            type: string
-            enum:
-            - MAX
-            - FIXED
-          amount:
-            type: number
-            format: double
-    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ProductSpecific:
-      required:
-      - productConfigurations
-      - type
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData'
-      - type: object
-        properties:
-          productConfigurations:
-            uniqueItems: true
-            type: array
-            items:
-              $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.ProductConfiguration'
-    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData:
-      required:
+      - id
+      - locked
       - type
       type: object
       properties:
+        id:
+          type: string
         type:
           type: string
           enum:
           - APPLY_TO_ALL_PRODUCTS
           - PRODUCT_SPECIFIC
+        locked:
+          type: boolean
       discriminator:
         propertyName: type
     com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.ProductConfiguration:
@@ -175,21 +149,47 @@ components:
           enum:
           - MAX
           - FIXED
-    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigDto:
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ApplyToAllProducts:
       required:
-      - id
-      - locked
+      - amount
+      - percentageType
+      - type
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData'
+      - type: object
+        properties:
+          percentageType:
+            type: string
+            enum:
+            - MAX
+            - FIXED
+          amount:
+            type: number
+            format: double
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData:
+      required:
       - type
       type: object
       properties:
-        id:
-          type: string
         type:
           type: string
           enum:
           - APPLY_TO_ALL_PRODUCTS
           - PRODUCT_SPECIFIC
-        locked:
-          type: boolean
       discriminator:
         propertyName: type
+    com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData.ProductSpecific:
+      required:
+      - productConfigurations
+      - type
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.PriceUpliftConfigSaveData'
+      - type: object
+        properties:
+          productConfigurations:
+            uniqueItems: true
+            type: array
+            items:
+              $ref: '#/components/schemas/com.monytyz.billing.quote.dto.quoteoffering.priceupliftconfiguration.ProductConfiguration'

@@ -292,107 +292,6 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.common.dto.ResponseDto:
-      type: object
-      properties:
-        status:
-          type: integer
-          format: int32
-        message:
-          type: string
-    com.monytyz.billing.credit.dto.credit.CreditVoidRequest:
-      required:
-      - reason
-      type: object
-      properties:
-        reason:
-          type: string
-    com.monytyz.billing.transactable.dto.AggregatedSourceApplicationSummary:
-      required:
-      - amount
-      - targetId
-      - targetType
-      type: object
-      properties:
-        targetId:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
-        targetType:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
-        amount:
-          type: number
-      description: Aggregated application(s) of the credit note
-    com.monytyz.billing.credit.dto.credit.CreditSaveDto:
-      type: object
-      properties:
-        creditNoteId:
-          type: string
-          description: ID for the Note of this credit
-          example: ctnt_QEPqCDqeaVte5WzM
-        prepaidInvoiceItemId:
-          type: string
-          description: Invoice item id for prepaid invoice
-          example: ivitm_DHlWk4mIICkQabl0
-        prepaidProductId:
-          type: string
-          description: Id for prepaid product
-          example: prod_nStU73ZJahgBSxnh
-        status:
-          type: string
-          description: Status of the credit. Describes if it can be ACTIVE,INACTIVE,CANCELED or APPLIED
-          enum:
-          - ACTIVE
-          - INACTIVE
-          - VOID
-          - EXPIRED
-          - APPLIED
-        type:
-          type: string
-          description: Type of the credit. Can be  CREDIT_NOTE,SERVICE,PREPAID
-          enum:
-          - CREDIT_NOTE
-          - SERVICE
-          - PREPAID
-        currency:
-          type: string
-          description: Currency for the credit amount
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        amount:
-          type: number
-          description: Amount which can be applied
-        expirationDate:
-          type: string
-          description: Expiration date for this credit
-          format: date
-        reason:
-          maxLength: 255
-          minLength: 0
-          type: string
-          description: Reason why this credit exists/created
-          example: Billing
-        name:
-          type: string
-          description: Name of the credit
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the credit
-          description: User configured custom fields for the credit
     com.monytyz.billing.credit.dto.credit.CreditDetailDto:
       type: object
       properties:
@@ -520,8 +419,20 @@ components:
         voidReason:
           type: string
           description: Reason why this credit was voided.
-    com.monytyz.billing.transactable.model.enums.TargetType:
+    com.monytyz.billing.transactable.dto.AggregatedSourceApplicationSummary:
+      required:
+      - amount
+      - targetId
+      - targetType
       type: object
+      properties:
+        targetId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
+        targetType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
+        amount:
+          type: number
+      description: Aggregated application(s) of the credit note
     com.monytyz.billing.transactable.TargetId:
       required:
       - value
@@ -549,6 +460,119 @@ components:
           description: Amount of the credit applied to the invoice
           example: 100
       description: Application(s) of this credit on invoice(s)
+    com.monytyz.billing.credit.dto.credit.CreditSaveDto:
+      type: object
+      properties:
+        creditNoteId:
+          type: string
+          description: ID for the Note of this credit
+          example: ctnt_QEPqCDqeaVte5WzM
+        prepaidInvoiceItemId:
+          type: string
+          description: Invoice item id for prepaid invoice
+          example: ivitm_DHlWk4mIICkQabl0
+        prepaidProductId:
+          type: string
+          description: Id for prepaid product
+          example: prod_nStU73ZJahgBSxnh
+        status:
+          type: string
+          description: Status of the credit. Describes if it can be ACTIVE,INACTIVE,CANCELED or APPLIED
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - VOID
+          - EXPIRED
+          - APPLIED
+        type:
+          type: string
+          description: Type of the credit. Can be  CREDIT_NOTE,SERVICE,PREPAID
+          enum:
+          - CREDIT_NOTE
+          - SERVICE
+          - PREPAID
+        currency:
+          type: string
+          description: Currency for the credit amount
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        amount:
+          type: number
+          description: Amount which can be applied
+        expirationDate:
+          type: string
+          description: Expiration date for this credit
+          format: date
+        reason:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: Reason why this credit exists/created
+          example: Billing
+        name:
+          type: string
+          description: Name of the credit
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the credit
+          description: User configured custom fields for the credit
+    com.monytyz.billing.credit.dto.credit.CreditVoidRequest:
+      required:
+      - reason
+      type: object
+      properties:
+        reason:
+          type: string
+    com.monytyz.billing.transactable.model.enums.TargetType:
+      type: object
+    com.monytyz.billing.common.dto.ResponseDto:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+    com.monytyz.billing.transactable.dto.SourceApplicationSummary:
+      required:
+      - amount
+      - applicationDate
+      - targetId
+      - targetType
+      - type
+      type: object
+      properties:
+        targetId:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
+        targetType:
+          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
+        amount:
+          type: number
+        type:
+          type: string
+          enum:
+          - APPLICATION
+          - UNAPPLICATION
+        applicationDate:
+          type: string
+          format: date-time
+      description: All application(s) of the credit note
     com.monytyz.billing.customer.dto.account.AccountSummary:
       required:
       - accountType
@@ -599,27 +623,3 @@ components:
           - PARTNER
         defaultLegalEntityId:
           type: string
-    com.monytyz.billing.transactable.dto.SourceApplicationSummary:
-      required:
-      - amount
-      - applicationDate
-      - targetId
-      - targetType
-      - type
-      type: object
-      properties:
-        targetId:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.TargetId'
-        targetType:
-          $ref: '#/components/schemas/com.monytyz.billing.transactable.model.enums.TargetType'
-        amount:
-          type: number
-        type:
-          type: string
-          enum:
-          - APPLICATION
-          - UNAPPLICATION
-        applicationDate:
-          type: string
-          format: date-time
-      description: All application(s) of the credit note

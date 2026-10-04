@@ -305,105 +305,6 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.catalog.dto.customprice.CustomPriceDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          example: cstm_9TkhFbhZ5oY4q2fw
-        amount:
-          type: number
-          example: 100000
-      description: Custom price object associated with the subscription item
-    com.monytyz.billing.subscription.dto.subscription.SubscriptionListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.subscription.dto.subscription.SubscriptionDetailDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for a usage type
-        name:
-          type: string
-          description: Display name of a usage type
-        pluralName:
-          type: string
-          description: Name of a usage type in plural form
-        description:
-          type: string
-          description: Description of a usage type
-        unitName:
-          type: string
-          description: Unit for the usage. I.E. GB for bandwidth usage
-        decimalPlaces:
-          type: integer
-          description: Decimal places is used to count fractional precision for a usage unit
-          format: int32
-          example: 2
-        status:
-          type: string
-          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
-          enum:
-          - ACTIVE
-          - INACTIVE
     com.monytyz.billing.catalog.dto.offering.OfferingDto:
       type: object
       properties:
@@ -607,107 +508,6 @@ components:
             enum:
             - EXCLUDE_FROM_RENEWAL
       description: Discount details associated with the subscription
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.subscription.dto.subscriptionitem.SubscriptionItemDiscountDto:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the subscription item
-          example: suit_9TkhFbhZ5oY4q2fw
-        discount:
-          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.discount.DiscountDto'
-        applicableDiscountType:
-          type: string
-          description: Type of discount. Valid values are PERCENTAGE, FLAT
-          example: PERCENTAGE
-          enum:
-          - FLAT
-          - PERCENTAGE
-        applicableDiscountAmount:
-          type: number
-          description: Discount amount of the subscription
-          example: 100
-      description: List of applicable item discounts
-    com.monytyz.billing.subscription.dto.subscriptionitem.SubscriptionItemDetailDto:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the subscription item
-          example: suit_9TkhFbhZ5oY4q2fw
-        description:
-          type: string
-          description: Description of the subscription item
-          example: Netflix Subscription
-        units:
-          type: number
-          description: Unit/Quantity of the subscription item within a subscription
-          format: double
-          example: 5
-        product:
-          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductDto'
-        orderItemId:
-          type: string
-          example: orit_GA1jSFv4Lzs3V34y
-        customPrice:
-          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.customprice.CustomPriceDto'
-        applicableItemDiscounts:
-          uniqueItems: true
-          type: array
-          description: List of applicable item discounts
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.subscription.dto.subscriptionitem.SubscriptionItemDiscountDto'
-        quoteItemId:
-          type: string
-          description: Unique identifier for the quote item
-          example: qtit_GA1jSFv4Lzs3V34y
-        isActive:
-          type: boolean
-      description: List of subscription items
-    com.monytyz.billing.customer.dto.account.AccountData:
-      required:
-      - accountType
-      - customId
-      - id
-      - name
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the account
-          example: acct_jgPH8G33rELY6LQa
-        name:
-          type: string
-          description: Name of the account.
-          example: Demo Account
-        customId:
-          type: string
-          description: A user provided identifier for the account
-          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
-        accountType:
-          type: string
-          description: Type of the account. An account can be CUSTOMER, PARTNER
-          example: CUSTOMER
-          enum:
-          - CUSTOMER
-          - PARTNER
-      description: Account details associated with the subscription
-      example:
-        id: acct_VbeTm9zhLf7pw
-        name: Demo Account
-        customId: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
     com.monytyz.billing.catalog.dto.product.ProductDto:
       required:
       - id
@@ -801,6 +601,206 @@ components:
           description: Boolean field to identify if the product is tax-exempt
           example: false
       description: Product details associated with the subscription item
+    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for a usage type
+        name:
+          type: string
+          description: Display name of a usage type
+        pluralName:
+          type: string
+          description: Name of a usage type in plural form
+        description:
+          type: string
+          description: Description of a usage type
+        unitName:
+          type: string
+          description: Unit for the usage. I.E. GB for bandwidth usage
+        decimalPlaces:
+          type: integer
+          description: Decimal places is used to count fractional precision for a usage unit
+          format: int32
+          example: 2
+        status:
+          type: string
+          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+    com.monytyz.billing.subscription.dto.subscriptionitem.SubscriptionItemDetailDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the subscription item
+          example: suit_9TkhFbhZ5oY4q2fw
+        description:
+          type: string
+          description: Description of the subscription item
+          example: Netflix Subscription
+        units:
+          type: number
+          description: Unit/Quantity of the subscription item within a subscription
+          format: double
+          example: 5
+        product:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductDto'
+        orderItemId:
+          type: string
+          example: orit_GA1jSFv4Lzs3V34y
+        customPrice:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.customprice.CustomPriceDto'
+        applicableItemDiscounts:
+          uniqueItems: true
+          type: array
+          description: List of applicable item discounts
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.subscription.dto.subscriptionitem.SubscriptionItemDiscountDto'
+        quoteItemId:
+          type: string
+          description: Unique identifier for the quote item
+          example: qtit_GA1jSFv4Lzs3V34y
+        isActive:
+          type: boolean
+      description: List of subscription items
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.dto.account.AccountData:
+      required:
+      - accountType
+      - customId
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the account
+          example: acct_jgPH8G33rELY6LQa
+        name:
+          type: string
+          description: Name of the account.
+          example: Demo Account
+        customId:
+          type: string
+          description: A user provided identifier for the account
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        accountType:
+          type: string
+          description: Type of the account. An account can be CUSTOMER, PARTNER
+          example: CUSTOMER
+          enum:
+          - CUSTOMER
+          - PARTNER
+      description: Account details associated with the subscription
+      example:
+        id: acct_VbeTm9zhLf7pw
+        name: Demo Account
+        customId: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+    com.monytyz.billing.subscription.dto.subscriptionitem.SubscriptionItemDiscountDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the subscription item
+          example: suit_9TkhFbhZ5oY4q2fw
+        discount:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.discount.DiscountDto'
+        applicableDiscountType:
+          type: string
+          description: Type of discount. Valid values are PERCENTAGE, FLAT
+          example: PERCENTAGE
+          enum:
+          - FLAT
+          - PERCENTAGE
+        applicableDiscountAmount:
+          type: number
+          description: Discount amount of the subscription
+          example: 100
+      description: List of applicable item discounts
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.subscription.dto.subscription.SubscriptionListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.subscription.dto.subscription.SubscriptionDetailDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.catalog.dto.customprice.CustomPriceDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          example: cstm_9TkhFbhZ5oY4q2fw
+        amount:
+          type: number
+          example: 100000
+      description: Custom price object associated with the subscription item
     com.monytyz.billing.subscription.dto.subscription.SubscriptionDetailDto:
       required:
       - id

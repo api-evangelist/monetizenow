@@ -304,79 +304,6 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.catalog.dto.product.ProductListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductDto'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for a usage type
-        name:
-          type: string
-          description: Display name of a usage type
-        pluralName:
-          type: string
-          description: Name of a usage type in plural form
-        description:
-          type: string
-          description: Description of a usage type
-        unitName:
-          type: string
-          description: Unit for the usage. I.E. GB for bandwidth usage
-        decimalPlaces:
-          type: integer
-          description: Decimal places is used to count fractional precision for a usage unit
-          format: int32
-          example: 2
-        status:
-          type: string
-          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
-          enum:
-          - ACTIVE
-          - INACTIVE
     com.monytyz.billing.catalog.dto.product.ProductSaveDto:
       required:
       - name
@@ -455,22 +382,10 @@ components:
         taxExempt:
           type: boolean
           example: false
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.UsageProducts:
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.AllProducts:
       type: object
       allOf:
       - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
     com.monytyz.billing.catalog.dto.product.ProductDto:
       required:
       - id
@@ -564,7 +479,92 @@ components:
           description: Boolean field to identify if the product is tax-exempt
           example: false
       description: Product details associated with the subscription item
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.AllProducts:
+    com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for a usage type
+        name:
+          type: string
+          description: Display name of a usage type
+        pluralName:
+          type: string
+          description: Name of a usage type in plural form
+        description:
+          type: string
+          description: Description of a usage type
+        unitName:
+          type: string
+          description: Unit for the usage. I.E. GB for bandwidth usage
+        decimalPlaces:
+          type: integer
+          description: Decimal places is used to count fractional precision for a usage unit
+          format: int32
+          example: 2
+        status:
+          type: string
+          description: Active status for a UsageType. Can be ACTIVE/INACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData.UsageProducts:
       type: object
       allOf:
       - $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.catalog.dto.product.ProductListDto:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'

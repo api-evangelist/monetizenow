@@ -528,140 +528,43 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    com.monytyz.billing.customer.v2.dto.AccountDocumentContactUpdateRequest:
+    com.monytyz.billing.esign.dto.ESignRecipientResponse:
       required:
-      - esignCcIds
-      - esignPrimaryIds
-      - esignSecondaryIds
+      - ccContacts
+      - currentRoutingOrder
+      - recipientCount
+      - signers
       type: object
       properties:
-        esignPrimaryIds:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-        esignSecondaryIds:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-        esignCcIds:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-    com.monytyz.billing.esign.dto.ESignRecipient:
-      required:
-      - declinedDateTime
-      - deliveredDateTime
-      - email
-      - id
-      - name
-      - order
-      - sentDateTime
-      - signedDateTime
-      - status
-      type: object
-      properties:
-        id:
+        recipientCount:
           type: string
+        currentRoutingOrder:
+          type: string
+        signers:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.esign.dto.ESignRecipient'
+        ccContacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.esign.dto.ESignRecipient'
+    com.monytyz.billing.customer.v2.dto.AccountDocumentUpdateRequest:
+      required:
+      - name
+      - signingOrder
+      type: object
+      properties:
         name:
           type: string
-        email:
-          type: string
-        order:
-          type: string
-        status:
-          type: string
-        declinedDateTime:
-          type: string
-        deliveredDateTime:
-          type: string
-        sentDateTime:
-          type: string
-        signedDateTime:
-          type: string
-    ContactSnapshotDtoAddressSnapshotDto:
-      type: object
-      properties:
-        line1:
-          type: string
-          description: First line of the address
-          example: 344 Clinton Street
-        line2:
-          type: string
-          description: Second line of the address
-          example: Apartment 3D
-        city:
-          type: string
-          description: City of the address
-          example: New York
-        state:
-          type: string
-          description: State of the address
-          example: New York
-        country:
-          type: string
-          description: Country of the address
-          example: US
-        postalCode:
-          type: string
-          description: Postal code of the address
-          example: '12345'
         description:
           type: string
-          description: Description of the address
-          example: Permanent Address
-      description: Address of the contact
-    com.monytyz.billing.customer.dto.contact.ContactSnapshotDto:
-      type: object
-      properties:
-        id:
+        signingOrder:
           type: string
-          description: A unique identifier for the contact
-          example: cntct_8P9ijCslTprCI7Wu
-        accountId:
-          type:
-          - string
-          - 'null'
-          description: Account ID associated with the contact
-          example: acc_1234567890123
-        customId:
-          type:
-          - string
-          - 'null'
-          description: A user provided identifier for the contact
-          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
-        internal:
-          type: boolean
-          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
-          example: false
-        snapshotId:
-          type: string
-          description: The identifier of the snapshot
-          example: cntctsnp_4J3aiDdLtQPc13VO
-        address:
-          $ref: '#/components/schemas/ContactSnapshotDtoAddressSnapshotDto'
-        fullName:
-          type: string
-          description: Full name of the contact
-          example: Bob Smith
-        email:
-          type: string
-          description: Email of the contact
-          example: contact@example.com
-        phone:
-          type:
-          - string
-          - 'null'
-          description: Phone of the contact
-          example: +1 800 444 4444
-        title:
-          type:
-          - string
-          - 'null'
-          description: Title of the contact
-          example: CFO
+          enum:
+          - INTERNAL_FIRST
+          - EXTERNAL_FIRST
+          - EXTERNAL_ONLY
+          - INSTANTANEOUS
     com.monytyz.billing.customer.v2.dto.AccountDocumentDetailResponse:
       required:
       - accountId
@@ -735,105 +638,6 @@ components:
           type: string
           description: Timestamp of when the record was last modified
           format: date-time
-    com.monytyz.billing.util.MNPage:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            type: object
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.customer.v2.dto.AccountDocumentContactResponse:
-      required:
-      - additionalESignRecipients
-      - primaryESignContacts
-      - secondaryESignContacts
-      type: object
-      properties:
-        primaryESignContacts:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
-        secondaryESignContacts:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
-        additionalESignRecipients:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
-    com.monytyz.billing.customer.v2.dto.AccountDocumentUpdateRequest:
-      required:
-      - name
-      - signingOrder
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        signingOrder:
-          type: string
-          enum:
-          - INTERNAL_FIRST
-          - EXTERNAL_FIRST
-          - EXTERNAL_ONLY
-          - INSTANTANEOUS
-    com.monytyz.billing.esign.dto.ESignRecipientResponse:
-      required:
-      - ccContacts
-      - currentRoutingOrder
-      - recipientCount
-      - signers
-      type: object
-      properties:
-        recipientCount:
-          type: string
-        currentRoutingOrder:
-          type: string
-        signers:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.esign.dto.ESignRecipient'
-        ccContacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.esign.dto.ESignRecipient'
-    com.monytyz.billing.customer.v2.dto.AccountDocumentCreateRequest:
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
     com.monytyz.billing.storage.dto.StorageObjectDto:
       type: object
       properties:
@@ -884,3 +688,199 @@ components:
           type: string
           description: Reference file name of the storage object
           example: sample.pdf
+    com.monytyz.billing.customer.dto.contact.ContactSnapshotDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        accountId:
+          type:
+          - string
+          - 'null'
+          description: Account ID associated with the contact
+          example: acc_1234567890123
+        customId:
+          type:
+          - string
+          - 'null'
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        snapshotId:
+          type: string
+          description: The identifier of the snapshot
+          example: cntctsnp_4J3aiDdLtQPc13VO
+        address:
+          $ref: '#/components/schemas/ContactSnapshotDtoAddressSnapshotDto'
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type:
+          - string
+          - 'null'
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type:
+          - string
+          - 'null'
+          description: Title of the contact
+          example: CFO
+    com.monytyz.billing.customer.v2.dto.AccountDocumentCreateRequest:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    com.monytyz.billing.customer.v2.dto.AccountDocumentContactUpdateRequest:
+      required:
+      - esignCcIds
+      - esignPrimaryIds
+      - esignSecondaryIds
+      type: object
+      properties:
+        esignPrimaryIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        esignSecondaryIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        esignCcIds:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.v2.dto.AccountDocumentContactResponse:
+      required:
+      - additionalESignRecipients
+      - primaryESignContacts
+      - secondaryESignContacts
+      type: object
+      properties:
+        primaryESignContacts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
+        secondaryESignContacts:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
+        additionalESignRecipients:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactSnapshotDto'
+    com.monytyz.billing.util.MNPage:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.esign.dto.ESignRecipient:
+      required:
+      - declinedDateTime
+      - deliveredDateTime
+      - email
+      - id
+      - name
+      - order
+      - sentDateTime
+      - signedDateTime
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        order:
+          type: string
+        status:
+          type: string
+        declinedDateTime:
+          type: string
+        deliveredDateTime:
+          type: string
+        sentDateTime:
+          type: string
+        signedDateTime:
+          type: string
+    ContactSnapshotDtoAddressSnapshotDto:
+      type: object
+      properties:
+        line1:
+          type: string
+          description: First line of the address
+          example: 344 Clinton Street
+        line2:
+          type: string
+          description: Second line of the address
+          example: Apartment 3D
+        city:
+          type: string
+          description: City of the address
+          example: New York
+        state:
+          type: string
+          description: State of the address
+          example: New York
+        country:
+          type: string
+          description: Country of the address
+          example: US
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: '12345'
+        description:
+          type: string
+          description: Description of the address
+          example: Permanent Address
+      description: Address of the contact

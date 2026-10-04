@@ -356,6 +356,19 @@ paths:
                 $ref: '#/components/schemas/Unit'
 components:
   schemas:
+    UsageHistoryResponse:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Date corresponding to the aggregated unitsConsumed
+          format: date
+          example: '2022-01-01'
+        unitsConsumed:
+          type: number
+          description: Total unrated unitsConsumed for the given date
+          format: double
+          example: 100
     FailedEvent:
       type: object
       properties:
@@ -365,6 +378,37 @@ components:
           type: string
           description: Reason for failure
       description: List of events that failed ingestion
+    UpdateUsageRequest:
+      type: object
+      properties:
+        unitsConsumed:
+          type: number
+          description: Updated units consumed for the event
+          format: double
+          example: 100
+        ratedPrice:
+          type: number
+          description: Optionally update rated Price for the event
+          format: double
+          example: 1
+    Unit:
+      type: object
+    EventResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the event ingestion
+          example: PARTIAL
+          enum:
+          - SUCCESS
+          - PARTIAL
+          - FAILED
+        failedEvents:
+          type: array
+          description: List of events that failed ingestion
+          items:
+            $ref: '#/components/schemas/FailedEvent'
     EventRequest:
       type: object
       properties:
@@ -407,37 +451,6 @@ components:
           format: double
           example: 1
       description: Event that failed ingestion
-    Unit:
-      type: object
-    EventResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Status of the event ingestion
-          example: PARTIAL
-          enum:
-          - SUCCESS
-          - PARTIAL
-          - FAILED
-        failedEvents:
-          type: array
-          description: List of events that failed ingestion
-          items:
-            $ref: '#/components/schemas/FailedEvent'
-    UsageHistoryResponse:
-      type: object
-      properties:
-        date:
-          type: string
-          description: Date corresponding to the aggregated unitsConsumed
-          format: date
-          example: '2022-01-01'
-        unitsConsumed:
-          type: number
-          description: Total unrated unitsConsumed for the given date
-          format: double
-          example: 100
     EventListDto:
       type: object
       properties:
@@ -453,17 +466,30 @@ components:
           format: int64
         pageable:
           $ref: '#/components/schemas/Pageable'
-    UpdateUsageRequest:
+    Pageable:
+      type: object
+      properties:
+        nextPageToken:
+          type: string
+        pageSize:
+          type: integer
+          format: int32
+    UsageQueryResponse:
       type: object
       properties:
         unitsConsumed:
           type: number
-          description: Updated units consumed for the event
+          description: Total Un-rated Units consumed for the requested period
           format: double
           example: 100
-        ratedPrice:
+        ratedUnitsConsumed:
           type: number
-          description: Optionally update rated Price for the event
+          description: Total Rated Units consumed for the requested period
+          format: double
+          example: 20
+        totalRatedPrice:
+          type: number
+          description: Total Rated Price for the requested period
           format: double
           example: 1
     Event:
@@ -499,24 +525,6 @@ components:
           description: Timestamp of the event
           format: date-time
           example: '2022-01-01T00:00:00Z'
-    UsageQueryResponse:
-      type: object
-      properties:
-        unitsConsumed:
-          type: number
-          description: Total Un-rated Units consumed for the requested period
-          format: double
-          example: 100
-        ratedUnitsConsumed:
-          type: number
-          description: Total Rated Units consumed for the requested period
-          format: double
-          example: 20
-        totalRatedPrice:
-          type: number
-          description: Total Rated Price for the requested period
-          format: double
-          example: 1
     ResponseDto:
       type: object
       properties:
@@ -593,11 +601,3 @@ components:
           - 511 NETWORK_AUTHENTICATION_REQUIRED
         message:
           type: string
-    Pageable:
-      type: object
-      properties:
-        nextPageToken:
-          type: string
-        pageSize:
-          type: integer
-          format: int32

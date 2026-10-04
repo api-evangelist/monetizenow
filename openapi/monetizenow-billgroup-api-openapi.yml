@@ -370,200 +370,6 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.customer.dto.billgroup.BillGroupSaveDto:
-      required:
-      - billDay
-      - name
-      - netTerms
-      - status
-      type: object
-      properties:
-        paymentMethodId:
-          type:
-          - string
-          - 'null'
-          description: Unique identifier for the billgroup payment method
-          example: pmtmd_vFQZjKnb7mUpDYud
-        defaultPaymentGatewayId:
-          type:
-          - string
-          - 'null'
-          description: Unique identifier for the payment gateway. If found empty, BE will set the default one.
-          example: pmtgw_EMfbqn56S9h9CweL
-        contactId:
-          type: string
-          description: Unique identifier for the billgroup billing contact
-          example: ctrct_QEPqCDqeaVte5WzM
-        shippingContactId:
-          type: string
-          description: Unique identifier for the BillGroup's shipping contact
-          example: ctrct_QEPqCDqeaVte5WzM
-        customId:
-          type:
-          - string
-          - 'null'
-          description: A user provided identifier for the billgroup
-          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
-        name:
-          type: string
-          description: Name of the billgroup
-          example: Demo BillGroup
-        billDay:
-          type: integer
-          description: This is the specific day of the month on which the bill will be generated
-          format: int32
-          example: 5
-        netTerms:
-          type: string
-          description: Net terms of an invoice
-          example: NET_30
-          enum:
-          - NET_0
-          - NET_5
-          - NET_7
-          - NET_8
-          - NET_10
-          - NET_14
-          - NET_15
-          - NET_20
-          - NET_21
-          - NET_30
-          - NET_45
-          - NET_60
-          - NET_75
-          - NET_90
-          - NET_100
-          - NET_120
-          - NET_150
-          - NET_180
-        status:
-          type: string
-          description: Billgroup status like ACTIVE, INACTIVE, CANCELED OR SUSPENDED
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - INACTIVE
-          - CANCELED
-          - SUSPENDED
-        dunningProcessId:
-          type:
-          - string
-          - 'null'
-          description: Unique identifier for the dunning process
-          example: dunpr_QEPqCDqeaVte5WzM
-        collectInvoiceBalanceAutomatically:
-          type: boolean
-          description: If you want to override the global payment configuration and prevent collection at invoice time
-          example: false
-        autoEmailInvoice:
-          type: boolean
-          description: Automatically send invoice by email if true
-          example: false
-        invoiceCreation:
-          type: string
-          description: The invoice creation type like AUTOMATIC or MANUAL
-          example: AUTOMATIC
-          enum:
-          - AUTOMATIC
-          - MANUAL
-        invoiceDelay:
-          type: integer
-          description: Delay associated with invoice creation with minimum zero and maximum two days
-          format: int32
-          example: 0
-        firstInvoiceCreationStrategy:
-          type: string
-          description: First invoice creation strategy when invoice is being created manually
-          example: GENERATE_ON_QUOTE_PROCESSED
-          enum:
-          - FOLLOW_EXISTING_SETTINGS
-          - GENERATE_ON_QUOTE_PROCESSED
-        ccEmails:
-          uniqueItems: true
-          type: array
-          description: A list of email addresses to which the invoice will be copied
-          example: '[''abc@gmail.com'', ''def@gmail.com'']'
-          items:
-            type: string
-            description: A list of email addresses to which the invoice will be copied
-            example: '[''abc@gmail.com'', ''def@gmail.com'']'
-        purchaseOrderNumber:
-          type: string
-          description: The corresponding purchase order number
-          example: PO-123
-        legalEntityId:
-          type: string
-          description: Unique identifier for the legal entity. Account's legal entity will be linked if no legal entity is specified
-          example: lgen_e33f05749111f
-        currency:
-          type: string
-          description: Currency for the BillGroup. It is the ISO 4217 assigned three-digit code. If no currency is provided, the account's default currency will be set
-          example: USD
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-        addressData:
-          oneOf:
-          - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData.Account'
-          - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData.Contact'
-        vatNumber:
-          type: string
-          description: The corresponding vat number
-          example: '12345678901'
-        registrationNumber:
-          type: string
-          description: The corresponding registration number
-          example: 123-45-6789
-        accountingDateCalculationStrategy:
-          type: string
-          description: The accounting date calculation strategy
-          example: BILLING_ANNIVERSARY
-          enum:
-          - BILLING_ANNIVERSARY
-          - CLOSEST_DATE_WITHIN_INVOICING_PERIOD
-          - CLOSEST_DATE_WITHIN_USAGE_PERIOD
-        linkedAccountId:
-          type:
-          - string
-          - 'null'
-          description: Linked account ID for this bill group
-          example: acct_linked123
-        billingAccountId:
-          type:
-          - string
-          - 'null'
-          description: Billing account ID for this bill group
-          example: acct_billing456
-      example: "\n            {\n                \"name\": \"Demo BillGroup\",\n                \"contactId\": \"cont_KmKel632AmnUp\",\n                \"defaultPaymentGatewayId\": \"pmgw_MkAi8Eno4mXta\",\n                \"paymentMethodId\": \"pmtmd_vFQZjKnb7mUpDYud\",\n                \"dunningProcessId\": \"dunpr_QEPqCDqeaVte5WzM,\n                \"billDay\": 1,\n                \"status\": \"ACTIVE\",\n                \"collectInvoiceBalanceAutomatically\": true,\n                \"customId\": \"6b48c3f6-852e-4cd7-b4f4-a35ad60ad483\",\n                \"netTerms\": \"NET_30\",\n                \"autoEmailInvoice\": true,\n                \"invoiceCreation\": \"AUTOMATIC\",\n                \"invoiceDelay\": 0\n            }\n            "
-    com.monytyz.billing.customer.dto.address.SourcedAddressData:
-      required:
-      - addressSource
-      type: object
-      properties:
-        addressSource:
-          type: string
-          enum:
-          - ACCOUNT
-          - CONTACT
-      discriminator:
-        propertyName: addressSource
     com.monytyz.billing.customer.dto.billgroup.BillGroupDetailDto:
       type: object
       properties:
@@ -811,6 +617,188 @@ components:
         billingAccountId:
           type: string
           description: Unique identifier for the billgroup account
+    com.monytyz.billing.customer.dto.billgroup.BillGroupSaveDto:
+      required:
+      - billDay
+      - name
+      - netTerms
+      - status
+      type: object
+      properties:
+        paymentMethodId:
+          type:
+          - string
+          - 'null'
+          description: Unique identifier for the billgroup payment method
+          example: pmtmd_vFQZjKnb7mUpDYud
+        defaultPaymentGatewayId:
+          type:
+          - string
+          - 'null'
+          description: Unique identifier for the payment gateway. If found empty, BE will set the default one.
+          example: pmtgw_EMfbqn56S9h9CweL
+        contactId:
+          type: string
+          description: Unique identifier for the billgroup billing contact
+          example: ctrct_QEPqCDqeaVte5WzM
+        shippingContactId:
+          type: string
+          description: Unique identifier for the BillGroup's shipping contact
+          example: ctrct_QEPqCDqeaVte5WzM
+        customId:
+          type:
+          - string
+          - 'null'
+          description: A user provided identifier for the billgroup
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        name:
+          type: string
+          description: Name of the billgroup
+          example: Demo BillGroup
+        billDay:
+          type: integer
+          description: This is the specific day of the month on which the bill will be generated
+          format: int32
+          example: 5
+        netTerms:
+          type: string
+          description: Net terms of an invoice
+          example: NET_30
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        status:
+          type: string
+          description: Billgroup status like ACTIVE, INACTIVE, CANCELED OR SUSPENDED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - SUSPENDED
+        dunningProcessId:
+          type:
+          - string
+          - 'null'
+          description: Unique identifier for the dunning process
+          example: dunpr_QEPqCDqeaVte5WzM
+        collectInvoiceBalanceAutomatically:
+          type: boolean
+          description: If you want to override the global payment configuration and prevent collection at invoice time
+          example: false
+        autoEmailInvoice:
+          type: boolean
+          description: Automatically send invoice by email if true
+          example: false
+        invoiceCreation:
+          type: string
+          description: The invoice creation type like AUTOMATIC or MANUAL
+          example: AUTOMATIC
+          enum:
+          - AUTOMATIC
+          - MANUAL
+        invoiceDelay:
+          type: integer
+          description: Delay associated with invoice creation with minimum zero and maximum two days
+          format: int32
+          example: 0
+        firstInvoiceCreationStrategy:
+          type: string
+          description: First invoice creation strategy when invoice is being created manually
+          example: GENERATE_ON_QUOTE_PROCESSED
+          enum:
+          - FOLLOW_EXISTING_SETTINGS
+          - GENERATE_ON_QUOTE_PROCESSED
+        ccEmails:
+          uniqueItems: true
+          type: array
+          description: A list of email addresses to which the invoice will be copied
+          example: '[''abc@gmail.com'', ''def@gmail.com'']'
+          items:
+            type: string
+            description: A list of email addresses to which the invoice will be copied
+            example: '[''abc@gmail.com'', ''def@gmail.com'']'
+        purchaseOrderNumber:
+          type: string
+          description: The corresponding purchase order number
+          example: PO-123
+        legalEntityId:
+          type: string
+          description: Unique identifier for the legal entity. Account's legal entity will be linked if no legal entity is specified
+          example: lgen_e33f05749111f
+        currency:
+          type: string
+          description: Currency for the BillGroup. It is the ISO 4217 assigned three-digit code. If no currency is provided, the account's default currency will be set
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+        addressData:
+          oneOf:
+          - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData.Account'
+          - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData.Contact'
+        vatNumber:
+          type: string
+          description: The corresponding vat number
+          example: '12345678901'
+        registrationNumber:
+          type: string
+          description: The corresponding registration number
+          example: 123-45-6789
+        accountingDateCalculationStrategy:
+          type: string
+          description: The accounting date calculation strategy
+          example: BILLING_ANNIVERSARY
+          enum:
+          - BILLING_ANNIVERSARY
+          - CLOSEST_DATE_WITHIN_INVOICING_PERIOD
+          - CLOSEST_DATE_WITHIN_USAGE_PERIOD
+        linkedAccountId:
+          type:
+          - string
+          - 'null'
+          description: Linked account ID for this bill group
+          example: acct_linked123
+        billingAccountId:
+          type:
+          - string
+          - 'null'
+          description: Billing account ID for this bill group
+          example: acct_billing456
+      example: "\n            {\n                \"name\": \"Demo BillGroup\",\n                \"contactId\": \"cont_KmKel632AmnUp\",\n                \"defaultPaymentGatewayId\": \"pmgw_MkAi8Eno4mXta\",\n                \"paymentMethodId\": \"pmtmd_vFQZjKnb7mUpDYud\",\n                \"dunningProcessId\": \"dunpr_QEPqCDqeaVte5WzM,\n                \"billDay\": 1,\n                \"status\": \"ACTIVE\",\n                \"collectInvoiceBalanceAutomatically\": true,\n                \"customId\": \"6b48c3f6-852e-4cd7-b4f4-a35ad60ad483\",\n                \"netTerms\": \"NET_30\",\n                \"autoEmailInvoice\": true,\n                \"invoiceCreation\": \"AUTOMATIC\",\n                \"invoiceDelay\": 0\n            }\n            "
     com.monytyz.billing.customer.dto.billgroup.BillGroupContactDto:
       required:
       - email
@@ -844,6 +832,161 @@ components:
           format: int32
         pageable:
           $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayBasicDto:
+      required:
+      - defaultGateway
+      - description
+      - id
+      - locked
+      - status
+      - testGateway
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          example: pmtgw_EMfbqn56S9h9CweL
+        description:
+          type: string
+          example: Description about PGW
+        type:
+          type: string
+          example: STRIPEV2
+          enum:
+          - STRIPEV2
+          - BRAINTREE
+          - WORLDPAY
+          - AUTHNET
+          - ADYEN
+          - VANTIV
+          - PAYPAL_PRO
+          - PAYMENT_TECH
+          - TEST_PASS
+          - TEST_FAIL
+        status:
+          type: string
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - ARCHIVED
+        testGateway:
+          type: boolean
+          example: false
+        defaultGateway:
+          type: boolean
+          example: true
+        locked:
+          type: boolean
+          example: true
+    com.monytyz.billing.customer.dto.address.SourcedAddressData:
+      required:
+      - addressSource
+      type: object
+      properties:
+        addressSource:
+          type: string
+          enum:
+          - ACCOUNT
+          - CONTACT
+      discriminator:
+        propertyName: addressSource
+    com.monytyz.billing.customer.dto.address.SourcedAddressData.Contact:
+      required:
+      - addressSource
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData'
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.dto.contact.ContactDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        customId:
+          type: string
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        accountId:
+          type: string
+          description: Account ID where the contact belongs
+          example: acct_m0CB9LflojZxytfC
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        status:
+          type: string
+          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+          - ARCHIVED
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type: string
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type: string
+          description: Title of the contact
+          example: CFO
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        primary:
+          type: boolean
+          description: Boolean value indicating if the contact is primary or not
+          example: true
+        defaultESigner:
+          type: boolean
+          description: Boolean value indicating if the contact is default eSigner
+          example: false
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the contact
+          description: User configured custom fields for the contact
+        esigner:
+          type: boolean
+      description: Primary contact information for this account
     com.monytyz.billing.customer.dto.address.AddressDto:
       type: object
       properties:
@@ -896,24 +1039,6 @@ components:
           description: Description of the address
           example: Permanent Address
       description: Billing address for the account
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.customer.dto.address.SourcedAddressData.Contact:
-      required:
-      - addressSource
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.SourcedAddressData'
     com.monytyz.billing.customer.dto.address.SourcedAddressData.Account:
       required:
       - addressSource
@@ -1037,128 +1162,3 @@ components:
           type: string
           description: A list of account level email addresses to which the dunning mail will be copied
           example: abc@gmail.com,def@gmail.com
-    com.monytyz.billing.customer.dto.contact.ContactDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: A unique identifier for the contact
-          example: cntct_8P9ijCslTprCI7Wu
-        customId:
-          type: string
-          description: A user provided identifier for the contact
-          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
-        accountId:
-          type: string
-          description: Account ID where the contact belongs
-          example: acct_m0CB9LflojZxytfC
-        address:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-        status:
-          type: string
-          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - CANCELED
-          - ARCHIVED
-        fullName:
-          type: string
-          description: Full name of the contact
-          example: Bob Smith
-        email:
-          type: string
-          description: Email of the contact
-          example: contact@example.com
-        phone:
-          type: string
-          description: Phone of the contact
-          example: +1 800 444 4444
-        title:
-          type: string
-          description: Title of the contact
-          example: CFO
-        internal:
-          type: boolean
-          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
-          example: false
-        primary:
-          type: boolean
-          description: Boolean value indicating if the contact is primary or not
-          example: true
-        defaultESigner:
-          type: boolean
-          description: Boolean value indicating if the contact is default eSigner
-          example: false
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the contact
-          description: User configured custom fields for the contact
-        esigner:
-          type: boolean
-      description: Primary contact information for this account
-    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayBasicDto:
-      required:
-      - defaultGateway
-      - description
-      - id
-      - locked
-      - status
-      - testGateway
-      - type
-      type: object
-      properties:
-        id:
-          type: string
-          example: pmtgw_EMfbqn56S9h9CweL
-        description:
-          type: string
-          example: Description about PGW
-        type:
-          type: string
-          example: STRIPEV2
-          enum:
-          - STRIPEV2
-          - BRAINTREE
-          - WORLDPAY
-          - AUTHNET
-          - ADYEN
-          - VANTIV
-          - PAYPAL_PRO
-          - PAYMENT_TECH
-          - TEST_PASS
-          - TEST_FAIL
-        status:
-          type: string
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - INACTIVE
-          - ARCHIVED
-        testGateway:
-          type: boolean
-          example: false
-        defaultGateway:
-          type: boolean
-          example: true
-        locked:
-          type: boolean
-          example: true

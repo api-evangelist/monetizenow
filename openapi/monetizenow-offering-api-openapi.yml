@@ -506,7 +506,7 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
-    com.monytyz.billing.customer.dto.account.AccountDto:
+    com.monytyz.billing.catalog.dto.offering.OfferingDetailDto:
       type: object
       properties:
         createdBy:
@@ -527,26 +527,143 @@ components:
           format: date-time
         id:
           type: string
-          description: Unique identifier for the account
-          example: acct_m0CB9LflojZxytfC
+          description: Unique identifier of an offering
+          example: offer_iJuVJLgQKIFc98RE
         customId:
           type: string
-          description: A user provided identifier for the account
-          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
-        isTestAccount:
+          description: User defined identifier for an offering
+          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
+        name:
+          type: string
+          description: Display name of the offering
+        type:
+          type: string
+          description: Type of the offering. Can be SUBSCRIPTION, ONETIME or MIN_COMMIT
+          enum:
+          - SUBSCRIPTION
+          - ONETIME
+          - MIN_COMMIT
+          - CUSTOM_PERCENT_OF_TOTAL
+        description:
+          type: string
+          description: Description of the offering
+          example: Netflix Monthly Offer
+        status:
+          type: string
+          description: Status of the offering. Can be in any of the state ACTIVE, INACTIVE, CANCELED, PENDING, EXPIRED, ARCHIVED
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - CANCELED
+          - PENDING
+          - EXPIRED
+          - ARCHIVED
+        startDate:
+          type: string
+          description: Defines when the offering will take in effect.
+          format: date
+        endDate:
+          type: string
+          description: Defines when an offering will expire
+          format: date
+        products:
+          uniqueItems: true
+          type: array
+          description: An offering can have multiple products with multiple rates for each product. When an offering is used in a quote, along with a specified rate from that offering for the quote, it's known as QuoteOffering.
+          deprecated: true
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductBasicDto'
+        offeringProducts:
+          type: array
+          description: An offering can have multiple mandatory or optional products.
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.offering.OfferingProductDto'
+        rates:
+          uniqueItems: true
+          type: array
+          description: List of rates which are defined for a product, to select from, in a QuoteOffering
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateDto'
+        discounts:
+          uniqueItems: true
+          type: array
+          description: List of discounts which are applied for the offering.
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.discount.DiscountDto'
+        locked:
           type: boolean
-          description: Boolean value indicating if the account is a test account
-        locale:
+          description: Indicates if an offering is locked. Typically it's true when offering is used or referenced in a QuoteOffering.
+        financeId:
           type: string
-          description: 'Locale of the account. Example: en_US'
-          example: en
-        accountName:
+          description: This is income account id from the accounting system
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the offering
+          description: User configured custom fields for the offering
+    com.monytyz.billing.catalog.dto.discount.DiscountDto:
+      type: object
+      properties:
+        createdBy:
           type: string
-          description: Name of the account.
-          example: Netflix
-        defaultCurrency:
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
           type: string
-          description: Represents the currency of the account. It is the ISO 4217 assigned three-digit code. If no currency is specified, the tenant's default currency will be set for the account.
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the discount
+          example: disc_TbFRB6xKDHScB
+        name:
+          type: string
+          description: Name of the discount
+          example: Early payment flat discount
+        description:
+          type: string
+          description: Description of the discount
+          example: Discount for early payment
+        discountType:
+          type: string
+          description: Type of discount. Valid values are PERCENTAGE, FLAT
+          example: FLAT
+          enum:
+          - FLAT
+          - PERCENTAGE
+        status:
+          type: string
+          description: Status of the discount. Valid values are ACTIVE, INACTIVE, PENDING, EXPIRED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - PENDING
+          - EXPIRED
+        discountCode:
+          type: string
+          description: Code for the discount
+          example: EARLY_PAYMENT
+        quoteId:
+          type: string
+          description: Associated Quote Id for the discount
+          example: quot_oKEMgylKzkIWR
+        discountAmount:
+          type: number
+          description: Amount of the discount
+          example: 100
+        currency:
+          type: string
+          description: Currency of the discount
           example: USD
           enum:
           - AUD
@@ -564,114 +681,152 @@ components:
           - SGD
           - TWD
           - USD
-        status:
+        durationType:
           type: string
-          description: Status of the account. An account can be ACTIVE, INACTIVE, CANCELED or SUSPENDED
+          description: Duration type of the discount. Valid values are ONE_TIME, UNLIMITED, LIMITED
+          example: ONE_TIME
           enum:
-          - ACTIVE
-          - CANCELED
-          - SUSPENDED
-          - INACTIVE
-        accountType:
-          type: string
-          description: Type of the account. An account can be CUSTOMER, PARTNER
-          enum:
-          - CUSTOMER
-          - PARTNER
-        primaryContact:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
-        noteCount:
+          - ONE_TIME
+          - UNLIMITED
+          - LIMITED
+        durationMonths:
           type: integer
-          description: Number of notes that is associated with this account
-          format: int64
-          example: 100000
-        defaultLegalEntityId:
-          type: string
-          description: Legal entity ID for this account. Default legal entity will be used as default when no legal entity is specified
-          example: lgen_e33f05749111f
-        shippingAddress:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-        billingAddress:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the account
-          description: User configured custom fields for the account
-        taxEntityUseCode:
-          type: string
-          description: Tax entity use code for the account
-          example: M
-        taxExemptionNumber:
-          type: string
-          description: Tax exemption number for the account
-          example: F60730EE-4127-49C0-B490-CBDF29BFD235
-        defaultDunningProcessId:
-          type: string
-          description: Optional dunning process id for the account
-          example: dunpr_tDbC2FxuCwQoxcjm
-        ccEmails:
-          type: string
-          description: A list of account level email addresses to which the dunning mail will be copied
-          example: abc@gmail.com,def@gmail.com
-    com.monytyz.billing.common.dto.ResponseDto:
-      type: object
-      properties:
-        status:
-          type: integer
+          description: Duration of the discount
           format: int32
-        message:
-          type: string
-    com.monytyz.billing.catalog.dto.offering.OfferingListDto:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.offering.OfferingDetailDto'
-        totalElements:
+          example: 12
+        maxUses:
           type: integer
-          format: int64
-        totalPages:
-          type: integer
+          description: Maximum number of times the discount can be used
           format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.catalog.dto.offering.OfferingProductDto:
-      required:
-      - isMandatory
-      - position
-      - product
-      - quantityDisplayType
-      type: object
-      properties:
-        product:
-          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductBasicDto'
-        isMandatory:
+          example: 10
+        remainingUses:
+          type: integer
+          description: Remaining number of times the discount can be used
+          format: int32
+          example: 5
+        startDate:
+          type: string
+          description: Start date of the discount
+          format: date
+          example: '2021-01-01'
+        endDate:
+          type: string
+          description: End date of the discount
+          format: date
+          example: '2021-12-31'
+        autoRemove:
           type: boolean
-        position:
-          type: integer
-          format: int32
-        quantityDisplayType:
+          description: Boolean value indicating if the discount should be removed automatically
+          example: true
+        accountId:
           type: string
-          enum:
-          - INPUT
-          - DROPDOWN
-      description: An offering can have multiple mandatory or optional products.
-    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
+          description: Account Id for the discount
+          example: acct_jHhOQjAs87kNj
+        scopeProductId:
+          type: string
+          description: Product Id for the discount
+          example: prod_N7oFTpLCwMRCo
+        scopeOfferingId:
+          type: string
+          description: Offering Id for the discount
+          example: offr_xO00qdIFuMsQy
+        locked:
+          type: boolean
+          description: Boolean value indicating if the discount is locked
+          example: false
+        lifecyclePolicies:
+          uniqueItems: true
+          type: array
+          description: List of lifecycle policies for the discount
+          example:
+          - EXCLUDE_FROM_xRENEWAL
+          items:
+            type: string
+            description: List of lifecycle policies for the discount
+            example: '["EXCLUDE_FROM_xRENEWAL"]'
+            enum:
+            - EXCLUDE_FROM_RENEWAL
+      description: Discount details associated with the subscription
+    com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData:
       required:
       - type
       type: object
       properties:
         type:
           type: string
+          enum:
+          - USAGE_PRODUCTS
+          - SPECIFIC_USAGE_PRODUCTS
+      description: If the rate is for a min commit offering, then this configuration will containconfiguration details for the min commit offering
       discriminator:
         propertyName: type
+    com.monytyz.billing.catalog.dto.product.ProductBasicDto:
+      required:
+      - id
+      - locked
+      - status
+      type: object
+      properties:
+        id:
+          type: string
+        customId:
+          type: string
+        financeId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+        productType:
+          type: string
+          enum:
+          - ADVANCE
+          - ARREARS
+          - USAGE
+          - ONETIME
+          - ONETIME_PREPAID_CREDIT
+          - MIN_COMMIT
+        usageTypes:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.usage.UsageTypeDto'
+        oneTimePrepaidCreditConfig:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
+        sku:
+          type: string
+        recognitionMethod:
+          type: string
+          enum:
+          - IMMEDIATE
+          - EVENLY_MONTHLY_IN_ADVANCE
+        locked:
+          type: boolean
+        taxItemCode:
+          type: string
+        taxExempt:
+          type: boolean
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
     com.monytyz.billing.catalog.dto.usage.UsageTypeDto:
       type: object
       properties:
@@ -717,6 +872,96 @@ components:
           enum:
           - ACTIVE
           - INACTIVE
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.customer.dto.contact.ContactDto:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: A unique identifier for the contact
+          example: cntct_8P9ijCslTprCI7Wu
+        customId:
+          type: string
+          description: A user provided identifier for the contact
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        accountId:
+          type: string
+          description: Account ID where the contact belongs
+          example: acct_m0CB9LflojZxytfC
+        address:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        status:
+          type: string
+          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - CANCELED
+          - ARCHIVED
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type: string
+          description: Phone of the contact
+          example: +1 800 444 4444
+        title:
+          type: string
+          description: Title of the contact
+          example: CFO
+        internal:
+          type: boolean
+          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
+          example: false
+        primary:
+          type: boolean
+          description: Boolean value indicating if the contact is primary or not
+          example: true
+        defaultESigner:
+          type: boolean
+          description: Boolean value indicating if the contact is default eSigner
+          example: false
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the contact
+          description: User configured custom fields for the contact
+        esigner:
+          type: boolean
+      description: Primary contact information for this account
     com.monytyz.billing.catalog.dto.rate.RateDto:
       type: object
       properties:
@@ -867,151 +1112,6 @@ components:
         parentRateId: null
         minCommitConfig: null
         rateType: CATALOG
-    com.monytyz.billing.catalog.dto.discount.DiscountDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for the discount
-          example: disc_TbFRB6xKDHScB
-        name:
-          type: string
-          description: Name of the discount
-          example: Early payment flat discount
-        description:
-          type: string
-          description: Description of the discount
-          example: Discount for early payment
-        discountType:
-          type: string
-          description: Type of discount. Valid values are PERCENTAGE, FLAT
-          example: FLAT
-          enum:
-          - FLAT
-          - PERCENTAGE
-        status:
-          type: string
-          description: Status of the discount. Valid values are ACTIVE, INACTIVE, PENDING, EXPIRED
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - INACTIVE
-          - PENDING
-          - EXPIRED
-        discountCode:
-          type: string
-          description: Code for the discount
-          example: EARLY_PAYMENT
-        quoteId:
-          type: string
-          description: Associated Quote Id for the discount
-          example: quot_oKEMgylKzkIWR
-        discountAmount:
-          type: number
-          description: Amount of the discount
-          example: 100
-        currency:
-          type: string
-          description: Currency of the discount
-          example: USD
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        durationType:
-          type: string
-          description: Duration type of the discount. Valid values are ONE_TIME, UNLIMITED, LIMITED
-          example: ONE_TIME
-          enum:
-          - ONE_TIME
-          - UNLIMITED
-          - LIMITED
-        durationMonths:
-          type: integer
-          description: Duration of the discount
-          format: int32
-          example: 12
-        maxUses:
-          type: integer
-          description: Maximum number of times the discount can be used
-          format: int32
-          example: 10
-        remainingUses:
-          type: integer
-          description: Remaining number of times the discount can be used
-          format: int32
-          example: 5
-        startDate:
-          type: string
-          description: Start date of the discount
-          format: date
-          example: '2021-01-01'
-        endDate:
-          type: string
-          description: End date of the discount
-          format: date
-          example: '2021-12-31'
-        autoRemove:
-          type: boolean
-          description: Boolean value indicating if the discount should be removed automatically
-          example: true
-        accountId:
-          type: string
-          description: Account Id for the discount
-          example: acct_jHhOQjAs87kNj
-        scopeProductId:
-          type: string
-          description: Product Id for the discount
-          example: prod_N7oFTpLCwMRCo
-        scopeOfferingId:
-          type: string
-          description: Offering Id for the discount
-          example: offr_xO00qdIFuMsQy
-        locked:
-          type: boolean
-          description: Boolean value indicating if the discount is locked
-          example: false
-        lifecyclePolicies:
-          uniqueItems: true
-          type: array
-          description: List of lifecycle policies for the discount
-          example:
-          - EXCLUDE_FROM_xRENEWAL
-          items:
-            type: string
-            description: List of lifecycle policies for the discount
-            example: '["EXCLUDE_FROM_xRENEWAL"]'
-            enum:
-            - EXCLUDE_FROM_RENEWAL
-      description: Discount details associated with the subscription
     com.monytyz.billing.customer.dto.address.AddressDto:
       type: object
       properties:
@@ -1064,69 +1164,47 @@ components:
           description: Description of the address
           example: Permanent Address
       description: Billing address for the account
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
+    com.monytyz.billing.common.dto.ResponseDto:
       type: object
       properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-    com.monytyz.billing.catalog.dto.product.ProductBasicDto:
-      required:
-      - id
-      - locked
-      - status
-      type: object
-      properties:
-        id:
-          type: string
-        customId:
-          type: string
-        financeId:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
         status:
+          type: integer
+          format: int32
+        message:
           type: string
-          enum:
-          - ACTIVE
-          - INACTIVE
-        productType:
-          type: string
-          enum:
-          - ADVANCE
-          - ARREARS
-          - USAGE
-          - ONETIME
-          - ONETIME_PREPAID_CREDIT
-          - MIN_COMMIT
-        usageTypes:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.usage.UsageTypeDto'
-        oneTimePrepaidCreditConfig:
-          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData'
-        sku:
-          type: string
-        recognitionMethod:
-          type: string
-          enum:
-          - IMMEDIATE
-          - EVENLY_MONTHLY_IN_ADVANCE
-        locked:
+    com.monytyz.billing.catalog.dto.offering.OfferingProductDto:
+      required:
+      - isMandatory
+      - position
+      - product
+      - quantityDisplayType
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductBasicDto'
+        isMandatory:
           type: boolean
-        taxItemCode:
+        position:
+          type: integer
+          format: int32
+        quantityDisplayType:
           type: string
-        taxExempt:
-          type: boolean
+          enum:
+          - INPUT
+          - DROPDOWN
+      description: An offering can have multiple mandatory or optional products.
+    com.monytyz.billing.catalog.dto.prepaidcredit.OneTimePrePaidCreditConfigData:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.customer.dto.account.AccountDto:
+      type: object
+      properties:
         createdBy:
           type: string
           description: Identifier for the user who created the record
@@ -1143,7 +1221,97 @@ components:
           type: string
           description: Timestamp of when the record was last modified
           format: date-time
-    com.monytyz.billing.customer.dto.account.AccountListDto:
+        id:
+          type: string
+          description: Unique identifier for the account
+          example: acct_m0CB9LflojZxytfC
+        customId:
+          type: string
+          description: A user provided identifier for the account
+          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
+        isTestAccount:
+          type: boolean
+          description: Boolean value indicating if the account is a test account
+        locale:
+          type: string
+          description: 'Locale of the account. Example: en_US'
+          example: en
+        accountName:
+          type: string
+          description: Name of the account.
+          example: Netflix
+        defaultCurrency:
+          type: string
+          description: Represents the currency of the account. It is the ISO 4217 assigned three-digit code. If no currency is specified, the tenant's default currency will be set for the account.
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        status:
+          type: string
+          description: Status of the account. An account can be ACTIVE, INACTIVE, CANCELED or SUSPENDED
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          description: Type of the account. An account can be CUSTOMER, PARTNER
+          enum:
+          - CUSTOMER
+          - PARTNER
+        primaryContact:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.contact.ContactDto'
+        noteCount:
+          type: integer
+          description: Number of notes that is associated with this account
+          format: int64
+          example: 100000
+        defaultLegalEntityId:
+          type: string
+          description: Legal entity ID for this account. Default legal entity will be used as default when no legal entity is specified
+          example: lgen_e33f05749111f
+        shippingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        billingAddress:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
+        customFields:
+          type: object
+          additionalProperties:
+            type: object
+            description: User configured custom fields for the account
+          description: User configured custom fields for the account
+        taxEntityUseCode:
+          type: string
+          description: Tax entity use code for the account
+          example: M
+        taxExemptionNumber:
+          type: string
+          description: Tax exemption number for the account
+          example: F60730EE-4127-49C0-B490-CBDF29BFD235
+        defaultDunningProcessId:
+          type: string
+          description: Optional dunning process id for the account
+          example: dunpr_tDbC2FxuCwQoxcjm
+        ccEmails:
+          type: string
+          description: A list of account level email addresses to which the dunning mail will be copied
+          example: abc@gmail.com,def@gmail.com
+    com.monytyz.billing.catalog.dto.offering.OfferingListDto:
       required:
       - content
       - totalElements
@@ -1153,7 +1321,7 @@ components:
         content:
           type: array
           items:
-            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.offering.OfferingDetailDto'
         totalElements:
           type: integer
           format: int64
@@ -1227,190 +1395,22 @@ components:
             type: object
             description: User configured custom fields for the offering
           description: User configured custom fields for the offering
-    com.monytyz.billing.catalog.dto.offering.OfferingDetailDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier of an offering
-          example: offer_iJuVJLgQKIFc98RE
-        customId:
-          type: string
-          description: User defined identifier for an offering
-          example: 6b48c3f6-852e-4cd7-b4f4-a35ad60ad483
-        name:
-          type: string
-          description: Display name of the offering
-        type:
-          type: string
-          description: Type of the offering. Can be SUBSCRIPTION, ONETIME or MIN_COMMIT
-          enum:
-          - SUBSCRIPTION
-          - ONETIME
-          - MIN_COMMIT
-          - CUSTOM_PERCENT_OF_TOTAL
-        description:
-          type: string
-          description: Description of the offering
-          example: Netflix Monthly Offer
-        status:
-          type: string
-          description: Status of the offering. Can be in any of the state ACTIVE, INACTIVE, CANCELED, PENDING, EXPIRED, ARCHIVED
-          enum:
-          - ACTIVE
-          - INACTIVE
-          - CANCELED
-          - PENDING
-          - EXPIRED
-          - ARCHIVED
-        startDate:
-          type: string
-          description: Defines when the offering will take in effect.
-          format: date
-        endDate:
-          type: string
-          description: Defines when an offering will expire
-          format: date
-        products:
-          uniqueItems: true
-          type: array
-          description: An offering can have multiple products with multiple rates for each product. When an offering is used in a quote, along with a specified rate from that offering for the quote, it's known as QuoteOffering.
-          deprecated: true
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.product.ProductBasicDto'
-        offeringProducts:
-          type: array
-          description: An offering can have multiple mandatory or optional products.
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.offering.OfferingProductDto'
-        rates:
-          uniqueItems: true
-          type: array
-          description: List of rates which are defined for a product, to select from, in a QuoteOffering
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.rate.RateDto'
-        discounts:
-          uniqueItems: true
-          type: array
-          description: List of discounts which are applied for the offering.
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.catalog.dto.discount.DiscountDto'
-        locked:
-          type: boolean
-          description: Indicates if an offering is locked. Typically it's true when offering is used or referenced in a QuoteOffering.
-        financeId:
-          type: string
-          description: This is income account id from the accounting system
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the offering
-          description: User configured custom fields for the offering
-    com.monytyz.billing.customer.dto.contact.ContactDto:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: A unique identifier for the contact
-          example: cntct_8P9ijCslTprCI7Wu
-        customId:
-          type: string
-          description: A user provided identifier for the contact
-          example: c993f52b-0bbd-454b-9849-fd6c1991efb6
-        accountId:
-          type: string
-          description: Account ID where the contact belongs
-          example: acct_m0CB9LflojZxytfC
-        address:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.address.AddressDto'
-        status:
-          type: string
-          description: Status of the contact. Status can be ACTIVE, CANCELED or ARCHIVED
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - CANCELED
-          - ARCHIVED
-        fullName:
-          type: string
-          description: Full name of the contact
-          example: Bob Smith
-        email:
-          type: string
-          description: Email of the contact
-          example: contact@example.com
-        phone:
-          type: string
-          description: Phone of the contact
-          example: +1 800 444 4444
-        title:
-          type: string
-          description: Title of the contact
-          example: CFO
-        internal:
-          type: boolean
-          description: Boolean value indicating if the contact is internal or external which is used for e-Signing
-          example: false
-        primary:
-          type: boolean
-          description: Boolean value indicating if the contact is primary or not
-          example: true
-        defaultESigner:
-          type: boolean
-          description: Boolean value indicating if the contact is default eSigner
-          example: false
-        customFields:
-          type: object
-          additionalProperties:
-            type: object
-            description: User configured custom fields for the contact
-          description: User configured custom fields for the contact
-        esigner:
-          type: boolean
-      description: Primary contact information for this account
-    com.monytyz.billing.catalog.dto.mincommit.MinCommitConfigData:
+    com.monytyz.billing.customer.dto.account.AccountListDto:
       required:
-      - type
+      - content
+      - totalElements
+      - totalPages
       type: object
       properties:
-        type:
-          type: string
-          enum:
-          - USAGE_PRODUCTS
-          - SPECIFIC_USAGE_PRODUCTS
-      description: If the rate is for a min commit offering, then this configuration will containconfiguration details for the min commit offering
-      discriminator:
-        propertyName: type
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'

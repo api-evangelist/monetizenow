@@ -244,10 +244,184 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    com.monytyz.billing.trial.dto.TrialToQuoteInitDetails:
+      required:
+      - quoteHeaderInfo
+      - version
+      type: object
+      properties:
+        version:
+          type: string
+        quoteHeaderInfo:
+          $ref: '#/components/schemas/com.monytyz.billing.trial.dto.QuoteHeaderInfo'
+    com.monytyz.billing.data.cpq.QuoteId:
+      required:
+      - value
+      type: object
+      properties:
+        value:
+          type: string
+    com.monytyz.billing.trial.dto.CreateTrialRequest:
+      required:
+      - accountId
+      - defaultEndAction
+      - endDate
+      - quoteInitDetails
+      - startDate
+      - trialConversionPolicy
+      - type
+      type: object
+      properties:
+        accountId:
+          $ref: '#/components/schemas/com.monytyz.billing.data.account.AccountId'
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        defaultEndAction:
+          type: string
+          enum:
+          - CONVERT_TO_PAID
+          - CANCEL
+        type:
+          type: string
+          enum:
+          - NEW
+          - AMENDMENT
+        quoteInitDetails:
+          $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialToQuoteInitDetails'
+        trialConversionPolicy:
+          oneOf:
+          - $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialConversionPolicy.NewTrialConversionPolicy'
+    com.monytyz.billing.trial.dto.OfferingProductDetail:
+      required:
+      - offeringId
+      - productDetails
+      - rateId
+      type: object
+      properties:
+        offeringId:
+          $ref: '#/components/schemas/com.monytyz.billing.data.catalog.OfferingId'
+        productDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.trial.dto.ProductDetail'
+        rateId:
+          $ref: '#/components/schemas/com.monytyz.billing.data.catalog.RateId'
+    com.monytyz.billing.trial.dto.QuoteHeaderInfo:
+      required:
+      - billingContactId
+      - lengthOfContract
+      - netTerms
+      - primaryContactId
+      type: object
+      properties:
+        lengthOfContract:
+          type: integer
+          format: int32
+        netTerms:
+          type: string
+          enum:
+          - NET_0
+          - NET_5
+          - NET_7
+          - NET_8
+          - NET_10
+          - NET_14
+          - NET_15
+          - NET_20
+          - NET_21
+          - NET_30
+          - NET_45
+          - NET_60
+          - NET_75
+          - NET_90
+          - NET_100
+          - NET_120
+          - NET_150
+          - NET_180
+        primaryContactId:
+          $ref: '#/components/schemas/com.monytyz.billing.data.account.ContactId'
+        billingContactId:
+          $ref: '#/components/schemas/com.monytyz.billing.data.account.ContactId'
+    com.monytyz.billing.util.MNPageCom.monytyz.billing.trial.dto.TrialResponse:
+      required:
+      - content
+      - totalElements
+      - totalPages
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialResponse'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/MNPageable'
+    com.monytyz.billing.trial.dto.ProductDetail:
+      required:
+      - id
+      - quantity
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/com.monytyz.billing.data.catalog.ProductId'
+        quantity:
+          type: integer
+          format: int32
+    com.monytyz.billing.data.catalog.OfferingId:
+      type: string
+      description: Unique identifier of an offering
+      example: offr_jb0eOTfjtEdTX
+    com.monytyz.billing.data.account.AccountId:
+      type: string
+      description: Unique identifier for the account
+      example: acct_73Vv4gb6PCfWU
+    com.monytyz.billing.trial.dto.TrialConversionPolicy:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - NEW
+          - AMENDMENT
+      discriminator:
+        propertyName: type
+    com.monytyz.billing.data.catalog.ProductId:
+      type: string
+      description: Unique identifier of a product
+      example: prod_Jlwk8t665ZWN9
+    com.monytyz.billing.trial.data.TrialId:
+      required:
+      - value
+      type: object
+      properties:
+        value:
+          type: string
+    com.monytyz.billing.data.catalog.RateId:
+      type: string
+      description: Unique identifier for the rate
+      example: rate_73Vv4gb6PCfWU
     com.monytyz.billing.data.account.ContactId:
       type: string
       description: Unique identifier of a contact
       example: cont_jb0eOTfjtEdTX
+    com.monytyz.billing.trial.dto.ConvertTrialRequest:
+      required:
+      - isAutoConverted
+      type: object
+      properties:
+        isAutoConverted:
+          type: boolean
     com.monytyz.billing.trial.dto.TrialResponse:
       required:
       - accountId
@@ -305,25 +479,6 @@ components:
           - $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialConversionPolicy.NewTrialConversionPolicy'
         endStatusReason:
           type: string
-    com.monytyz.billing.util.MNPageCom.monytyz.billing.trial.dto.TrialResponse:
-      required:
-      - content
-      - totalElements
-      - totalPages
-      type: object
-      properties:
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialResponse'
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/MNPageable'
     MNPageable:
       required:
       - pageNumber
@@ -336,6 +491,19 @@ components:
         pageSize:
           type: integer
           format: int32
+    com.monytyz.billing.trial.dto.TrialConversionPolicy.NewTrialConversionPolicy:
+      required:
+      - offeringProductDetails
+      - type
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialConversionPolicy'
+      - type: object
+        properties:
+          offeringProductDetails:
+            type: array
+            items:
+              $ref: '#/components/schemas/com.monytyz.billing.trial.dto.OfferingProductDetail'
     com.monytyz.billing.trial.dto.CancelTrialRequest:
       required:
       - cancelType
@@ -351,171 +519,3 @@ components:
           maxLength: 250
           minLength: 0
           type: string
-    com.monytyz.billing.trial.dto.CreateTrialRequest:
-      required:
-      - accountId
-      - defaultEndAction
-      - endDate
-      - quoteInitDetails
-      - startDate
-      - trialConversionPolicy
-      - type
-      type: object
-      properties:
-        accountId:
-          $ref: '#/components/schemas/com.monytyz.billing.data.account.AccountId'
-        startDate:
-          type: string
-          format: date-time
-        endDate:
-          type: string
-          format: date-time
-        defaultEndAction:
-          type: string
-          enum:
-          - CONVERT_TO_PAID
-          - CANCEL
-        type:
-          type: string
-          enum:
-          - NEW
-          - AMENDMENT
-        quoteInitDetails:
-          $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialToQuoteInitDetails'
-        trialConversionPolicy:
-          oneOf:
-          - $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialConversionPolicy.NewTrialConversionPolicy'
-    com.monytyz.billing.trial.dto.ProductDetail:
-      required:
-      - id
-      - quantity
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/com.monytyz.billing.data.catalog.ProductId'
-        quantity:
-          type: integer
-          format: int32
-    com.monytyz.billing.trial.dto.OfferingProductDetail:
-      required:
-      - offeringId
-      - productDetails
-      - rateId
-      type: object
-      properties:
-        offeringId:
-          $ref: '#/components/schemas/com.monytyz.billing.data.catalog.OfferingId'
-        productDetails:
-          type: array
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.trial.dto.ProductDetail'
-        rateId:
-          $ref: '#/components/schemas/com.monytyz.billing.data.catalog.RateId'
-    com.monytyz.billing.trial.dto.QuoteHeaderInfo:
-      required:
-      - billingContactId
-      - lengthOfContract
-      - netTerms
-      - primaryContactId
-      type: object
-      properties:
-        lengthOfContract:
-          type: integer
-          format: int32
-        netTerms:
-          type: string
-          enum:
-          - NET_0
-          - NET_5
-          - NET_7
-          - NET_8
-          - NET_10
-          - NET_14
-          - NET_15
-          - NET_20
-          - NET_21
-          - NET_30
-          - NET_45
-          - NET_60
-          - NET_75
-          - NET_90
-          - NET_100
-          - NET_120
-          - NET_150
-          - NET_180
-        primaryContactId:
-          $ref: '#/components/schemas/com.monytyz.billing.data.account.ContactId'
-        billingContactId:
-          $ref: '#/components/schemas/com.monytyz.billing.data.account.ContactId'
-    com.monytyz.billing.data.account.AccountId:
-      type: string
-      description: Unique identifier for the account
-      example: acct_73Vv4gb6PCfWU
-    com.monytyz.billing.data.cpq.QuoteId:
-      required:
-      - value
-      type: object
-      properties:
-        value:
-          type: string
-    com.monytyz.billing.data.catalog.ProductId:
-      type: string
-      description: Unique identifier of a product
-      example: prod_Jlwk8t665ZWN9
-    com.monytyz.billing.trial.dto.TrialToQuoteInitDetails:
-      required:
-      - quoteHeaderInfo
-      - version
-      type: object
-      properties:
-        version:
-          type: string
-        quoteHeaderInfo:
-          $ref: '#/components/schemas/com.monytyz.billing.trial.dto.QuoteHeaderInfo'
-    com.monytyz.billing.trial.dto.ConvertTrialRequest:
-      required:
-      - isAutoConverted
-      type: object
-      properties:
-        isAutoConverted:
-          type: boolean
-    com.monytyz.billing.trial.data.TrialId:
-      required:
-      - value
-      type: object
-      properties:
-        value:
-          type: string
-    com.monytyz.billing.data.catalog.OfferingId:
-      type: string
-      description: Unique identifier of an offering
-      example: offr_jb0eOTfjtEdTX
-    com.monytyz.billing.data.catalog.RateId:
-      type: string
-      description: Unique identifier for the rate
-      example: rate_73Vv4gb6PCfWU
-    com.monytyz.billing.trial.dto.TrialConversionPolicy.NewTrialConversionPolicy:
-      required:
-      - offeringProductDetails
-      - type
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/com.monytyz.billing.trial.dto.TrialConversionPolicy'
-      - type: object
-        properties:
-          offeringProductDetails:
-            type: array
-            items:
-              $ref: '#/components/schemas/com.monytyz.billing.trial.dto.OfferingProductDetail'
-    com.monytyz.billing.trial.dto.TrialConversionPolicy:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - NEW
-          - AMENDMENT
-      discriminator:
-        propertyName: type

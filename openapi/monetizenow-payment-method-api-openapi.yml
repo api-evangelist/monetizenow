@@ -314,6 +314,97 @@ paths:
           description: Internal server error. Please contact the support team.
 components:
   schemas:
+    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodImportRequest:
+      required:
+      - externalPaymentMethodIds
+      - gatewayAccountId
+      - gatewayId
+      type: object
+      properties:
+        gatewayId:
+          type: string
+          example: pmtgw_INSDH99X5phboiPD
+        gatewayAccountId:
+          type: string
+          example: cus_NdLbfYr2zhEkHm
+        externalPaymentMethodIds:
+          uniqueItems: true
+          type: array
+          example:
+          - pm_1N0RTjFlgb12q7barLBprPIx
+          - card_1N0RU9Flgb12q7babgrGefrp
+          items:
+            type: string
+            example: '["pm_1N0RTjFlgb12q7barLBprPIx","card_1N0RU9Flgb12q7babgrGefrp"]'
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfiguration:
+      required:
+      - amountConfigurations
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Payment method type
+          example: US_BANK_TRANSFER
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        amountConfigurations:
+          type: array
+          description: Minimum and maximum amounts for payment type per currency
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.AmountConfiguration'
+      description: Configuration for minimum and maximum payments amounts
+      example: US_BANK_TRANSFER
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfigurations:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          description: Configuration for minimum and maximum payments amounts
+          example: US_BANK_TRANSFER
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfiguration'
+      description: Configuration for minimum and maximum payments amounts
+    com.monytyz.billing.payment.dto.paymentgateway.AmountConfiguration:
+      required:
+      - currency
+      type: object
+      properties:
+        currency:
+          type: string
+          description: Currency to which the amount configuration applies
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        minimum:
+          type: number
+          description: Minimum payment amount allowed for payment type and currency
+          example: 25
+        maximum:
+          type: number
+          description: Maximum payment amount allowed for payment type and currency
+          example: 500
+      description: Minimum and maximum amounts for payment type per currency
     com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSaveDto:
       type: object
       properties:
@@ -352,28 +443,350 @@ components:
           deprecated: true
         billingDetails:
           $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.BillingDetails'
-    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodImportRequest:
+    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSupport:
       required:
-      - externalPaymentMethodIds
-      - gatewayAccountId
-      - gatewayId
+      - enabled
+      - method
       type: object
       properties:
-        gatewayId:
+        method:
           type: string
-          example: pmtgw_INSDH99X5phboiPD
-        gatewayAccountId:
-          type: string
-          example: cus_NdLbfYr2zhEkHm
-        externalPaymentMethodIds:
+          description: Payment method type like CREDIT_CARD, DIRECT_DEBIT, ACH_CREDIT etc
+          example: DIRECT_DEBIT
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        enabled:
+          type: boolean
+          description: A boolean field indicating that the payment method type should be enabled or not
+          example: true
+      description: A list of allowed payment methods
+    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodImportResponse:
+      required:
+      - existingPaymentMethods
+      - failedImports
+      - gatewayAccount
+      - succeededImports
+      type: object
+      properties:
+        gatewayAccount:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.GatewayAccountData'
+        succeededImports:
           uniqueItems: true
           type: array
-          example:
-          - pm_1N0RTjFlgb12q7barLBprPIx
-          - card_1N0RU9Flgb12q7babgrGefrp
+          description: List of successful payment method imports
           items:
-            type: string
-            example: '["pm_1N0RTjFlgb12q7barLBprPIx","card_1N0RU9Flgb12q7babgrGefrp"]'
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodData'
+        failedImports:
+          uniqueItems: true
+          type: array
+          description: List of failed payment method imports
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.FailedImport'
+        existingPaymentMethods:
+          uniqueItems: true
+          type: array
+          description: List of payment methods that are already imported
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodData'
+    MNPageable:
+      required:
+      - pageNumber
+      - pageSize
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    com.monytyz.billing.payment.dto.paymentmethod.FailedImport:
+      required:
+      - externalPaymentMethodId
+      - reason
+      type: object
+      properties:
+        externalPaymentMethodId:
+          type: string
+          description: External payment method id
+          example: pm_1NNZkPBXyD37Yf5R6DNQLPxF
+        reason:
+          type: string
+          description: Reason for import failure
+          example: Unknown Error
+      description: List of failed payment method imports
+    com.monytyz.billing.payment.dto.paymentmethod.BillingDetails:
+      type: object
+      properties:
+        fullName:
+          type: string
+          description: Full name of the contact
+          example: Bob Smith
+        email:
+          type: string
+          description: Email of the contact
+          example: contact@example.com
+        phone:
+          type: string
+          description: Phone of the contact
+          example: +44 7700 900278
+        title:
+          type: string
+          description: Title of the contact
+          example: CFO
+        line1:
+          type: string
+          description: First line of the address
+          example: 8 Louise Court
+        line2:
+          type: string
+          description: Second line of the address
+          example: 12–13 Beaulieu Road
+        city:
+          type: string
+          description: City of the address
+          example: Southampton
+        state:
+          type: string
+          description: State of the address
+          example: London
+        postalCode:
+          type: string
+          description: Postal code of the address
+          example: PO2 0DN
+        country:
+          type: string
+          description: Country of the address
+          example: UK
+      description: Billing details of the payment method
+    com.monytyz.billing.payment.dto.paymentmethod.GatewayAccountData:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: External identifier for the gateway account. In Stripe, this is the customer ID
+          example: cus_O85DG5nkCWtWdT
+        name:
+          type:
+          - string
+          - 'null'
+          description: Name of the gateway account. In Stripe, it's the customer's name
+          example: John Smith
+        email:
+          type:
+          - string
+          - 'null'
+          description: Email of the gateway account. In Stripe, it's the customer's email
+          example: john@gmail.com
+    com.monytyz.billing.payment.dto.payment.PaymentDto:
+      required:
+      - currency
+      - id
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: Identifier for the user who created the record
+          example: usr_X0XZ05bvkrB1RpLS
+        createDate:
+          type: string
+          description: Timestamp of when the record was created
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: Identifier for the user who last modified the record
+          example: usr_X0XZ05bvkrB1RpLS
+        modifyDate:
+          type: string
+          description: Timestamp of when the record was last modified
+          format: date-time
+        id:
+          type: string
+          description: Unique identifier for the payment
+          example: pmt_m0CB9LflojZxytfC
+        paymentDate:
+          type: string
+          description: Date of the payment
+          format: date
+          example: '2022-04-13'
+        currency:
+          type: string
+          description: Currency of the payment
+          example: USD
+          enum:
+          - AUD
+          - BYN
+          - CAD
+          - CNY
+          - DKK
+          - EUR
+          - GBP
+          - INR
+          - ISK
+          - MYR
+          - NOK
+          - SEK
+          - SGD
+          - TWD
+          - USD
+        account:
+          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountSummary'
+        collectionDate:
+          type: string
+          description: Date when the payment is settled
+          format: date
+          example: '2022-04-15'
+          deprecated: true
+        settledDate:
+          type: string
+          description: Date when the payment is settled
+          format: date-time
+        refundDate:
+          type: string
+          description: Date of the refund
+          format: date
+          example: '2022-04-25'
+        voidDate:
+          type: string
+          description: Date when the payment is voided
+          format: date
+          example: '2022-04-25'
+        description:
+          type: string
+          description: Description of the payment
+          example: Monthly Payment
+        paymentMethodId:
+          type: string
+          description: Unique identifier for the payment method
+          example: pmtm_GDJKaum7vI9vf9tl
+        gatewayId:
+          type: string
+          description: Unique identifier for the payment gateway
+          example: pmtgw_EMfbqn56S9h9CweL
+        gatewayReference:
+          type: string
+          description: Gateway reference for the payment. It can be charge id or payment intent id when the payment is successful and request id when the payment fails
+          example: 4cd7-b4f4-a35ad60ad483
+        gatewayCode:
+          type: string
+          description: Gateway error code when the payment fails
+          example: a35ad60ad483
+        gatewayMessage:
+          type: string
+          description: Gateway error message when the payment fails
+          example: Gateway Connected Successfully
+        amount:
+          type: number
+          description: Amount of the payment
+          example: 100000000
+        appliedAmount:
+          type: number
+          description: Applied amount for the payment
+          example: 10000000
+        unAppliedAmount:
+          type: number
+          description: Unapplied amount for the payment
+          example: 100000
+        fullyApplied:
+          type: boolean
+          description: A boolean field indicating that payment is fully applied or not
+          example: true
+        paymentStatus:
+          type: string
+          description: Status of the payment. Status can be SUCCESS, PROCESSING, FAILED, CANCELED, REFUNDED or PARTIAL_REFUND
+          example: SUCCESS
+          enum:
+          - PROCESSING
+          - SUCCESS
+          - FAILED
+          - CANCELED
+          - REFUNDED
+          - PARTIAL_REFUND
+        paymentType:
+          type: string
+          description: Payment method type like CREDIT_CARD, DIRECT_DEBIT, ACH_CREDIT etc
+          example: CREDIT_CARD
+          enum:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        referenceNo:
+          type: string
+          description: Customer reference number for the payment
+          example: '12345'
+        successfulOrProcessing:
+          type: boolean
+    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the payment gateway
+          example: pmtgw_EMfbqn56S9h9CweL
+        type:
+          type: string
+          description: Payment gateway type like STRIPEV2, BRAINTREE, WORLDPAY etc
+          example: STRIPEV2
+          enum:
+          - STRIPEV2
+          - BRAINTREE
+          - WORLDPAY
+          - AUTHNET
+          - ADYEN
+          - VANTIV
+          - PAYPAL_PRO
+          - PAYMENT_TECH
+          - TEST_PASS
+          - TEST_FAIL
+        status:
+          type: string
+          description: Payment gateway status like ACTIVE, INACTIVE OR ARCHIVED
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - ARCHIVED
+        testGateway:
+          type: boolean
+          description: A boolean field indicating that it is the test gateway or not
+          example: false
+        description:
+          type: string
+          description: Description of the payment gateway
+          example: Description for the payment gateway
+        publicKey:
+          type: string
+          description: Public key for the payment gateway. It's publishable key for Stripe
+          example: pk_test_51Hwfowe23LJ02M1f5WZ6c23
+        defaultGateway:
+          type: boolean
+          description: A boolean field indicating that it is the default gateway or not
+          example: true
+        locked:
+          type: boolean
+          description: A boolean field indicating that the gateway is locked or not
+          example: true
+        webhookId:
+          type: string
+          description: Unique identifier for the webhook
+          example: we_1MEaM8BVaXRvkQL7LqeaOCgy
+        allowedPaymentMethods:
+          uniqueItems: true
+          type: array
+          description: A list of allowed payment methods
+          items:
+            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSupport'
+        paymentConfiguration:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfigurations'
+      description: Payment gateway details of the payment method
     com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodDto:
       type: object
       properties:
@@ -524,104 +937,26 @@ components:
           format: date-time
         cancellationReason:
           type: string
-    com.monytyz.billing.payment.dto.paymentmethod.BillingDetails:
-      type: object
-      properties:
-        fullName:
-          type: string
-          description: Full name of the contact
-          example: Bob Smith
-        email:
-          type: string
-          description: Email of the contact
-          example: contact@example.com
-        phone:
-          type: string
-          description: Phone of the contact
-          example: +44 7700 900278
-        title:
-          type: string
-          description: Title of the contact
-          example: CFO
-        line1:
-          type: string
-          description: First line of the address
-          example: 8 Louise Court
-        line2:
-          type: string
-          description: Second line of the address
-          example: 12–13 Beaulieu Road
-        city:
-          type: string
-          description: City of the address
-          example: Southampton
-        state:
-          type: string
-          description: State of the address
-          example: London
-        postalCode:
-          type: string
-          description: Postal code of the address
-          example: PO2 0DN
-        country:
-          type: string
-          description: Country of the address
-          example: UK
-      description: Billing details of the payment method
-    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodData:
+    com.monytyz.billing.customer.dto.account.AccountSummary:
       required:
-      - externalId
-      - lastFour
-      - type
-      type: object
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-          enum:
-          - CREDIT_CARD
-          - DIRECT_DEBIT
-          - ACH_CREDIT
-          - US_BANK_TRANSFER
-          - MANUAL
-        externalId:
-          type: string
-        lastFour:
-          type: string
-        billingDetails:
-          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.BillingDetails'
-      description: List of payment methods that are already imported
-    com.monytyz.billing.payment.dto.paymentmethod.GatewayAccountData:
-      required:
+      - accountType
       - id
+      - isTestAccount
+      - status
       type: object
       properties:
         id:
           type: string
-          description: External identifier for the gateway account. In Stripe, this is the customer ID
-          example: cus_O85DG5nkCWtWdT
-        name:
-          type:
-          - string
-          - 'null'
-          description: Name of the gateway account. In Stripe, it's the customer's name
-          example: John Smith
-        email:
-          type:
-          - string
-          - 'null'
-          description: Email of the gateway account. In Stripe, it's the customer's email
-          example: john@gmail.com
-    com.monytyz.billing.payment.dto.paymentgateway.AmountConfiguration:
-      required:
-      - currency
-      type: object
-      properties:
-        currency:
+        customId:
           type: string
-          description: Currency to which the amount configuration applies
-          example: USD
+        isTestAccount:
+          type: boolean
+        locale:
+          type: string
+        accountName:
+          type: string
+        defaultCurrency:
+          type: string
           enum:
           - AUD
           - BYN
@@ -638,39 +973,20 @@ components:
           - SGD
           - TWD
           - USD
-        minimum:
-          type: number
-          description: Minimum payment amount allowed for payment type and currency
-          example: 25
-        maximum:
-          type: number
-          description: Maximum payment amount allowed for payment type and currency
-          example: 500
-      description: Minimum and maximum amounts for payment type per currency
-    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfigurations:
-      required:
-      - configurations
-      type: object
-      properties:
-        configurations:
-          type: array
-          description: Configuration for minimum and maximum payments amounts
-          example: US_BANK_TRANSFER
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfiguration'
-      description: Configuration for minimum and maximum payments amounts
-    MNPageable:
-      required:
-      - pageNumber
-      - pageSize
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - CANCELED
+          - SUSPENDED
+          - INACTIVE
+        accountType:
+          type: string
+          enum:
+          - CUSTOMER
+          - PARTNER
+        defaultLegalEntityId:
+          type: string
     com.monytyz.billing.payment.dto.paymentmethod.GatewayAccountDto:
       type: object
       properties:
@@ -726,57 +1042,6 @@ components:
           - PAYMENT_TECH
           - TEST_PASS
           - TEST_FAIL
-    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfiguration:
-      required:
-      - amountConfigurations
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-          description: Payment method type
-          example: US_BANK_TRANSFER
-          enum:
-          - CREDIT_CARD
-          - DIRECT_DEBIT
-          - ACH_CREDIT
-          - US_BANK_TRANSFER
-          - MANUAL
-        amountConfigurations:
-          type: array
-          description: Minimum and maximum amounts for payment type per currency
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.AmountConfiguration'
-      description: Configuration for minimum and maximum payments amounts
-      example: US_BANK_TRANSFER
-    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodImportResponse:
-      required:
-      - existingPaymentMethods
-      - failedImports
-      - gatewayAccount
-      - succeededImports
-      type: object
-      properties:
-        gatewayAccount:
-          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.GatewayAccountData'
-        succeededImports:
-          uniqueItems: true
-          type: array
-          description: List of successful payment method imports
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodData'
-        failedImports:
-          uniqueItems: true
-          type: array
-          description: List of failed payment method imports
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.FailedImport'
-        existingPaymentMethods:
-          uniqueItems: true
-          type: array
-          description: List of payment methods that are already imported
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodData'
     com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodListDto:
       required:
       - content
@@ -796,292 +1061,27 @@ components:
           format: int32
         pageable:
           $ref: '#/components/schemas/MNPageable'
-    com.monytyz.billing.payment.dto.payment.PaymentDto:
+    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodData:
       required:
-      - currency
-      - id
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: Identifier for the user who created the record
-          example: usr_X0XZ05bvkrB1RpLS
-        createDate:
-          type: string
-          description: Timestamp of when the record was created
-          format: date-time
-        lastModifiedBy:
-          type: string
-          description: Identifier for the user who last modified the record
-          example: usr_X0XZ05bvkrB1RpLS
-        modifyDate:
-          type: string
-          description: Timestamp of when the record was last modified
-          format: date-time
-        id:
-          type: string
-          description: Unique identifier for the payment
-          example: pmt_m0CB9LflojZxytfC
-        paymentDate:
-          type: string
-          description: Date of the payment
-          format: date
-          example: '2022-04-13'
-        currency:
-          type: string
-          description: Currency of the payment
-          example: USD
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        account:
-          $ref: '#/components/schemas/com.monytyz.billing.customer.dto.account.AccountSummary'
-        collectionDate:
-          type: string
-          description: Date when the payment is settled
-          format: date
-          example: '2022-04-15'
-          deprecated: true
-        settledDate:
-          type: string
-          description: Date when the payment is settled
-          format: date-time
-        refundDate:
-          type: string
-          description: Date of the refund
-          format: date
-          example: '2022-04-25'
-        voidDate:
-          type: string
-          description: Date when the payment is voided
-          format: date
-          example: '2022-04-25'
-        description:
-          type: string
-          description: Description of the payment
-          example: Monthly Payment
-        paymentMethodId:
-          type: string
-          description: Unique identifier for the payment method
-          example: pmtm_GDJKaum7vI9vf9tl
-        gatewayId:
-          type: string
-          description: Unique identifier for the payment gateway
-          example: pmtgw_EMfbqn56S9h9CweL
-        gatewayReference:
-          type: string
-          description: Gateway reference for the payment. It can be charge id or payment intent id when the payment is successful and request id when the payment fails
-          example: 4cd7-b4f4-a35ad60ad483
-        gatewayCode:
-          type: string
-          description: Gateway error code when the payment fails
-          example: a35ad60ad483
-        gatewayMessage:
-          type: string
-          description: Gateway error message when the payment fails
-          example: Gateway Connected Successfully
-        amount:
-          type: number
-          description: Amount of the payment
-          example: 100000000
-        appliedAmount:
-          type: number
-          description: Applied amount for the payment
-          example: 10000000
-        unAppliedAmount:
-          type: number
-          description: Unapplied amount for the payment
-          example: 100000
-        fullyApplied:
-          type: boolean
-          description: A boolean field indicating that payment is fully applied or not
-          example: true
-        paymentStatus:
-          type: string
-          description: Status of the payment. Status can be SUCCESS, PROCESSING, FAILED, CANCELED, REFUNDED or PARTIAL_REFUND
-          example: SUCCESS
-          enum:
-          - PROCESSING
-          - SUCCESS
-          - FAILED
-          - CANCELED
-          - REFUNDED
-          - PARTIAL_REFUND
-        paymentType:
-          type: string
-          description: Payment method type like CREDIT_CARD, DIRECT_DEBIT, ACH_CREDIT etc
-          example: CREDIT_CARD
-          enum:
-          - CREDIT_CARD
-          - DIRECT_DEBIT
-          - ACH_CREDIT
-          - US_BANK_TRANSFER
-          - MANUAL
-        referenceNo:
-          type: string
-          description: Customer reference number for the payment
-          example: '12345'
-        successfulOrProcessing:
-          type: boolean
-    com.monytyz.billing.payment.dto.paymentmethod.FailedImport:
-      required:
-      - externalPaymentMethodId
-      - reason
-      type: object
-      properties:
-        externalPaymentMethodId:
-          type: string
-          description: External payment method id
-          example: pm_1NNZkPBXyD37Yf5R6DNQLPxF
-        reason:
-          type: string
-          description: Reason for import failure
-          example: Unknown Error
-      description: List of failed payment method imports
-    com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSupport:
-      required:
-      - enabled
-      - method
-      type: object
-      properties:
-        method:
-          type: string
-          description: Payment method type like CREDIT_CARD, DIRECT_DEBIT, ACH_CREDIT etc
-          example: DIRECT_DEBIT
-          enum:
-          - CREDIT_CARD
-          - DIRECT_DEBIT
-          - ACH_CREDIT
-          - US_BANK_TRANSFER
-          - MANUAL
-        enabled:
-          type: boolean
-          description: A boolean field indicating that the payment method type should be enabled or not
-          example: true
-      description: A list of allowed payment methods
-    com.monytyz.billing.customer.dto.account.AccountSummary:
-      required:
-      - accountType
-      - id
-      - isTestAccount
-      - status
+      - externalId
+      - lastFour
+      - type
       type: object
       properties:
         id:
           type: string
-        customId:
-          type: string
-        isTestAccount:
-          type: boolean
-        locale:
-          type: string
-        accountName:
-          type: string
-        defaultCurrency:
-          type: string
-          enum:
-          - AUD
-          - BYN
-          - CAD
-          - CNY
-          - DKK
-          - EUR
-          - GBP
-          - INR
-          - ISK
-          - MYR
-          - NOK
-          - SEK
-          - SGD
-          - TWD
-          - USD
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - CANCELED
-          - SUSPENDED
-          - INACTIVE
-        accountType:
-          type: string
-          enum:
-          - CUSTOMER
-          - PARTNER
-        defaultLegalEntityId:
-          type: string
-    com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayDto:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the payment gateway
-          example: pmtgw_EMfbqn56S9h9CweL
         type:
           type: string
-          description: Payment gateway type like STRIPEV2, BRAINTREE, WORLDPAY etc
-          example: STRIPEV2
           enum:
-          - STRIPEV2
-          - BRAINTREE
-          - WORLDPAY
-          - AUTHNET
-          - ADYEN
-          - VANTIV
-          - PAYPAL_PRO
-          - PAYMENT_TECH
-          - TEST_PASS
-          - TEST_FAIL
-        status:
+          - CREDIT_CARD
+          - DIRECT_DEBIT
+          - ACH_CREDIT
+          - US_BANK_TRANSFER
+          - MANUAL
+        externalId:
           type: string
-          description: Payment gateway status like ACTIVE, INACTIVE OR ARCHIVED
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - INACTIVE
-          - ARCHIVED
-        testGateway:
-          type: boolean
-          description: A boolean field indicating that it is the test gateway or not
-          example: false
-        description:
+        lastFour:
           type: string
-          description: Description of the payment gateway
-          example: Description for the payment gateway
-        publicKey:
-          type: string
-          description: Public key for the payment gateway. It's publishable key for Stripe
-          example: pk_test_51Hwfowe23LJ02M1f5WZ6c23
-        defaultGateway:
-          type: boolean
-          description: A boolean field indicating that it is the default gateway or not
-          example: true
-        locked:
-          type: boolean
-          description: A boolean field indicating that the gateway is locked or not
-          example: true
-        webhookId:
-          type: string
-          description: Unique identifier for the webhook
-          example: we_1MEaM8BVaXRvkQL7LqeaOCgy
-        allowedPaymentMethods:
-          uniqueItems: true
-          type: array
-          description: A list of allowed payment methods
-          items:
-            $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.PaymentMethodSupport'
-        paymentConfiguration:
-          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentgateway.PaymentGatewayConfigurations'
-      description: Payment gateway details of the payment method
+        billingDetails:
+          $ref: '#/components/schemas/com.monytyz.billing.payment.dto.paymentmethod.BillingDetails'
+      description: List of payment methods that are already imported
