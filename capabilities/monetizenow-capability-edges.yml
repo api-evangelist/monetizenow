@@ -1,0 +1,127 @@
+slug: monetizenow
+provider: MonetizeNow
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 11
+edges:
+- tag: Invoice
+  spec_file: monetizenow-invoice-api-openapi.yml
+  capability_id: BC-4250.30
+  capability_id_l1: BC-4250
+  capability_name: Invoicing & Statement Management
+  confidence: 0.93
+  evidence: GET /api/billGroups/{billGroupId}/invoices/preview 'Preview an upcoming invoice'; GET /api/invoices/{invoiceId}/print
+    'Generate Invoice Pdf'; InvoiceItemDto, PaymentInstruction
+  reason: Generation, retrieval, update and PDF delivery of subscription invoices — directly Invoicing
+    & Statement Management in a SaaS billing platform.
+- tag: Usage
+  spec_file: monetizenow-usage-api-openapi.yml
+  capability_id: BC-4250.10
+  capability_id_l1: BC-4250
+  capability_name: Usage Metering
+  confidence: 0.9
+  evidence: POST /usage/events recordEvents 'Record usage events'; GET /usage/consumption 'Get usage consumption';
+    'Update units consumed and/or the rated price'
+  reason: Ingestion and aggregation of metered usage events feeding rating — textbook usage metering for
+    subscription billing.
+- tag: Opportunity
+  spec_file: monetizenow-opportunity-api-openapi.yml
+  capability_id: BC-410.30
+  capability_id_l1: BC-410
+  capability_name: Opportunity & Pipeline Management
+  confidence: 0.85
+  evidence: POST /api/opportunities 'Create opportunity'; PUT /api/opportunities/{opportunityId}/quotes/{quoteId}/setPrimary
+    'Set primary quote'; OpportunityQuoteLinkResponseDto
+  reason: Sales opportunity records linked to quotes with a primary-quote designation — classic opportunity/deal
+    pipeline management in the CPQ front end.
+- tag: Payment
+  spec_file: monetizenow-payment-api-openapi.yml
+  capability_id: BC-4250.40
+  capability_id_l1: BC-4250
+  capability_name: Payment Collection & Dunning
+  confidence: 0.85
+  evidence: POST /api/accounts/{accountId}/payments/invoice/{invoiceId}/pay 'Pay an invoice'; POST /api/payments/{paymentId}/refund
+    'Refund a payment'; ApplyPaymentToInvoiceDto
+  reason: Collection of payments against invoices, manual payment recording and refunds — payment collection
+    within the subscription billing lifecycle.
+- tag: Payment Method
+  spec_file: monetizenow-payment-method-api-openapi.yml
+  capability_id: BC-4250.40
+  capability_id_l1: BC-4250
+  capability_name: Payment Collection & Dunning
+  confidence: 0.85
+  evidence: POST /api/accounts/{accountId}/paymentMethods createPaymentMethod 'Create payment method for
+    an account'; 'Set default payment method'; GatewayAccountDto / PaymentGatewayDto
+  reason: Operations manage customer payment methods and payment-gateway accounts for a SaaS billing platform,
+    which is payment-method management within subscription payment collection.
+- tag: Contract
+  spec_file: monetizenow-contract-api-openapi.yml
+  capability_id: BC-4240
+  capability_id_l1: BC-4240
+  capability_name: Subscription Lifecycle Management
+  confidence: 0.8
+  evidence: POST /api/contracts/{contractId}/amend 'Amend contract'; POST /api/contracts/{contractId}/renew
+    'Renew contract'; ContractRenewDto, IncrementalSubscriptionBreakdownResponse
+  reason: Subscription contract lifecycle in a SaaS quote-to-cash platform — amendment and renewal of
+    subscription contracts tied to quotes. Spans contracting, modification and renewal sub-capabilities,
+    so L1 only.
+- tag: Credit Note
+  spec_file: monetizenow-credit-note-api-openapi.yml
+  capability_id: BC-4250.30
+  capability_id_l1: BC-4250
+  capability_name: Invoicing & Statement Management
+  confidence: 0.8
+  evidence: POST /api/invoices/{invoiceId}/creditNotes 'Save credit note'; POST /api/creditNotes/{creditNoteId}/void
+    'Void a credit note'; CreditNoteInvoiceItem
+  reason: Credit notes issued against invoices, printed and voided — invoice adjustment and statement
+    management within subscription billing.
+- tag: Trial
+  spec_file: monetizenow-trial-api-openapi.yml
+  capability_id: BC-4240.30
+  capability_id_l1: BC-4240
+  capability_name: Subscription Provisioning
+  confidence: 0.78
+  evidence: POST /api/accounts/{accountId}/trials/{trialId}/convert 'Convert trial'; schemas ConvertTrialRequest,
+    TrialConversionPolicy, TrialToQuoteInitDetails
+  reason: Trial creation, cancellation and trial-to-paid conversion maps directly to subscription provisioning,
+    which explicitly includes trial-to-paid conversion.
+- tag: Subscription
+  spec_file: monetizenow-subscription-api-openapi.yml
+  capability_id: BC-4240
+  capability_id_l1: BC-4240
+  capability_name: Subscription Lifecycle Management
+  confidence: 0.75
+  evidence: GET /api/subscriptions/{subscriptionId} 'Get subscription by Id'; schemas SubscriptionDetailDto,
+    SubscriptionItemDetailDto, SubscriptionItemDiscountDto
+  reason: Read surface over subscription records of a SaaS billing platform; clearly subscription lifecycle
+    domain but the read-only operations do not name a specific sub-capability.
+- tag: Payment Gateway
+  spec_file: monetizenow-payment-gateway-api-openapi.yml
+  capability_id: BC-4250.40
+  capability_id_l1: BC-4250
+  capability_name: Payment Collection & Dunning
+  confidence: 0.72
+  evidence: POST /api/paymentGateways/{paymentGatewayId}/gatewayAccounts/{paymentGatewayAccountId}/setupIntent
+    'Create setup intent'; StripeSetupIntentDto, PaymentMethodSupport
+  reason: Gateway listing and Stripe setup-intent creation to register payment methods — payment-method
+    management supporting collection. Partly configuration plumbing, so confidence is tempered.
+- tag: Quote
+  spec_file: monetizenow-quote-api-openapi.yml
+  capability_id: BC-4240.20
+  capability_id_l1: BC-4240
+  capability_name: Subscription Contracting
+  confidence: 0.72
+  evidence: POST /api/quotes createNetNewQuote 'Create a new quote'; POST /api/quotes/{quoteId}/accept
+    'Accept quote'; schemas QuoteApprovalDto, QuoteConditionalTermsDto, IncrementalSubscriptionBreakdownResponse
+  reason: Quote lifecycle (create, approve, accept, cancel) producing subscription breakdowns is subscription
+    contracting/quote management in a quote-to-cash SaaS platform; could alternatively be read as CPQ
+    under Sales Management.
